@@ -160,22 +160,49 @@
                 </div>
                 
                 <div class="settings-category" data-category="api">
-                    <h3>Chaves de API</h3>
+                    <h3>Configuração de IA</h3>
+                    
+                    <!-- Provider Selection -->
                     <div class="input-group">
-                        <label for="api-openai">
-                            OpenAI API Key
-                            <span id="openai-status" class="api-status"></span>
+                        <label>Provedor de IA</label>
+                        <div class="provider-grid" id="provider-grid">
+                            <!-- Providers will be rendered by JS -->
+                        </div>
+                    </div>
+                    
+                    <!-- Model Selection -->
+                    <div class="input-group" id="model-selection-group">
+                        <label for="model-select">Modelo</label>
+                        <select id="model-select" class="model-select">
+                            <!-- Models will be populated by JS -->
+                        </select>
+                        <small class="input-help" id="model-context">Contexto: - tokens</small>
+                    </div>
+                    
+                    <!-- API Key Input -->
+                    <div class="input-group" id="api-key-group">
+                        <label for="api-key">
+                            Chave API
+                            <span id="api-key-status" class="api-status"></span>
                         </label>
                         <div class="input-with-button">
-                            <input type="password" id="api-openai" placeholder="sk-..." autocomplete="off">
-                            <button id="test-openai" class="btn-small" disabled>Testar</button>
+                            <input type="password" id="api-key" placeholder="sk-..." autocomplete="off">
+                            <button id="btn-test-connection" class="btn-small" disabled>Testar</button>
                         </div>
-                        <small class="input-help">Sua chave é armazenada apenas localmente no navegador</small>
+                        <small class="input-help" id="api-key-help">
+                            <a href="#" id="provider-link" target="_blank">Obter chave API →</a>
+                        </small>
                     </div>
-                    <div class="input-group">
-                        <label for="api-anthropic">Anthropic API Key (opcional)</label>
-                        <input type="password" id="api-anthropic" placeholder="sk-ant-..." autocomplete="off">
+                    
+                    <!-- Custom Endpoint (for Local/Custom) -->
+                    <div class="input-group" id="custom-endpoint-group" style="display: none;">
+                        <label for="custom-endpoint">Endpoint da API</label>
+                        <input type="text" id="custom-endpoint" placeholder="http://localhost:11434/api/generate">
+                        <small class="input-help">URL completa da API (incluindo /v1/chat/completions se necessário)</small>
                     </div>
+                    
+                    <!-- Connection Status -->
+                    <div id="connection-status" class="connection-status" style="display: none;"></div>
                 </div>
                 
                 <div class="settings-category" data-category="bank">
@@ -258,5 +285,6 @@
     
     <!-- App Scripts -->
     <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/provider-settings.js"></script>
 </body>
 </html>
