@@ -1,4 +1,4 @@
-const CACHE_NAME = 'english-training-v2';
+const CACHE_NAME = 'english-training-v3';
 const STATIC_ASSETS = [
   '/english_training/',
   '/english_training/index.html',
