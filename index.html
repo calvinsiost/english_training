@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/study-layout.css">
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
@@ -119,36 +120,67 @@
                     <span id="study-progress" class="study-progress">Passagem 1/1 · Questão 1/5</span>
                 </div>
 
-                <div class="passage-container">
-                    <article id="passage-text" class="passage-text">
-                        <!-- Passage content loaded dynamically -->
-                    </article>
+                <!-- Mobile Tabs -->
+                <div class="study-tabs" id="study-tabs">
+                    <button class="study-tab active" data-tab="passage">
+                        <i data-lucide="book-open"></i> Texto
+                    </button>
+                    <button class="study-tab" data-tab="question">
+                        <i data-lucide="help-circle"></i> Questão <span class="tab-badge" id="tab-question-num">1</span>
+                    </button>
                 </div>
 
-                <div class="question-container">
-                    <div id="question-text" class="question-text">
-                        <!-- Question loaded dynamically -->
+                <div class="study-content" id="study-content">
+                    <!-- Passage Container -->
+                    <div class="passage-container" id="passage-panel">
+                        <div class="passage-header" id="passage-header">
+                            <h3>Texto da Passagem</h3>
+                            <i data-lucide="chevron-down" class="passage-toggle-icon"></i>
+                        </div>
+                        <div class="reading-progress">
+                            <div class="reading-progress-bar" id="reading-progress"></div>
+                        </div>
+                        <article id="passage-text" class="passage-text">
+                            <!-- Passage content loaded dynamically -->
+                        </article>
                     </div>
 
-                    <div id="options-list" class="options-list">
-                        <!-- Options A-E loaded dynamically -->
-                    </div>
+                    <!-- Question Container -->
+                    <div class="question-container" id="question-panel">
+                        <div id="question-text" class="question-text">
+                            <!-- Question loaded dynamically -->
+                        </div>
 
-                    <div id="confidence-section" class="confidence-section" style="display: none;">
-                        <p class="confidence-prompt">Quão confiante você está?</p>
-                        <div class="confidence-buttons">
-                            <button data-confidence="0" class="confidence-btn">Chutei</button>
-                            <button data-confidence="1" class="confidence-btn">Pouco</button>
-                            <button data-confidence="2" class="confidence-btn">Confiante</button>
-                            <button data-confidence="3" class="confidence-btn">Certeza</button>
+                        <div id="options-list" class="options-list">
+                            <!-- Options A-E loaded dynamically -->
+                        </div>
+
+                        <div id="confidence-section" class="confidence-section" style="display: none;">
+                            <p class="confidence-prompt">Quão confiante você está?</p>
+                            <div class="confidence-buttons">
+                                <button data-confidence="0" class="confidence-btn">Chutei</button>
+                                <button data-confidence="1" class="confidence-btn">Pouco</button>
+                                <button data-confidence="2" class="confidence-btn">Confiante</button>
+                                <button data-confidence="3" class="confidence-btn">Certeza</button>
+                            </div>
+                        </div>
+
+                        <div id="feedback-section" class="feedback-section" style="display: none;">
+                            <!-- Feedback loaded dynamically -->
+                        </div>
+
+                        <div class="next-question-container" id="next-container" style="display: none;">
+                            <button id="btn-next" class="btn-next-question">
+                                Próxima Questão <i data-lucide="arrow-right"></i>
+                            </button>
+                        </div>
+
+                        <div class="shortcuts-hint" id="shortcuts-hint">
+                            <span class="shortcut"><kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> <kbd>D</kbd> <kbd>E</kbd> Responder</span>
+                            <span class="shortcut"><kbd>1-4</kbd> Confiança</span>
+                            <span class="shortcut"><kbd>Enter</kbd> Próxima</span>
                         </div>
                     </div>
-
-                    <div id="feedback-section" class="feedback-section" style="display: none;">
-                        <!-- Feedback loaded dynamically -->
-                    </div>
-
-                    <button id="btn-next" class="btn-next" style="display: none;">Próxima <i data-lucide="arrow-right"></i></button>
                 </div>
             </section>
 

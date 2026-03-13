@@ -369,9 +369,17 @@ function loadPassageIntoUI(passage) {
     // Format passage with paragraphs
     const formattedText = passage.text
       .split('\n\n')
-      .map(p => `<p>${p}</p>`)
+      .filter(p => p.trim())
+      .map(p => `<p>${p.trim()}</p>`)
       .join('');
     passageEl.innerHTML = formattedText;
+    
+    // Reset reading progress
+    const progressBar = document.getElementById('reading-progress');
+    if (progressBar) progressBar.style.width = '0%';
+    
+    // Reset scroll
+    passageEl.scrollTop = 0;
   }
   
   // Load first question
@@ -399,10 +407,30 @@ function loadPassageIntoUI(passage) {
     progressEl.textContent = `Questão ${state.currentQuestionIndex + 1}/${passage.questions.length}`;
   }
   
+  // Update tab badge
+  updateStudyProgressIndicator();
+  
+  // Reset to passage tab on mobile
+  const studyContent = document.getElementById('study-content');
+  if (studyContent) {
+    studyContent.classList.remove('show-question');
+  }
+  const passageTab = document.querySelector('[data-tab="passage"]');
+  if (passageTab) {
+    document.querySelectorAll('.study-tab').forEach(t => t.classList.remove('active'));
+    passageTab.classList.add('active');
+  }
+  
   // Hide feedback and confidence sections
   document.getElementById('confidence-section').style.display = 'none';
   document.getElementById('feedback-section').style.display = 'none';
-  document.getElementById('btn-next').style.display = 'none';
+  document.getElementById('next-container').style.display = 'none';
+  
+  // Expand passage if collapsed
+  const passageContainer = document.getElementById('passage-panel');
+  if (passageContainer) {
+    passageContainer.classList.remove('collapsed');
+  }
 }
 
 // Handle Option Selection
@@ -440,9 +468,10 @@ function handleConfidenceSelect(confidenceLevel, selectedAnswer, question) {
   `;
   
   // Show next button
+  const nextContainer = document.getElementById('next-container');
   const nextBtn = document.getElementById('btn-next');
-  nextBtn.style.display = 'block';
-  nextBtn.onclick = handleNextQuestion;
+  if (nextContainer) nextContainer.style.display = 'block';
+  if (nextBtn) nextBtn.onclick = handleNextQuestion;
   
   // Mark correct/incorrect in UI
   document.querySelectorAll('.option-btn').forEach(btn => {
@@ -601,4 +630,95 @@ window.router = {
   navigate: (hash) => {
     window.location.hash = hash;
   }
-};
+};// Study UI Enhancements - Tabs, Collapse, Reading Progress
+
+// Setup Study UI (tabs, collapsible passage, etc.)
+function setupStudyUI() {
+  // Mobile tabs
+  const tabs = document.querySelectorAll('.study-tab');
+  const studyContent = document.getElementById('study-content');
+  
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const targetTab = tab.dataset.tab;
+      
+      // Update active tab
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      
+      // Show corresponding panel
+      if (targetTab === 'question') {
+        studyContent.classList.add('show-question');
+      } else {
+        studyContent.classList.remove('show-question');
+      }
+    });
+  });
+  
+  // Collapsible passage header
+  const passageHeader = document.getElementById('passage-header');
+  const passageContainer = document.getElementById('passage-panel');
+  
+  if (passageHeader && passageContainer) {
+    passageHeader.addEventListener('click', () => {
+      passageContainer.classList.toggle('collapsed');
+    });
+  }
+  
+  // Reading progress tracker
+  const passageText = document.getElementById('passage-text');
+  const progressBar = document.getElementById('reading-progress');
+  
+  if (passageText && progressBar) {
+    passageText.addEventListener('scroll', () => {
+      const scrollTop = passageText.scrollTop;
+      const scrollHeight = passageText.scrollHeight - passageText.clientHeight;
+      const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      progressBar.style.width = progress + '%';
+    });
+  }
+  
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    // Only when in study view
+    if (!document.getElementById('study').classList.contains('view--active')) return;
+    
+    // Options A-E (keys a-e)
+    if (e.key >= 'a' && e.key <= 'e') {
+      const optionIndex = e.key.charCodeAt(0) - 'a'.charCodeAt(0);
+      const options = document.querySelectorAll('.option-btn:not(:disabled)');
+      if (options[optionIndex]) {
+        options[optionIndex].click();
+      }
+    }
+    
+    // Confidence 1-4
+    if (e.key >= '1' && e.key <= '4') {
+      const confidenceBtn = document.querySelector(`[data-confidence="${e.key - 1}"]`);
+      if (confidenceBtn && confidenceBtn.offsetParent !== null) {
+        confidenceBtn.click();
+      }
+    }
+    
+    // Enter for next question
+    if (e.key === 'Enter') {
+      const nextBtn = document.getElementById('btn-next');
+      if (nextBtn && nextBtn.offsetParent !== null) {
+        nextBtn.click();
+      }
+    }
+  });
+}
+
+// Update loadPassageIntoUI to handle new elements
+function updateStudyProgressIndicator() {
+  const badge = document.getElementById('tab-question-num');
+  if (badge && state.currentPassage) {
+    badge.textContent = state.currentQuestionIndex + 1;
+  }
+}
+
+// Initialize Study UI on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  setupStudyUI();
+});
