@@ -5,8 +5,14 @@
    ===================================================== */
 
 @media (min-width: 900px) {
-  /* Remove max-width limitation for study view */
-  #app:has(#study.view--active) .main-content {
+  /* Expand app container when study view is active */
+  body:has(#study.view--active) #app {
+    max-width: 1400px;
+    width: 95%;
+  }
+  
+  /* Ensure main-content uses full width */
+  body:has(#study.view--active) .main-content {
     max-width: none;
     width: 100%;
     padding: var(--space-4);
