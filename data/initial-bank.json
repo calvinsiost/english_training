@@ -1,0 +1,49 @@
+{
+  "schema_version": "3.3",
+  "last_updated": "2025-03-13",
+  "description": "Banco inicial de questões FUVEST - Estrutura de exemplo. Substitua pelas questões reais extraídas dos PDFs.",
+  "total_passages": 1,
+  "source": "FUVEST - Exame de Proficiência em Inglês",
+  "passages": [
+    {
+      "id": "example-001",
+      "exam_id": "example",
+      "text": "The rapid advancement of artificial intelligence has sparked intense debate among researchers, policymakers, and the public. While some celebrate the potential for AI to solve complex problems in medicine, climate science, and education, others warn of existential risks and unintended consequences. The challenge lies not in halting progress, but in steering it responsibly. This requires interdisciplinary collaboration, robust regulatory frameworks, and ongoing public dialogue about the kind of future we want to build.",
+      "source": "Adapted from Nature, 2024.",
+      "topic": "technology_ai",
+      "difficulty_score": 60,
+      "questions": [
+        {
+          "id": "example-001-q01",
+          "question_type": "main_idea",
+          "question_text": "Conforme o texto, o principal desafio relacionado ao avanço da inteligência artificial é",
+          "options": [
+            "(A) impedir o desenvolvimento de tecnologias perigosas.",
+            "(B) direcionar o progresso de forma responsável.",
+            "(C) convencer o público sobre os benefícios da IA.",
+            "(D) estabelecer uma única área de pesquisa dominante.",
+            "(E) eliminar os riscos existenciais completamente."
+          ],
+          "correct_answer": "B",
+          "correct_explanation": "O texto afirma explicitamente que 'O desafio não está em deter o progresso, mas em direcioná-lo de forma responsável' (The challenge lies not in halting progress, but in steering it responsibly).",
+          "tested_concept": "identificar tese principal"
+        },
+        {
+          "id": "example-001-q02",
+          "question_type": "inference",
+          "question_text": "De acordo com o texto, pode-se inferir que a colaboração interdisciplinar é necessária porque",
+          "options": [
+            "(A) os cientistas de IA não têm capacidade técnica suficiente.",
+            "(B) os problemas exigem perspectivas de múltiplas áreas do conhecimento.",
+            "(C) o público não confia em especialistas isolados.",
+            "(D) os reguladores não compreendem a tecnologia.",
+            "(E) a pesquisa em IA está fragmentada demais."
+          ],
+          "correct_answer": "B",
+          "correct_explanation": "O texto menciona 'colaboração interdisciplinar' no contexto de lidar com desafios complexos em medicina, ciência climática e educação, implicando que diferentes áreas de expertise são necessárias.",
+          "tested_concept": "inferir implicação"
+        }
+      ]
+    }
+  ]
+}
