@@ -6,6 +6,47 @@
 import { AIConfig } from './config/ai-providers.js';
 import { STORES, DB_NAME, DB_VERSION } from './config/constants.js';
 
+// IndexedDB Promise Helpers
+function idbGet(store, key) {
+  return new Promise((resolve, reject) => {
+    const request = store.get(key);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function idbPut(store, value) {
+  return new Promise((resolve, reject) => {
+    const request = store.put(value);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function idbAdd(store, value) {
+  return new Promise((resolve, reject) => {
+    const request = store.add(value);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function idbCount(store) {
+  return new Promise((resolve, reject) => {
+    const request = store.count();
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function idbGetAll(store) {
+  return new Promise((resolve, reject) => {
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
 // Global state
 const state = {
   db: null,
@@ -119,12 +160,12 @@ async function initializeQuestionBank() {
         source_type: 'official',
         created_at: new Date().toISOString()
       };
-      await bankStore.put(bankEntry);
+      await idbPut(bankStore, bankEntry);
     }
     
     // Mark as initialized
     const metaWriteTx = db.transaction(STORES.META, 'readwrite');
-    await metaWriteTx.objectStore(STORES.META).put({
+    await idbPut(metaWriteTx.objectStore(STORES.META), {
       key: 'bank_initialized',
       value: true,
       version: data.schema_version,
@@ -230,11 +271,7 @@ async function updateDashboard() {
     // Get bank count
     const tx = state.db.transaction(STORES.QUESTION_BANK, 'readonly');
     const store = tx.objectStore(STORES.QUESTION_BANK);
-    const count = await new Promise((resolve, reject) => {
-      const request = store.count();
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
+    const count = await idbCount(store);
     
     document.getElementById('bank-count').textContent = count;
     
@@ -271,7 +308,7 @@ async function startStudySession() {
     const store = tx.objectStore(STORES.QUESTION_BANK);
     
     // Get all passages
-    const passages = await store.getAll();
+    const passages = await idbGetAll(store);
     
     // Filter fresh passages (times_served === 0)
     const freshPassages = passages.filter(p => p.times_served === 0);
@@ -436,7 +473,7 @@ async function saveAttempt(question, answer, confidence, isCorrect) {
     const tx = state.db.transaction(STORES.QUESTION_ATTEMPTS, 'readwrite');
     const store = tx.objectStore(STORES.QUESTION_ATTEMPTS);
     
-    await store.add({
+    await idbAdd(store, {
       question_id: question.id,
       passage_id: state.currentPassage.id,
       question_type: question.question_type,
@@ -465,7 +502,7 @@ async function exportData() {
     for (const storeName of Object.values(STORES)) {
       const tx = state.db.transaction(storeName, 'readonly');
       const store = tx.objectStore(storeName);
-      data.stores[storeName] = await store.getAll();
+      data.stores[storeName] = await idbGetAll(store);
     }
     
     // Download
@@ -504,7 +541,7 @@ async function importData(event) {
       const store = tx.objectStore(storeName);
       
       for (const record of records) {
-        await store.put(record);
+        await idbPut(store, record);
       }
     }
     
