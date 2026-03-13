@@ -230,7 +230,11 @@ async function updateDashboard() {
     // Get bank count
     const tx = state.db.transaction(STORES.QUESTION_BANK, 'readonly');
     const store = tx.objectStore(STORES.QUESTION_BANK);
-    const count = await store.count();
+    const count = await new Promise((resolve, reject) => {
+      const request = store.count();
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
     
     document.getElementById('bank-count').textContent = count;
     
