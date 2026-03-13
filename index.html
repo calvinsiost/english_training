@@ -10,7 +10,7 @@
     
     <!-- PWA -->
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon.svg">
     
     <!-- CSS -->
     <link rel="stylesheet" href="css/variables.css">
@@ -159,41 +159,75 @@
                     <h2>Configurações</h2>
                 </div>
                 
-                <div class="settings-section">
+                <div class="settings-category" data-category="api">
                     <h3>Chaves de API</h3>
                     <div class="input-group">
-                        <label for="api-openai">OpenAI API Key</label>
-                        <input type="password" id="api-openai" placeholder="sk-...">
-                        <button id="test-openai" class="btn-small">Testar</button>
+                        <label for="api-openai">
+                            OpenAI API Key
+                            <span id="openai-status" class="api-status"></span>
+                        </label>
+                        <div class="input-with-button">
+                            <input type="password" id="api-openai" placeholder="sk-..." autocomplete="off">
+                            <button id="test-openai" class="btn-small" disabled>Testar</button>
+                        </div>
+                        <small class="input-help">Sua chave é armazenada apenas localmente no navegador</small>
                     </div>
                     <div class="input-group">
                         <label for="api-anthropic">Anthropic API Key (opcional)</label>
-                        <input type="password" id="api-anthropic" placeholder="sk-ant-...">
+                        <input type="password" id="api-anthropic" placeholder="sk-ant-..." autocomplete="off">
                     </div>
                 </div>
                 
-                <div class="settings-section">
+                <div class="settings-category" data-category="bank">
                     <h3>Banco de Questões</h3>
-                    <p id="bank-info" class="settings-info">Carregando...</p>
-                    <button id="btn-generate-batch" class="btn-secondary">Gerar mais questões (batch)</button>
-                    <button id="btn-reset-bank" class="btn-danger">Resetar banco gerado</button>
-                </div>
-                
-                <div class="settings-section">
-                    <h3>Backup</h3>
-                    <button id="btn-export" class="btn-secondary">Exportar progresso (JSON)</button>
-                    <div class="input-group">
-                        <label for="import-file">Importar progresso</label>
-                        <input type="file" id="import-file" accept=".json">
+                    <div class="bank-stats">
+                        <div class="bank-stat-item">
+                            <span class="bank-stat-value" id="bank-total">-</span>
+                            <span class="bank-stat-label">passagens</span>
+                        </div>
+                        <div class="bank-stat-item">
+                            <span class="bank-stat-value" id="bank-questions">-</span>
+                            <span class="bank-stat-label">questões</span>
+                        </div>
+                        <div class="bank-stat-item">
+                            <span class="bank-stat-value" id="bank-official">-</span>
+                            <span class="bank-stat-label">oficiais FUVEST</span>
+                        </div>
+                    </div>
+                    <div class="settings-actions">
+                        <button id="btn-generate-batch" class="btn-secondary">
+                            <span>✨</span> Gerar mais questões (batch de 10)
+                        </button>
+                        <button id="btn-reset-bank" class="btn-danger">
+                            <span>🗑️</span> Resetar banco gerado
+                        </button>
                     </div>
                 </div>
                 
-                <div class="settings-section">
+                <div class="settings-category" data-category="backup">
+                    <h3>Backup e Restauração</h3>
+                    <p class="settings-description">Exporte seu progresso para transferir entre dispositivos ou fazer backup</p>
+                    <div class="settings-actions">
+                        <button id="btn-export" class="btn-secondary">
+                            <span>📤</span> Exportar progresso (JSON)
+                        </button>
+                        <label class="file-input-label">
+                            <input type="file" id="import-file" accept=".json" hidden>
+                            <span class="btn-secondary">
+                                <span>📥</span> Importar progresso
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="settings-category" data-category="prefs">
                     <h3>Preferências</h3>
                     <div class="input-group">
-                        <label for="daily-goal">Meta diária (minutos)</label>
-                        <input type="range" id="daily-goal" min="5" max="60" value="15">
-                        <span id="daily-goal-value">15</span>
+                        <label for="daily-goal">Meta diária de estudo</label>
+                        <div class="range-with-value">
+                            <input type="range" id="daily-goal" min="5" max="60" value="15" step="5">
+                            <span class="range-value"><span id="daily-goal-value">15</span> minutos</span>
+                        </div>
                     </div>
                 </div>
             </section>

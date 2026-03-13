@@ -253,13 +253,43 @@ function setupEventListeners() {
   document.getElementById('btn-export')?.addEventListener('click', exportData);
   document.getElementById('import-file')?.addEventListener('change', importData);
   
-  // Save API keys
-  document.getElementById('api-openai')?.addEventListener('blur', (e) => {
+  // Save API keys with validation
+  const openaiInput = document.getElementById('api-openai');
+  const testOpenaiBtn = document.getElementById('test-openai');
+  
+  openaiInput?.addEventListener('input', (e) => {
+    const key = e.target.value;
+    const statusEl = document.getElementById('openai-status');
+    
+    if (key.length === 0) {
+      statusEl.textContent = '';
+      statusEl.className = 'api-status';
+      testOpenaiBtn.disabled = true;
+    } else if (key.startsWith('sk-') && key.length > 20) {
+      statusEl.textContent = 'Válida';
+      statusEl.className = 'api-status valid';
+      testOpenaiBtn.disabled = false;
+    } else {
+      statusEl.textContent = 'Inválida';
+      statusEl.className = 'api-status invalid';
+      testOpenaiBtn.disabled = true;
+    }
+  });
+  
+  openaiInput?.addEventListener('blur', (e) => {
     if (e.target.value) AIConfig.setStoredKey('openai', e.target.value);
   });
   
   document.getElementById('api-anthropic')?.addEventListener('blur', (e) => {
     if (e.target.value) AIConfig.setStoredKey('anthropic', e.target.value);
+  });
+  
+  // File input label feedback
+  document.getElementById('import-file')?.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      showToast(`Arquivo selecionado: ${file.name}`, 'info');
+    }
   });
 }
 
@@ -268,18 +298,27 @@ async function updateDashboard() {
   if (!state.db) return;
   
   try {
-    // Get bank count
+    // Get bank statistics
     const tx = state.db.transaction(STORES.QUESTION_BANK, 'readonly');
     const store = tx.objectStore(STORES.QUESTION_BANK);
-    const count = await idbCount(store);
+    const passages = await idbGetAll(store);
     
-    document.getElementById('bank-count').textContent = count;
+    const totalPassages = passages.length;
+    const totalQuestions = passages.reduce((sum, p) => sum + (p.questions?.length || 0), 0);
+    const officialCount = passages.filter(p => p.source_type === 'official').length;
     
-    // Update bank info in settings
-    const bankInfo = document.getElementById('bank-info');
-    if (bankInfo) {
-      bankInfo.textContent = `${count} questões no banco`;
-    }
+    // Update dashboard card
+    const bankCountEl = document.getElementById('bank-count');
+    if (bankCountEl) bankCountEl.textContent = totalPassages;
+    
+    // Update settings bank stats
+    const bankTotalEl = document.getElementById('bank-total');
+    const bankQuestionsEl = document.getElementById('bank-questions');
+    const bankOfficialEl = document.getElementById('bank-official');
+    
+    if (bankTotalEl) bankTotalEl.textContent = totalPassages;
+    if (bankQuestionsEl) bankQuestionsEl.textContent = totalQuestions;
+    if (bankOfficialEl) bankOfficialEl.textContent = officialCount;
     
     // Check for review count (SRS cards due)
     // TODO: Implement SRS review count
@@ -583,5 +622,6 @@ window.router = {
   navigate: (hash) => {
     window.location.hash = hash;
   }
-};/ /   C a c h e   b u s t :    
+};/ /   C a c h e   b u s t :   
+ 
  
