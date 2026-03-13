@@ -1,6 +1,19 @@
 /* Study Layout - Optimized for minimal scrolling */
 
 /* =====================================================
+   DESKTOP CONTAINER OVERRIDE
+   ===================================================== */
+
+@media (min-width: 900px) {
+  /* Remove max-width limitation for study view */
+  #app:has(#study.view--active) .main-content {
+    max-width: none;
+    width: 100%;
+    padding: var(--space-4);
+  }
+}
+
+/* =====================================================
    TWO-COLUMN LAYOUT (Desktop > 900px)
    ===================================================== */
 
