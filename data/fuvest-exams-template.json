@@ -1,0 +1,140 @@
+{
+  "schema_version": "3.3",
+  "description": "Banco de questões FUVEST - 6 provas (2024-2026) = 180 questões",
+  "last_updated": "2025-03-13",
+  "total_passages": 36,
+  "total_questions": 180,
+  "source": "FUVEST - Fundação Universitária para o Vestibular",
+  "exams": [
+    {
+      "id": "2026-2ed",
+      "name": "FUVEST 2025/2026 - 2ª Edição",
+      "date": "2025-10-12",
+      "passages": [
+        {
+          "id": "2026-2ed-p1",
+          "text": "PLACEHOLDER - Texto da passagem 1 (NYT, Guardian, etc.)",
+          "source": "Fonte original. Adaptado.",
+          "topic": "technology_ai",
+          "questions": [
+            {
+              "id": "2026-2ed-q01",
+              "question_type": "main_idea",
+              "question_text": "Conforme o texto, ...",
+              "options": ["(A)...", "(B)...", "(C)...", "(D)...", "(E)..."],
+              "correct_answer": "A",
+              "correct_explanation": "Explicação...",
+              "tested_concept": "identificar tese principal"
+            },
+            {
+              "id": "2026-2ed-q02",
+              "question_type": "inference",
+              "question_text": "De acordo com o texto, pode-se inferir que...",
+              "options": ["(A)...", "(B)...", "(C)...", "(D)...", "(E)..."],
+              "correct_answer": "B",
+              "correct_explanation": "Explicação...",
+              "tested_concept": "inferir implicação"
+            },
+            {
+              "id": "2026-2ed-q03",
+              "question_type": "vocab_synonym",
+              "question_text": "O termo 'X' pode ser substituído, sem prejuízo, por...",
+              "options": ["(A)...", "(B)...", "(C)...", "(D)...", "(E)..."],
+              "correct_answer": "C",
+              "correct_explanation": "Explicação...",
+              "tested_concept": "sinônimo em contexto"
+            },
+            {
+              "id": "2026-2ed-q04",
+              "question_type": "vocab_meaning",
+              "question_text": "A escolha do termo 'Y' contribui para...",
+              "options": ["(A)...", "(B)...", "(C)...", "(D)...", "(E)..."],
+              "correct_answer": "D",
+              "correct_explanation": "Explicação...",
+              "tested_concept": "efeito de sentido"
+            },
+            {
+              "id": "2026-2ed-q05",
+              "question_type": "expression",
+              "question_text": "A expressão 'Z' sugere que...",
+              "options": ["(A)...", "(B)...", "(C)...", "(D)...", "(E)..."],
+              "correct_answer": "E",
+              "correct_explanation": "Explicação...",
+              "tested_concept": "interpretação de expressão"
+            }
+          ]
+        },
+        {"id": "2026-2ed-p2", "text": "...", "source": "...", "topic": "medicine_health", "questions": [{"id": "2026-2ed-q06"}, {"id": "2026-2ed-q07"}, {"id": "2026-2ed-q08"}, {"id": "2026-2ed-q09"}, {"id": "2026-2ed-q10"}]},
+        {"id": "2026-2ed-p3", "text": "...", "source": "...", "topic": "environment_climate", "questions": [{"id": "2026-2ed-q11"}, {"id": "2026-2ed-q12"}, {"id": "2026-2ed-q13"}, {"id": "2026-2ed-q14"}, {"id": "2026-2ed-q15"}]},
+        {"id": "2026-2ed-p4", "text": "...", "source": "...", "topic": "social_sciences", "questions": [{"id": "2026-2ed-q16"}, {"id": "2026-2ed-q17"}, {"id": "2026-2ed-q18"}, {"id": "2026-2ed-q19"}, {"id": "2026-2ed-q20"}]},
+        {"id": "2026-2ed-p5", "text": "...", "source": "...", "topic": "culture_arts", "questions": [{"id": "2026-2ed-q21"}, {"id": "2026-2ed-q22"}, {"id": "2026-2ed-q23"}, {"id": "2026-2ed-q24"}, {"id": "2026-2ed-q25"}]},
+        {"id": "2026-2ed-p6", "text": "...", "source": "...", "topic": "education", "questions": [{"id": "2026-2ed-q26"}, {"id": "2026-2ed-q27"}, {"id": "2026-2ed-q28"}, {"id": "2026-2ed-q29"}, {"id": "2026-2ed-q30"}]}
+      ]
+    },
+    {
+      "id": "2026-1ed",
+      "name": "FUVEST 2025/2026 - 1ª Edição",
+      "date": "2025-06-15",
+      "passages": [
+        {"id": "2026-1ed-p1", "topic": "technology_ai", "questions": [{"id": "2026-1ed-q01"}, {"id": "2026-1ed-q02"}, {"id": "2026-1ed-q03"}, {"id": "2026-1ed-q04"}, {"id": "2026-1ed-q05"}]},
+        {"id": "2026-1ed-p2", "topic": "medicine_health", "questions": [{"id": "2026-1ed-q06"}, {"id": "2026-1ed-q07"}, {"id": "2026-1ed-q08"}, {"id": "2026-1ed-q09"}, {"id": "2026-1ed-q10"}]},
+        {"id": "2026-1ed-p3", "topic": "environment_climate", "questions": [{"id": "2026-1ed-q11"}, {"id": "2026-1ed-q12"}, {"id": "2026-1ed-q13"}, {"id": "2026-1ed-q14"}, {"id": "2026-1ed-q15"}]},
+        {"id": "2026-1ed-p4", "topic": "politics_governance", "questions": [{"id": "2026-1ed-q16"}, {"id": "2026-1ed-q17"}, {"id": "2026-1ed-q18"}, {"id": "2026-1ed-q19"}, {"id": "2026-1ed-q20"}]},
+        {"id": "2026-1ed-p5", "topic": "economics_business", "questions": [{"id": "2026-1ed-q21"}, {"id": "2026-1ed-q22"}, {"id": "2026-1ed-q23"}, {"id": "2026-1ed-q24"}, {"id": "2026-1ed-q25"}]},
+        {"id": "2026-1ed-p6", "topic": "science_research", "questions": [{"id": "2026-1ed-q26"}, {"id": "2026-1ed-q27"}, {"id": "2026-1ed-q28"}, {"id": "2026-1ed-q29"}, {"id": "2026-1ed-q30"}]}
+      ]
+    },
+    {
+      "id": "2025-2ed",
+      "name": "FUVEST 2024/2025 - 2ª Edição",
+      "date": "2024-10-13",
+      "passages": [
+        {"id": "2025-2ed-p1", "topic": "technology_ai", "questions": [{"id": "2025-2ed-q01"}, {"id": "2025-2ed-q02"}, {"id": "2025-2ed-q03"}, {"id": "2025-2ed-q04"}, {"id": "2025-2ed-q05"}]},
+        {"id": "2025-2ed-p2", "topic": "medicine_health", "questions": [{"id": "2025-2ed-q06"}, {"id": "2025-2ed-q07"}, {"id": "2025-2ed-q08"}, {"id": "2025-2ed-q09"}, {"id": "2025-2ed-q10"}]},
+        {"id": "2025-2ed-p3", "topic": "social_sciences", "questions": [{"id": "2025-2ed-q11"}, {"id": "2025-2ed-q12"}, {"id": "2025-2ed-q13"}, {"id": "2025-2ed-q14"}, {"id": "2025-2ed-q15"}]},
+        {"id": "2025-2ed-p4", "topic": "culture_arts", "questions": [{"id": "2025-2ed-q16"}, {"id": "2025-2ed-q17"}, {"id": "2025-2ed-q18"}, {"id": "2025-2ed-q19"}, {"id": "2025-2ed-q20"}]},
+        {"id": "2025-2ed-p5", "topic": "education", "questions": [{"id": "2025-2ed-q21"}, {"id": "2025-2ed-q22"}, {"id": "2025-2ed-q23"}, {"id": "2025-2ed-q24"}, {"id": "2025-2ed-q25"}]},
+        {"id": "2025-2ed-p6", "topic": "history", "questions": [{"id": "2025-2ed-q26"}, {"id": "2025-2ed-q27"}, {"id": "2025-2ed-q28"}, {"id": "2025-2ed-q29"}, {"id": "2025-2ed-q30"}]}
+      ]
+    },
+    {
+      "id": "2025-1ed",
+      "name": "FUVEST 2024/2025 - 1ª Edição",
+      "date": "2024-06-16",
+      "passages": [
+        {"id": "2025-1ed-p1", "topic": "technology_ai", "questions": [{"id": "2025-1ed-q01"}, {"id": "2025-1ed-q02"}, {"id": "2025-1ed-q03"}, {"id": "2025-1ed-q04"}, {"id": "2025-1ed-q05"}]},
+        {"id": "2025-1ed-p2", "topic": "environment_climate", "questions": [{"id": "2025-1ed-q06"}, {"id": "2025-1ed-q07"}, {"id": "2025-1ed-q08"}, {"id": "2025-1ed-q09"}, {"id": "2025-1ed-q10"}]},
+        {"id": "2025-1ed-p3", "topic": "politics_governance", "questions": [{"id": "2025-1ed-q11"}, {"id": "2025-1ed-q12"}, {"id": "2025-1ed-q13"}, {"id": "2025-1ed-q14"}, {"id": "2025-1ed-q15"}]},
+        {"id": "2025-1ed-p4", "topic": "economics_business", "questions": [{"id": "2025-1ed-q16"}, {"id": "2025-1ed-q17"}, {"id": "2025-1ed-q18"}, {"id": "2025-1ed-q19"}, {"id": "2025-1ed-q20"}]},
+        {"id": "2025-1ed-p5", "topic": "psychology", "questions": [{"id": "2025-1ed-q21"}, {"id": "2025-1ed-q22"}, {"id": "2025-1ed-q23"}, {"id": "2025-1ed-q24"}, {"id": "2025-1ed-q25"}]},
+        {"id": "2025-1ed-p6", "topic": "language_communication", "questions": [{"id": "2025-1ed-q26"}, {"id": "2025-1ed-q27"}, {"id": "2025-1ed-q28"}, {"id": "2025-1ed-q29"}, {"id": "2025-1ed-q30"}]}
+      ]
+    },
+    {
+      "id": "2024-manha",
+      "name": "FUVEST 2023/2024 - Manhã",
+      "date": "2023-11-19",
+      "passages": [
+        {"id": "2024-manha-p1", "topic": "medicine_health", "questions": [{"id": "2024-manha-q01"}, {"id": "2024-manha-q02"}, {"id": "2024-manha-q03"}, {"id": "2024-manha-q04"}, {"id": "2024-manha-q05"}]},
+        {"id": "2024-manha-p2", "topic": "technology_ai", "questions": [{"id": "2024-manha-q06"}, {"id": "2024-manha-q07"}, {"id": "2024-manha-q08"}, {"id": "2024-manha-q09"}, {"id": "2024-manha-q10"}]},
+        {"id": "2024-manha-p3", "topic": "social_sciences", "questions": [{"id": "2024-manha-q11"}, {"id": "2024-manha-q12"}, {"id": "2024-manha-q13"}, {"id": "2024-manha-q14"}, {"id": "2024-manha-q15"}]},
+        {"id": "2024-manha-p4", "topic": "science_research", "questions": [{"id": "2024-manha-q16"}, {"id": "2024-manha-q17"}, {"id": "2024-manha-q18"}, {"id": "2024-manha-q19"}, {"id": "2024-manha-q20"}]},
+        {"id": "2024-manha-p5", "topic": "education", "questions": [{"id": "2024-manha-q21"}, {"id": "2024-manha-q22"}, {"id": "2024-manha-q23"}, {"id": "2024-manha-q24"}, {"id": "2024-manha-q25"}]},
+        {"id": "2024-manha-p6", "topic": "culture_arts", "questions": [{"id": "2024-manha-q26"}, {"id": "2024-manha-q27"}, {"id": "2024-manha-q28"}, {"id": "2024-manha-q29"}, {"id": "2024-manha-q30"}]}
+      ]
+    },
+    {
+      "id": "2024-tarde",
+      "name": "FUVEST 2023/2024 - Tarde",
+      "date": "2023-11-19",
+      "passages": [
+        {"id": "2024-tarde-p1", "topic": "environment_climate", "questions": [{"id": "2024-tarde-q01"}, {"id": "2024-tarde-q02"}, {"id": "2024-tarde-q03"}, {"id": "2024-tarde-q04"}, {"id": "2024-tarde-q05"}]},
+        {"id": "2024-tarde-p2", "topic": "medicine_health", "questions": [{"id": "2024-tarde-q06"}, {"id": "2024-tarde-q07"}, {"id": "2024-tarde-q08"}, {"id": "2024-tarde-q09"}, {"id": "2024-tarde-q10"}]},
+        {"id": "2024-tarde-p3", "topic": "politics_governance", "questions": [{"id": "2024-tarde-q11"}, {"id": "2024-tarde-q12"}, {"id": "2024-tarde-q13"}, {"id": "2024-tarde-q14"}, {"id": "2024-tarde-q15"}]},
+        {"id": "2024-tarde-p4", "topic": "technology_ai", "questions": [{"id": "2024-tarde-q16"}, {"id": "2024-tarde-q17"}, {"id": "2024-tarde-q18"}, {"id": "2024-tarde-q19"}, {"id": "2024-tarde-q20"}]},
+        {"id": "2024-tarde-p5", "topic": "economics_business", "questions": [{"id": "2024-tarde-q21"}, {"id": "2024-tarde-q22"}, {"id": "2024-tarde-q23"}, {"id": "2024-tarde-q24"}, {"id": "2024-tarde-q25"}]},
+        {"id": "2024-tarde-p6", "topic": "history", "questions": [{"id": "2024-tarde-q26"}, {"id": "2024-tarde-q27"}, {"id": "2024-tarde-q28"}, {"id": "2024-tarde-q29"}, {"id": "2024-tarde-q30"}]}
+      ]
+    }
+  ]
+}
