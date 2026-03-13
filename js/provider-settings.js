@@ -37,7 +37,7 @@ export function initProviderSettings(showToast) {
       if (isSelected) card.classList.add('selected');
       
       card.innerHTML = `
-        <span class="provider-icon">${provider.icon}</span>
+        <span class="provider-icon"><i data-lucide="${provider.icon}"></i></span>
         <span class="provider-name">${provider.name}</span>
         <span class="provider-status">${hasKey ? '✓ Configurado' : 'Não configurado'}</span>
       `;
@@ -116,7 +116,9 @@ export function initProviderSettings(showToast) {
     const config = PROVIDERS[selectedProvider];
     const model = config.models.find(m => m.id === modelSelect.value);
     if (model) {
-      document.getElementById('model-context').textContent = `Contexto: ${model.context.toLocaleString()} tokens`;
+      const el = document.getElementById('model-context');
+      el.innerHTML = `<i data-lucide="bar-chart-3"></i> Contexto: ${model.context.toLocaleString()} tokens`;
+      if (window.lucide) window.lucide.createIcons({ nameAttr: 'data-lucide' });
     }
   }
   
@@ -177,7 +179,12 @@ export function initProviderSettings(showToast) {
   // Initialize
   renderProviders();
   selectProvider(selectedProvider);
-  
+
+  // Render Lucide icons in dynamic content
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
+
   console.log('[ProviderSettings] Initialization complete');
 }
 

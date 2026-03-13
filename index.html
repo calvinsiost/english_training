@@ -3,29 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <meta name="theme-color" content="#16213e">
+    <meta name="theme-color" content="#141821">
     <meta name="description" content="English Training - Preparação para Exame de Proficiência FUVEST">
-    
+
     <title>English Training | FUVEST</title>
-    
+
     <!-- PWA -->
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon.svg">
-    
+
     <!-- CSS -->
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/components.css">
-    
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
     <div id="app">
         <!-- Header -->
         <header class="app-header">
             <h1 class="app-title">English Training</h1>
-            <button id="settings-btn" class="icon-btn" aria-label="Configurações">⚙️</button>
+            <button id="settings-btn" class="icon-btn" aria-label="Configurações"><i data-lucide="settings"></i></button>
         </header>
-        
+
         <!-- Main Content -->
         <main id="main-content" class="main-content">
             <!-- Dashboard (default view) -->
@@ -34,7 +36,7 @@
                     <h2>Preparação FUVEST</h2>
                     <p class="dashboard-subtitle">Exame de Proficiência em Inglês</p>
                 </div>
-                
+
                 <!-- Stats Cards -->
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -42,7 +44,7 @@
                         <span class="stat-label">Estimativa /30</span>
                     </div>
                     <div class="stat-card">
-                        <span class="stat-value" id="streak-days">0🔥</span>
+                        <span class="stat-value" id="streak-days">0 <i data-lucide="flame" class="streak-icon"></i></span>
                         <span class="stat-label">Dias seguidos</span>
                     </div>
                     <div class="stat-card">
@@ -50,7 +52,7 @@
                         <span class="stat-label">Questões no banco</span>
                     </div>
                 </div>
-                
+
                 <!-- Progress Bar -->
                 <div class="progress-section">
                     <div class="progress-header">
@@ -61,46 +63,46 @@
                         <div id="daily-progress" class="progress-fill" style="width: 0%"></div>
                     </div>
                 </div>
-                
+
                 <!-- Action Buttons -->
                 <div class="action-grid">
                     <button id="btn-review" class="action-btn action-btn--primary" disabled>
-                        <span class="action-icon">🔄</span>
+                        <span class="action-icon"><i data-lucide="refresh-cw"></i></span>
                         <span class="action-text">Revisões</span>
                         <span id="review-count" class="action-badge">0</span>
                     </button>
-                    
+
                     <button id="btn-continue" class="action-btn" style="display: none;">
-                        <span class="action-icon">📖</span>
+                        <span class="action-icon"><i data-lucide="book-open"></i></span>
                         <span class="action-text">Continuar</span>
                     </button>
-                    
+
                     <button id="btn-study" class="action-btn action-btn--primary">
-                        <span class="action-icon">📝</span>
+                        <span class="action-icon"><i data-lucide="file-text"></i></span>
                         <span class="action-text">Nova Passagem</span>
                     </button>
-                    
+
                     <button id="btn-exam" class="action-btn">
-                        <span class="action-icon">📋</span>
+                        <span class="action-icon"><i data-lucide="clipboard-list"></i></span>
                         <span class="action-text">Prova Real</span>
                     </button>
-                    
+
                     <button id="btn-analytics" class="action-btn">
-                        <span class="action-icon">📊</span>
+                        <span class="action-icon"><i data-lucide="bar-chart-3"></i></span>
                         <span class="action-text">Análise</span>
                     </button>
-                    
+
                     <button id="btn-deck" class="action-btn">
-                        <span class="action-icon">🃏</span>
+                        <span class="action-icon"><i data-lucide="layers"></i></span>
                         <span class="action-text">Flashcards</span>
                     </button>
-                    
+
                     <button id="btn-errors" class="action-btn">
-                        <span class="action-icon">❌</span>
+                        <span class="action-icon"><i data-lucide="x-circle"></i></span>
                         <span class="action-text">Rever Erros</span>
                     </button>
                 </div>
-                
+
                 <!-- Weakness Summary -->
                 <div class="weakness-section">
                     <h3>Fraquezas principais</h3>
@@ -109,29 +111,29 @@
                     </div>
                 </div>
             </section>
-            
+
             <!-- Study View -->
             <section id="study" class="view">
                 <div class="study-header">
-                    <button id="study-back" class="btn-back">← Voltar</button>
+                    <button id="study-back" class="btn-back"><i data-lucide="arrow-left"></i> Voltar</button>
                     <span id="study-progress" class="study-progress">Passagem 1/1 · Questão 1/5</span>
                 </div>
-                
+
                 <div class="passage-container">
                     <article id="passage-text" class="passage-text">
                         <!-- Passage content loaded dynamically -->
                     </article>
                 </div>
-                
+
                 <div class="question-container">
                     <div id="question-text" class="question-text">
                         <!-- Question loaded dynamically -->
                     </div>
-                    
+
                     <div id="options-list" class="options-list">
                         <!-- Options A-E loaded dynamically -->
                     </div>
-                    
+
                     <div id="confidence-section" class="confidence-section" style="display: none;">
                         <p class="confidence-prompt">Quão confiante você está?</p>
                         <div class="confidence-buttons">
@@ -141,25 +143,25 @@
                             <button data-confidence="3" class="confidence-btn">Certeza</button>
                         </div>
                     </div>
-                    
+
                     <div id="feedback-section" class="feedback-section" style="display: none;">
                         <!-- Feedback loaded dynamically -->
                     </div>
-                    
-                    <button id="btn-next" class="btn-next" style="display: none;">Próxima →</button>
+
+                    <button id="btn-next" class="btn-next" style="display: none;">Próxima <i data-lucide="arrow-right"></i></button>
                 </div>
             </section>
-            
+
             <!-- Settings View -->
             <section id="settings" class="view">
                 <div class="settings-header">
-                    <button id="settings-back" class="btn-back">← Voltar</button>
+                    <button id="settings-back" class="btn-back"><i data-lucide="arrow-left"></i> Voltar</button>
                     <h2>Configurações</h2>
                 </div>
-                
+
                 <div class="settings-category" data-category="api">
-                    <h3>Configuração de IA</h3>
-                    
+                    <h3><i data-lucide="key-round"></i> Configuração de IA</h3>
+
                     <!-- Provider Selection -->
                     <div class="input-group">
                         <label>Provedor de IA</label>
@@ -167,7 +169,7 @@
                             <!-- Providers will be rendered by JS -->
                         </div>
                     </div>
-                    
+
                     <!-- Model Selection -->
                     <div class="input-group" id="model-selection-group">
                         <label for="model-select">Modelo</label>
@@ -176,9 +178,9 @@
                                 <option value="">Selecione um provedor primeiro...</option>
                             </select>
                         </div>
-                        <div class="model-context-info" id="model-context">Contexto: - tokens</div>
+                        <div class="model-context-info" id="model-context"><i data-lucide="bar-chart-3"></i> Contexto: - tokens</div>
                     </div>
-                    
+
                     <!-- API Key Input -->
                     <div class="input-group" id="api-key-group">
                         <div class="label-row">
@@ -188,27 +190,27 @@
                         <div class="input-with-button">
                             <input type="password" id="api-key" placeholder="Digite sua chave API..." autocomplete="off">
                             <button id="btn-test-connection" class="btn-small" disabled>
-                                <span>🔌</span> Testar
+                                <i data-lucide="plug"></i> Testar
                             </button>
                         </div>
                         <small class="input-help" id="api-key-help">
-                            <span>💡</span> <a href="#" id="provider-link" target="_blank">Clique aqui para obter sua chave API</a>
+                            <i data-lucide="lightbulb"></i> <a href="#" id="provider-link" target="_blank">Clique aqui para obter sua chave API</a>
                         </small>
                     </div>
-                    
+
                     <!-- Custom Endpoint (for Local/Custom) -->
                     <div class="input-group" id="custom-endpoint-group" style="display: none;">
                         <label for="custom-endpoint">Endpoint da API</label>
                         <input type="text" id="custom-endpoint" placeholder="http://localhost:11434/api/generate">
                         <small class="input-help">URL completa da API (incluindo /v1/chat/completions se necessário)</small>
                     </div>
-                    
+
                     <!-- Connection Status -->
                     <div id="connection-status" class="connection-status" style="display: none;"></div>
                 </div>
-                
+
                 <div class="settings-category" data-category="bank">
-                    <h3>Banco de Questões</h3>
+                    <h3><i data-lucide="database"></i> Banco de Questões</h3>
                     <div class="bank-stats">
                         <div class="bank-stat-item">
                             <span class="bank-stat-value" id="bank-total">-</span>
@@ -225,32 +227,32 @@
                     </div>
                     <div class="settings-actions">
                         <button id="btn-generate-batch" class="btn-secondary">
-                            <span>✨</span> Gerar mais questões (batch de 10)
+                            <i data-lucide="sparkles"></i> Gerar mais questões (batch de 10)
                         </button>
                         <button id="btn-reset-bank" class="btn-danger">
-                            <span>🗑️</span> Resetar banco gerado
+                            <i data-lucide="trash-2"></i> Resetar banco gerado
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="settings-category" data-category="backup">
-                    <h3>Backup e Restauração</h3>
+                    <h3><i data-lucide="hard-drive-download"></i> Backup e Restauração</h3>
                     <p class="settings-description">Exporte seu progresso para transferir entre dispositivos ou fazer backup</p>
                     <div class="settings-actions">
                         <button id="btn-export" class="btn-secondary">
-                            <span>📤</span> Exportar progresso (JSON)
+                            <i data-lucide="upload"></i> Exportar progresso (JSON)
                         </button>
                         <label class="file-input-label">
                             <input type="file" id="import-file" accept=".json" hidden>
                             <span class="btn-secondary">
-                                <span>📥</span> Importar progresso
+                                <i data-lucide="download"></i> Importar progresso
                             </span>
                         </label>
                     </div>
                 </div>
-                
+
                 <div class="settings-category" data-category="prefs">
-                    <h3>Preferências</h3>
+                    <h3><i data-lucide="sliders-horizontal"></i> Preferências</h3>
                     <div class="input-group">
                         <label for="daily-goal">Meta diária de estudo</label>
                         <div class="range-with-value">
@@ -260,31 +262,31 @@
                     </div>
                 </div>
             </section>
-            
+
             <!-- Other views (placeholders) -->
             <section id="exam" class="view">
                 <h2>Modo Prova</h2>
                 <p>Em desenvolvimento</p>
-                <button class="btn-back" onclick="router.navigate('#/')">Voltar</button>
+                <button class="btn-back" onclick="router.navigate('#/')"><i data-lucide="arrow-left"></i> Voltar</button>
             </section>
-            
+
             <section id="review" class="view">
                 <h2>Revisão SRS</h2>
                 <p>Em desenvolvimento</p>
-                <button class="btn-back" onclick="router.navigate('#/')">Voltar</button>
+                <button class="btn-back" onclick="router.navigate('#/')"><i data-lucide="arrow-left"></i> Voltar</button>
             </section>
-            
+
             <section id="analytics" class="view">
                 <h2>Análise de Desempenho</h2>
                 <p>Em desenvolvimento</p>
-                <button class="btn-back" onclick="router.navigate('#/')">Voltar</button>
+                <button class="btn-back" onclick="router.navigate('#/')"><i data-lucide="arrow-left"></i> Voltar</button>
             </section>
         </main>
-        
+
         <!-- Toast Container -->
         <div id="toast-container" class="toast-container"></div>
     </div>
-    
+
     <!-- App Scripts -->
     <script type="module" src="js/provider-settings.js"></script>
     <script type="module" src="js/app.js"></script>

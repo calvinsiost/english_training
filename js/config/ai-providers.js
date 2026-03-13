@@ -7,14 +7,17 @@ export const PROVIDERS = {
   openai: {
     id: 'openai',
     name: 'OpenAI',
-    icon: '🤖',
+    icon: 'bot',
     website: 'https://platform.openai.com/api-keys',
     defaultModel: 'gpt-4o-mini',
     models: [
-      { id: 'gpt-4o', name: 'GPT-4o (Mais capaz)', context: 128000 },
+      { id: 'gpt-4o', name: 'GPT-4o (Multimodal, mais capaz)', context: 128000 },
       { id: 'gpt-4o-mini', name: 'GPT-4o Mini (Recomendado)', context: 128000 },
+      { id: 'o1', name: 'o1 (Raciocínio avançado)', context: 128000 },
+      { id: 'o1-mini', name: 'o1-mini (Raciocínio rápido)', context: 128000 },
+      { id: 'o3-mini', name: 'o3-mini (Último modelo de raciocínio)', context: 128000 },
       { id: 'gpt-4-turbo', name: 'GPT-4 Turbo', context: 128000 },
-      { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo (Mais barato)', context: 16385 }
+      { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo (Econômico)', context: 16385 }
     ],
     baseUrl: 'https://api.openai.com/v1/chat/completions',
     keyPrefix: 'sk-',
@@ -24,13 +27,15 @@ export const PROVIDERS = {
   anthropic: {
     id: 'anthropic',
     name: 'Anthropic',
-    icon: '🧠',
+    icon: 'brain',
     website: 'https://console.anthropic.com/settings/keys',
-    defaultModel: 'claude-3-sonnet-20240229',
+    defaultModel: 'claude-3-5-sonnet-20241022',
     models: [
       { id: 'claude-3-opus-20240229', name: 'Claude 3 Opus (Mais capaz)', context: 200000 },
-      { id: 'claude-3-sonnet-20240229', name: 'Claude 3 Sonnet (Recomendado)', context: 200000 },
-      { id: 'claude-3-haiku-20240307', name: 'Claude 3 Haiku (Mais rápido)', context: 200000 }
+      { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet (Recomendado)', context: 200000 },
+      { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku (Mais rápido)', context: 200000 },
+      { id: 'claude-3-sonnet-20240229', name: 'Claude 3 Sonnet', context: 200000 },
+      { id: 'claude-3-haiku-20240307', name: 'Claude 3 Haiku (Econômico)', context: 200000 }
     ],
     baseUrl: 'https://api.anthropic.com/v1/messages',
     keyPrefix: 'sk-ant',
@@ -40,13 +45,14 @@ export const PROVIDERS = {
   gemini: {
     id: 'gemini',
     name: 'Google Gemini',
-    icon: '💎',
+    icon: 'gem',
     website: 'https://aistudio.google.com/app/apikey',
     defaultModel: 'gemini-1.5-flash',
     models: [
-      { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro (Mais capaz)', context: 1000000 },
+      { id: 'gemini-2.0-flash-exp', name: 'Gemini 2.0 Flash Experimental (Mais recente)', context: 1000000 },
+      { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro (Mais capaz)', context: 2000000 },
       { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash (Recomendado)', context: 1000000 },
-      { id: 'gemini-1.0-pro', name: 'Gemini 1.0 Pro', context: 32000 }
+      { id: 'gemini-1.0-pro', name: 'Gemini 1.0 Pro (Legado)', context: 32000 }
     ],
     baseUrl: 'https://generativelanguage.googleapis.com/v1beta/models',
     keyPrefix: null,
@@ -56,7 +62,7 @@ export const PROVIDERS = {
   kimi: {
     id: 'kimi',
     name: 'Kimi (Moonshot)',
-    icon: '🌙',
+    icon: 'moon',
     website: 'https://platform.moonshot.cn/console/api-keys',
     defaultModel: 'moonshot-v1-8k',
     models: [
@@ -72,15 +78,21 @@ export const PROVIDERS = {
   openrouter: {
     id: 'openrouter',
     name: 'OpenRouter',
-    icon: '🔌',
+    icon: 'plug',
     website: 'https://openrouter.ai/keys',
     defaultModel: 'openai/gpt-4o-mini',
     models: [
-      { id: 'openai/gpt-4o', name: 'GPT-4o via OpenRouter', context: 128000 },
+      { id: 'openai/gpt-4o', name: 'GPT-4o', context: 128000 },
       { id: 'openai/gpt-4o-mini', name: 'GPT-4o Mini (Recomendado)', context: 128000 },
+      { id: 'openai/o1', name: 'o1 (Raciocínio)', context: 128000 },
       { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet', context: 200000 },
-      { id: 'google/gemini-1.5-pro', name: 'Gemini 1.5 Pro', context: 1000000 },
-      { id: 'meta-llama/llama-3.1-70b-instruct', name: 'Llama 3.1 70B (Open Source)', context: 128000 }
+      { id: 'anthropic/claude-3-opus', name: 'Claude 3 Opus', context: 200000 },
+      { id: 'google/gemini-2.0-flash-exp:free', name: 'Gemini 2.0 Flash (Grátis)', context: 1000000 },
+      { id: 'google/gemini-1.5-pro', name: 'Gemini 1.5 Pro', context: 2000000 },
+      { id: 'meta-llama/llama-3.3-70b-instruct', name: 'Llama 3.3 70B', context: 128000 },
+      { id: 'meta-llama/llama-3.1-70b-instruct', name: 'Llama 3.1 70B', context: 128000 },
+      { id: 'deepseek/deepseek-chat', name: 'DeepSeek V3', context: 64000 },
+      { id: 'x-ai/grok-2', name: 'Grok 2', context: 128000 }
     ],
     baseUrl: 'https://openrouter.ai/api/v1/chat/completions',
     keyPrefix: 'sk-or',
@@ -90,15 +102,20 @@ export const PROVIDERS = {
   local: {
     id: 'local',
     name: 'Local (Ollama)',
-    icon: '🏠',
+    icon: 'house',
     website: 'https://ollama.com',
-    defaultModel: 'llama3.1',
+    defaultModel: 'llama3.2',
     models: [
-      { id: 'llama3.1', name: 'Llama 3.1 (Recomendado)', context: 128000 },
-      { id: 'llama3', name: 'Llama 3', context: 8000 },
+      { id: 'llama3.3', name: 'Llama 3.3 (Mais recente)', context: 128000 },
+      { id: 'llama3.2', name: 'Llama 3.2 (Recomendado)', context: 128000 },
+      { id: 'llama3.1', name: 'Llama 3.1', context: 128000 },
       { id: 'mistral', name: 'Mistral', context: 32000 },
+      { id: 'mixtral', name: 'Mixtral 8x7B', context: 32000 },
       { id: 'codellama', name: 'Code Llama', context: 16000 },
-      { id: 'gemma2', name: 'Gemma 2', context: 8000 }
+      { id: 'qwen2.5', name: 'Qwen 2.5', context: 128000 },
+      { id: 'phi4', name: 'Phi-4', context: 16000 },
+      { id: 'gemma2', name: 'Gemma 2', context: 8000 },
+      { id: 'deepseek-coder-v2', name: 'DeepSeek Coder V2', context: 128000 }
     ],
     baseUrl: 'http://localhost:11434/api/generate',
     keyPrefix: null,
@@ -109,7 +126,7 @@ export const PROVIDERS = {
   custom: {
     id: 'custom',
     name: 'API Customizada',
-    icon: '⚙️',
+    icon: 'settings',
     website: '',
     defaultModel: 'default',
     models: [

@@ -78,7 +78,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Update dashboard
     await updateDashboard();
-    
+
+    // Initialize Lucide icons
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+
     showToast('Bem-vindo ao English Training!', 'success');
   } catch (error) {
     console.error('Initialization error:', error);
