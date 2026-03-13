@@ -1,10 +1,11 @@
-const CACHE_NAME = 'english-training-v4';
+const CACHE_NAME = 'english-training-v5';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './css/variables.css',
   './css/base.css',
   './css/components.css',
+  './css/study-layout.css',
   './manifest.json',
   './icon.svg'
 ];
@@ -49,9 +50,9 @@ self.addEventListener('fetch', (event) => {
   // Skip non-GET requests
   if (request.method !== 'GET') return;
   
-  // Strategy: Cache First for static assets
+  // Strategy: Network First for static assets (ensures fresh deploys are picked up)
   if (isStaticAsset(url)) {
-    event.respondWith(cacheFirst(request));
+    event.respondWith(networkFirst(request));
     return;
   }
   
