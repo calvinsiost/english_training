@@ -218,6 +218,13 @@ function switchView(viewId) {
     state.currentView = viewId;
   }
   
+  // Add/remove study-active class on body for CSS styling
+  if (viewId === 'study') {
+    document.body.classList.add('study-active');
+  } else {
+    document.body.classList.remove('study-active');
+  }
+  
   // Update dashboard data if entering dashboard
   if (viewId === 'dashboard') {
     updateDashboard();
