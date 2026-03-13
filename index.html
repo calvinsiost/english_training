@@ -17,8 +17,6 @@
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/components.css">
     
-    <!-- CDN Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <div id="app">
@@ -173,24 +171,28 @@
                     <!-- Model Selection -->
                     <div class="input-group" id="model-selection-group">
                         <label for="model-select">Modelo</label>
-                        <select id="model-select" class="model-select">
-                            <!-- Models will be populated by JS -->
-                        </select>
-                        <small class="input-help" id="model-context">Contexto: - tokens</small>
+                        <div class="model-select-wrapper">
+                            <select id="model-select" class="model-select">
+                                <option value="">Selecione um provedor primeiro...</option>
+                            </select>
+                        </div>
+                        <div class="model-context-info" id="model-context">Contexto: - tokens</div>
                     </div>
                     
                     <!-- API Key Input -->
                     <div class="input-group" id="api-key-group">
-                        <label for="api-key">
-                            Chave API
+                        <div class="label-row">
+                            <label for="api-key">Chave API</label>
                             <span id="api-key-status" class="api-status"></span>
-                        </label>
+                        </div>
                         <div class="input-with-button">
-                            <input type="password" id="api-key" placeholder="sk-..." autocomplete="off">
-                            <button id="btn-test-connection" class="btn-small" disabled>Testar</button>
+                            <input type="password" id="api-key" placeholder="Digite sua chave API..." autocomplete="off">
+                            <button id="btn-test-connection" class="btn-small" disabled>
+                                <span>🔌</span> Testar
+                            </button>
                         </div>
                         <small class="input-help" id="api-key-help">
-                            <a href="#" id="provider-link" target="_blank">Obter chave API →</a>
+                            <span>💡</span> <a href="#" id="provider-link" target="_blank">Clique aqui para obter sua chave API</a>
                         </small>
                     </div>
                     
@@ -284,7 +286,7 @@
     </div>
     
     <!-- App Scripts -->
-    <script type="module" src="js/app.js"></script>
     <script type="module" src="js/provider-settings.js"></script>
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>

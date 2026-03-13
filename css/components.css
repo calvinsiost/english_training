@@ -452,8 +452,17 @@
 /* Provider Selection Grid */
 .provider-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.provider-grid:empty::before {
+  content: 'Carregando provedores...';
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: var(--space-4);
 }
 
 .provider-card {
@@ -462,67 +471,114 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  padding: var(--space-4);
-  background-color: var(--color-bg-tertiary);
-  border: 2px solid transparent;
+  padding: var(--space-4) var(--space-3);
+  background: linear-gradient(145deg, var(--color-bg-tertiary), var(--color-bg-secondary));
+  border: 2px solid var(--color-border);
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all var(--transition-fast);
-  min-height: 80px;
+  min-height: 100px;
+  text-align: center;
 }
 
 .provider-card:hover {
   border-color: var(--color-accent);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
 }
 
 .provider-card.selected {
   border-color: var(--color-accent);
-  background-color: rgba(233, 69, 96, 0.1);
+  background: linear-gradient(145deg, rgba(233, 69, 96, 0.15), rgba(233, 69, 96, 0.05));
+  box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.2);
 }
 
 .provider-card .provider-icon {
-  font-size: var(--font-size-2xl);
+  font-size: 2rem;
+  line-height: 1;
 }
 
 .provider-card .provider-name {
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  text-align: center;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  line-height: 1.2;
 }
 
 .provider-card .provider-status {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
 }
 
 .provider-card.selected .provider-status {
   color: var(--color-success);
+  font-weight: var(--font-weight-bold);
 }
 
 /* Model Selection */
+.model-select-wrapper {
+  position: relative;
+  margin-top: var(--space-2);
+}
+
 .model-select {
   width: 100%;
-  padding: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  padding-right: var(--space-8);
   background-color: var(--color-bg-tertiary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   color: var(--color-text-primary);
   font-size: var(--font-size-base);
   cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23b8c5d6' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-3) center;
 }
 
 .model-select:focus {
   outline: none;
   border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.1);
 }
 
 .model-select option {
   background-color: var(--color-bg-secondary);
   color: var(--color-text-primary);
+  padding: var(--space-2);
+}
+
+.model-context-info {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-tertiary);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.model-context-info::before {
+  content: '📊';
 }
 
 /* API Key Input with Status */
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.label-row label {
+  margin-bottom: 0;
+}
+
 .input-with-button {
   display: flex;
   gap: var(--space-2);
@@ -536,6 +592,9 @@
   margin-top: 0;
   padding: var(--space-2) var(--space-4);
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
 }
 
 .api-status {
@@ -554,20 +613,23 @@
 }
 
 .input-help {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
   margin-top: var(--space-2);
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
-  font-style: italic;
 }
 
 .input-help a {
   color: var(--color-info);
   text-decoration: none;
+  font-weight: var(--font-weight-medium);
 }
 
 .input-help a:hover {
   text-decoration: underline;
+  color: var(--color-accent);
 }
 
 /* Connection Status */

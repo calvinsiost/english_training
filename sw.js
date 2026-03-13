@@ -1,12 +1,12 @@
-const CACHE_NAME = 'english-training-v3';
+const CACHE_NAME = 'english-training-v4';
 const STATIC_ASSETS = [
-  '/english_training/',
-  '/english_training/index.html',
-  '/english_training/css/variables.css',
-  '/english_training/css/base.css',
-  '/english_training/css/components.css',
-  '/english_training/manifest.json',
-  '/english_training/icon.svg'
+  './',
+  './index.html',
+  './css/variables.css',
+  './css/base.css',
+  './css/components.css',
+  './manifest.json',
+  './icon.svg'
 ];
 
 // Install event - cache static assets

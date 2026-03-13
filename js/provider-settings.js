@@ -1,5 +1,7 @@
 // AI Provider Settings
-export function initProviderSettings() {
+import { PROVIDERS, AIConfig } from './config/ai-providers.js';
+
+export function initProviderSettings(showToast) {
   const providerGrid = document.getElementById('provider-grid');
   const modelSelect = document.getElementById('model-select');
   const apiKeyInput = document.getElementById('api-key');
@@ -10,7 +12,15 @@ export function initProviderSettings() {
   const providerLink = document.getElementById('provider-link');
   const connectionStatus = document.getElementById('connection-status');
   
+  // Check if elements exist
+  if (!providerGrid) {
+    console.error('[ProviderSettings] provider-grid element not found');
+    return;
+  }
+  
   let selectedProvider = AIConfig.getSelectedProvider();
+  
+  console.log('[ProviderSettings] Initializing with provider:', selectedProvider);
   
   // Render provider cards
   function renderProviders() {
@@ -167,7 +177,7 @@ export function initProviderSettings() {
   // Initialize
   renderProviders();
   selectProvider(selectedProvider);
+  
+  console.log('[ProviderSettings] Initialization complete');
 }
 
-// Make available globally
-window.initProviderSettings = initProviderSettings;

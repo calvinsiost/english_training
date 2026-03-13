@@ -5,6 +5,7 @@
 
 import { AIConfig } from './config/ai-providers.js';
 import { STORES, DB_NAME, DB_VERSION } from './config/constants.js';
+import { initProviderSettings } from './provider-settings.js';
 
 // IndexedDB Promise Helpers
 function idbGet(store, key) {
@@ -251,51 +252,10 @@ function setupEventListeners() {
   });
   
   // Initialize AI Provider Settings
-  if (typeof initProviderSettings === 'function') {
-    initProviderSettings();
-  }
-  
+  initProviderSettings(showToast);
+
   document.getElementById('btn-export')?.addEventListener('click', exportData);
   document.getElementById('import-file')?.addEventListener('change', importData);
-  
-  // Save API keys with validation
-  const openaiInput = document.getElementById('api-openai');
-  const testOpenaiBtn = document.getElementById('test-openai');
-  
-  openaiInput?.addEventListener('input', (e) => {
-    const key = e.target.value;
-    const statusEl = document.getElementById('openai-status');
-    
-    if (key.length === 0) {
-      statusEl.textContent = '';
-      statusEl.className = 'api-status';
-      testOpenaiBtn.disabled = true;
-    } else if (key.startsWith('sk-') && key.length > 20) {
-      statusEl.textContent = 'Válida';
-      statusEl.className = 'api-status valid';
-      testOpenaiBtn.disabled = false;
-    } else {
-      statusEl.textContent = 'Inválida';
-      statusEl.className = 'api-status invalid';
-      testOpenaiBtn.disabled = true;
-    }
-  });
-  
-  openaiInput?.addEventListener('blur', (e) => {
-    if (e.target.value) AIConfig.setStoredKey('openai', e.target.value);
-  });
-  
-  document.getElementById('api-anthropic')?.addEventListener('blur', (e) => {
-    if (e.target.value) AIConfig.setStoredKey('anthropic', e.target.value);
-  });
-  
-  // File input label feedback
-  document.getElementById('import-file')?.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      showToast(`Arquivo selecionado: ${file.name}`, 'info');
-    }
-  });
 }
 
 // Update Dashboard Stats
@@ -574,16 +534,25 @@ async function importData(event) {
     const text = await file.text();
     const data = JSON.parse(text);
     
-    // Validate
-    if (!data.stores) {
-      throw new Error('Formato inválido');
+    // Validate structure
+    if (!data.stores || typeof data.stores !== 'object') {
+      throw new Error('Formato inválido: campo "stores" ausente');
     }
-    
-    // Import to stores
+
+    const validStores = Object.values(STORES);
     for (const [storeName, records] of Object.entries(data.stores)) {
+      if (!validStores.includes(storeName)) {
+        console.warn(`[Import] Store desconhecida ignorada: ${storeName}`);
+        continue;
+      }
+      if (!Array.isArray(records)) {
+        console.warn(`[Import] Store ${storeName} não é array, ignorada`);
+        continue;
+      }
+
       const tx = state.db.transaction(storeName, 'readwrite');
       const store = tx.objectStore(storeName);
-      
+
       for (const record of records) {
         await idbPut(store, record);
       }
