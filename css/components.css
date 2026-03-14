@@ -751,6 +751,19 @@
   color: var(--color-text-muted);
 }
 
+.connection-status.warning {
+  border-color: rgba(255, 193, 7, 0.3);
+  color: #ffc107;
+  background: rgba(255, 193, 7, 0.1);
+}
+
+.connection-status.warning small {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: var(--font-size-xs);
+  opacity: 0.9;
+}
+
 /* Bank Stats Grid */
 .bank-stats {
   display: grid;

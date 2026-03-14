@@ -229,8 +229,30 @@ export class AIConfig {
     return { valid: true };
   }
   
+  // Check if running in environment with CORS restrictions (GitHub Pages, etc.)
+  static isCORSRestricted() {
+    // Check if we're on a hosted domain (not localhost)
+    const hostname = window.location.hostname;
+    return hostname !== 'localhost' && hostname !== '127.0.0.1';
+  }
+  
+  // Providers known to have CORS issues when hosted
+  static hasCORSIssues(providerId) {
+    const corsRestrictedProviders = ['anthropic', 'openai', 'kimi'];
+    return corsRestrictedProviders.includes(providerId) && this.isCORSRestricted();
+  }
+
   static async testConnection(providerId, key, model) {
     const config = PROVIDERS[providerId];
+    
+    // Check for CORS issues
+    if (this.hasCORSIssues(providerId)) {
+      return { 
+        success: false, 
+        error: 'CORS_RESTRICTED',
+        message: 'Teste de conexão indisponível no GitHub Pages devido a restrições de segurança (CORS). A API funcionará normalmente se você usar a aplicação localmente (localhost). Alternativa: use OpenRouter, que suporta CORS.'
+      };
+    }
 
     try {
       let response;
@@ -285,8 +307,8 @@ export class AIConfig {
         });
         return { success: response.ok, error: null };
       } else {
-        // Generic test for other providers
-        return { success: true, error: null, message: 'Teste manual necessário' };
+        // Generic test for other providers (OpenRouter, etc.)
+        return { success: true, error: null, message: 'Configuração salva. Teste será feito ao gerar questões.' };
       }
 
       if (response.ok) {
@@ -297,6 +319,14 @@ export class AIConfig {
       const providerMessage = data.error?.message || data.error || data.message;
       return { success: false, error: providerMessage || `Erro ${response.status}` };
     } catch (error) {
+      // Check if it's a CORS error
+      if (error.message && error.message.includes('Failed to fetch')) {
+        return {
+          success: false,
+          error: 'CORS_ERROR',
+          message: 'Erro de CORS: Navegador bloqueou a requisição. Use a aplicação localmente ou mude para OpenRouter.'
+        };
+      }
       return { success: false, error: error.message };
     }
   }

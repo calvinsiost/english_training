@@ -167,8 +167,13 @@ export function initProviderSettings(showToast) {
     
     if (result.success) {
       connectionStatus.className = 'connection-status success';
-      connectionStatus.textContent = '✓ Conexão bem-sucedida!';
-      showToast('Conexão testada com sucesso!', 'success');
+      connectionStatus.textContent = result.message || '✓ Conexão bem-sucedida!';
+      showToast(result.message || 'Conexão testada com sucesso!', 'success');
+    } else if (result.error === 'CORS_RESTRICTED' || result.error === 'CORS_ERROR') {
+      // CORS error - show warning instead of error
+      connectionStatus.className = 'connection-status warning';
+      connectionStatus.innerHTML = `⚠️ <strong>Teste indisponível no GitHub Pages</strong><br><small>${result.message}</small>`;
+      showToast('Teste de conexão indisponível no GitHub Pages (CORS). A API ainda funciona localmente.', 'warning');
     } else {
       connectionStatus.className = 'connection-status error';
       connectionStatus.textContent = `✗ Erro: ${result.error}`;
