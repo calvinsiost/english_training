@@ -308,8 +308,24 @@ export class AIConfig {
           timeoutMs: 4000
         });
         return { success: response.ok, error: null };
+      } else if (providerId === 'openrouter') {
+        // OpenRouter supports CORS and should work on GitHub Pages
+        response = await requestWithFallback(config.baseUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${key}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': window.location.origin,
+            'X-Title': 'English Training App'
+          },
+          body: JSON.stringify({
+            model: model || config.defaultModel,
+            messages: [{ role: 'user', content: 'Hi' }],
+            max_tokens: 5
+          })
+        }, retryConfig);
       } else {
-        // Generic test for other providers (OpenRouter, etc.)
+        // Generic test for other providers
         return { success: true, error: null, message: 'Configuração salva. Teste será feito ao gerar questões.' };
       }
 
