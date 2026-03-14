@@ -13,10 +13,10 @@
     <link rel="apple-touch-icon" href="icon.svg">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="css/variables.css?v=2">
-    <link rel="stylesheet" href="css/base.css?v=2">
-    <link rel="stylesheet" href="css/components.css?v=2">
-    <link rel="stylesheet" href="css/study-layout.css?v=2">
+    <link rel="stylesheet" href="css/variables.css?v=3">
+    <link rel="stylesheet" href="css/base.css?v=3">
+    <link rel="stylesheet" href="css/components.css?v=3">
+    <link rel="stylesheet" href="css/study-layout.css?v=3">
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
@@ -42,7 +42,7 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <span class="stat-value" id="readiness-score">--</span>
-                        <span class="stat-label">Estimativa /30</span>
+                        <span class="stat-label" title="Estimativa de nota no exame FUVEST (0-30). Responda questões para calcular.">Estimativa /30</span>
                     </div>
                     <div class="stat-card">
                         <span class="stat-value" id="streak-days">0 <i data-lucide="flame" class="streak-icon"></i></span>
@@ -50,7 +50,7 @@
                     </div>
                     <div class="stat-card">
                         <span class="stat-value" id="bank-count">0</span>
-                        <span class="stat-label">Questões no banco</span>
+                        <span class="stat-label">Passagens no banco</span>
                     </div>
                 </div>
 
@@ -67,7 +67,7 @@
 
                 <!-- Action Buttons -->
                 <div class="action-grid">
-                    <button id="btn-review" class="action-btn action-btn--primary" disabled>
+                    <button id="btn-review" class="action-btn action-btn--primary" disabled title="Responda questões para desbloquear revisões">
                         <span class="action-icon"><i data-lucide="refresh-cw"></i></span>
                         <span class="action-text">Revisões</span>
                         <span id="review-count" class="action-badge">0</span>
@@ -135,7 +135,7 @@
                     <div class="passage-container" id="passage-panel">
                         <div class="passage-header" id="passage-header">
                             <h3>Texto da Passagem</h3>
-                            <i data-lucide="chevron-down" class="passage-toggle-icon"></i>
+                            <i data-lucide="chevron-up" class="passage-toggle-icon"></i>
                         </div>
                         <div class="reading-progress">
                             <div class="reading-progress-bar" id="reading-progress"></div>
@@ -165,7 +165,7 @@
                             </div>
                         </div>
 
-                        <div id="feedback-section" class="feedback-section" style="display: none;">
+                        <div id="feedback-section" class="feedback-section" style="display: none;" aria-live="polite">
                             <!-- Feedback loaded dynamically -->
                         </div>
 
@@ -286,6 +286,17 @@
                 <div class="settings-category" data-category="prefs">
                     <h3><i data-lucide="sliders-horizontal"></i> Preferências</h3>
                     <div class="input-group">
+                        <label for="theme-toggle">Tema</label>
+                        <div class="theme-toggle-group">
+                            <button id="theme-dark" class="theme-btn active" data-theme="dark">
+                                <i data-lucide="moon"></i> Escuro
+                            </button>
+                            <button id="theme-light" class="theme-btn" data-theme="light">
+                                <i data-lucide="sun"></i> Claro
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-group">
                         <label for="daily-goal">Meta diária de estudo</label>
                         <div class="range-with-value">
                             <input type="range" id="daily-goal" min="5" max="60" value="15" step="5">
@@ -315,8 +326,28 @@
             </section>
         </main>
 
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav" id="bottom-nav" aria-label="Navegação principal">
+            <a href="#/" class="nav-item active" data-view="dashboard">
+                <i data-lucide="home"></i>
+                <span>Início</span>
+            </a>
+            <a href="#/study" class="nav-item" data-view="study">
+                <i data-lucide="book-open"></i>
+                <span>Estudar</span>
+            </a>
+            <a href="#/analytics" class="nav-item" data-view="analytics">
+                <i data-lucide="bar-chart-2"></i>
+                <span>Análise</span>
+            </a>
+            <a href="#/settings" class="nav-item" data-view="settings">
+                <i data-lucide="settings"></i>
+                <span>Config</span>
+            </a>
+        </nav>
+
         <!-- Toast Container -->
-        <div id="toast-container" class="toast-container"></div>
+        <div id="toast-container" class="toast-container" role="status" aria-live="polite"></div>
     </div>
 
     <!-- App Scripts -->

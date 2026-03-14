@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.lucide.createIcons();
     }
 
-    showToast('Bem-vindo ao English Training!', 'success');
+    // Welcome toast removed - unnecessary on every load
   } catch (error) {
     console.error('Initialization error:', error);
     showToast('Erro ao inicializar. Recarregue a página.', 'error');
@@ -146,7 +146,7 @@ async function initializeQuestionBank() {
   }
   
   try {
-    showToast('Carregando banco de questões...', 'info');
+    console.log('Carregando banco de questões...');
     
     // Fetch from same domain (works with GitHub Pages)
     const response = await fetch('./data/initial-bank.json');
@@ -178,7 +178,7 @@ async function initializeQuestionBank() {
       timestamp: new Date().toISOString()
     });
     
-    showToast(`${data.total_passages} passagens carregadas!`, 'success');
+    console.log(`${data.total_passages} passagens carregadas`);
     console.log(`[App] Initialized question bank with ${data.total_passages} passages`);
   } catch (error) {
     console.error('[App] Failed to initialize question bank:', error);
@@ -221,10 +221,19 @@ function switchView(viewId) {
   // Add/remove study-active class on body for CSS styling
   if (viewId === 'study') {
     document.body.classList.add('study-active');
+    // Auto-load passage if navigating directly to study view
+    if (!state.currentPassage) {
+      startStudySession();
+    }
   } else {
     document.body.classList.remove('study-active');
   }
-  
+
+  // Update bottom nav active state
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.toggle('active', item.dataset.view === viewId);
+  });
+
   // Update dashboard data if entering dashboard
   if (viewId === 'dashboard') {
     updateDashboard();
@@ -262,6 +271,26 @@ function setupEventListeners() {
   document.getElementById('daily-goal')?.addEventListener('input', (e) => {
     document.getElementById('daily-goal-value').textContent = e.target.value;
   });
+
+  // Theme toggle
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const theme = btn.dataset.theme;
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // Restore saved theme
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    document.querySelectorAll('.theme-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.theme === savedTheme);
+    });
+  }
   
   // Initialize AI Provider Settings
   initProviderSettings(showToast);
@@ -610,17 +639,23 @@ async function importData(event) {
 // Toast Notification
 function showToast(message, type = 'info') {
   const container = document.getElementById('toast-container');
+  if (!container) return;
+
+  // Limit to 2 simultaneous toasts
+  while (container.children.length >= 2) {
+    container.firstChild.remove();
+  }
+
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
   toast.textContent = message;
-  
   container.appendChild(toast);
-  
+
   setTimeout(() => {
     toast.style.opacity = '0';
     toast.style.transform = 'translateY(20px)';
     setTimeout(() => toast.remove(), 300);
-  }, 3000);
+  }, 2000);
 }
 
 // Service Worker Registration
@@ -641,18 +676,21 @@ window.router = {
 
 // Setup Study UI (tabs, collapsible passage, etc.)
 function setupStudyUI() {
-  // Mobile tabs
-  const tabs = document.querySelectorAll('.study-tab');
+  // Mobile tabs - use event delegation for robustness
+  const tabsContainer = document.getElementById('study-tabs');
   const studyContent = document.getElementById('study-content');
-  
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
+
+  if (tabsContainer && studyContent) {
+    tabsContainer.addEventListener('click', (e) => {
+      const tab = e.target.closest('.study-tab');
+      if (!tab) return;
+
       const targetTab = tab.dataset.tab;
-      
+
       // Update active tab
-      tabs.forEach(t => t.classList.remove('active'));
+      tabsContainer.querySelectorAll('.study-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
-      
+
       // Show corresponding panel
       if (targetTab === 'question') {
         studyContent.classList.add('show-question');
@@ -660,7 +698,7 @@ function setupStudyUI() {
         studyContent.classList.remove('show-question');
       }
     });
-  });
+  }
   
   // Collapsible passage header
   const passageHeader = document.getElementById('passage-header');
