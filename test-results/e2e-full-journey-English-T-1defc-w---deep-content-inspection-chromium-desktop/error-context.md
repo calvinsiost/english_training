@@ -1,0 +1,76 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - heading "English Training" [level=1] [ref=e4]
+    - button "Configurações" [ref=e5] [cursor=pointer]:
+      - img [ref=e6]
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - button "Voltar" [ref=e12] [cursor=pointer]:
+          - img [ref=e13]
+          - text: Voltar
+        - generic [ref=e15]: Questão 1/5
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - generic [ref=e18] [cursor=pointer]:
+            - heading "Texto da Passagem" [level=3] [ref=e19]
+            - img [ref=e20]
+          - article [ref=e23]:
+            - generic [ref=e24]: FUVEST · 2025 · 1ª ed. · Manhã
+            - paragraph [ref=e25]: "Saturday morning of a long weekend and there is enough time. Three full days, an almost embarrassing bounty. The unrun errands will be vanquished. You’ll spend time with your family and your friends, take on an ambitious cooking project, finally address that creaky cabinet door. See a movie in the actual theater? Re ad a whole book from start to finish? Yes and yes! But it’s early still, so you might stay here, under the covers, and ponder. When faced with the boundless possibility of a long weekend, there is nothing so perversely tempting as staying in or returning t o bed. All this time to gloriously and productively fill; why not waste a little? Last year, a regrettably named trend belched up from the dark cauldron of TikTok: bed rotting. To “rot” is to spend the day under the covers, scrolling one’s phone, napping, staring at the ceiling. Some doctors praised the practice as a necessary form of r est; others warned it could signal depression. However, the habit of lingering in bed when one should be up and about, has risen in popularity. That is a practice concerned with defiance of worldly cares, with the tension between being a responsible member of society and snuggling beneath layers of blankets. This is a grim continuum on which to exist, skating between the poles of high- achieving hustler and dissolute layabout. Although our social bias for getting things done persists and we disdain behaviors with a whiff of laziness, I think it’s worthwhile to destigmatize deliberate inactivity. A friend introduced me to the “lie- down,” a mode of relaxation that, at least in terms of branding, comes off as a bit more respectable. The lie- down is just what it sounds like: a short stint off one’s feet. It’s a form of rest that manages to borrow the restorative benefits of the nap without the suggestion of sloth. One does not change out of one’s street clothes for a lie- down. This is not a full-on, take- to-the-bed retreat, but a deliberate if lavish recharge before one rises to resume living. A lie- down could involve reading or snoozing or just contemplating the world outside the window. So, how will you spend this weekend? Hopefully, you’ll find some soothing bal ance between getting things done and getting nothing done at all."
+        - generic [ref=e26]:
+          - generic [ref=e27]: No texto, a palavra mais apropriada para expressar sentido de inatividade é
+          - generic [ref=e28]:
+            - button "(A) bounty (1 parágrafo) ." [ref=e29] [cursor=pointer]
+            - button "(B) ponder (1 parágrafo)." [ref=e30] [cursor=pointer]
+            - button "(C) grim (2 parágrafo)." [ref=e31] [cursor=pointer]
+            - button "(D) whiff (2 parágrafo)." [ref=e32] [cursor=pointer]
+            - button "(E) sloth (2 parágrafo)." [ref=e33] [cursor=pointer]
+          - generic [ref=e34]:
+            - generic [ref=e35]:
+              - generic [ref=e36]: A
+              - generic [ref=e37]: B
+              - generic [ref=e38]: C
+              - generic [ref=e39]: D
+              - generic [ref=e40]: E
+              - text: Responder
+            - generic [ref=e41]:
+              - generic [ref=e42]: 1-4
+              - text: Confiança
+            - generic [ref=e43]:
+              - generic [ref=e44]: Enter
+              - text: Próxima
+    - generic [ref=e47]:
+      - heading "📝 Simulado FUVEST" [level=2] [ref=e48]
+      - paragraph [ref=e49]: Teste seus conhecimentos em condições de prova real
+      - generic [ref=e50]:
+        - generic [ref=e51]:
+          - generic [ref=e52]: "30"
+          - text: Questões
+        - generic [ref=e53]:
+          - generic [ref=e54]: "6"
+          - text: Passagens
+        - generic [ref=e55]:
+          - generic [ref=e56]: 4h
+          - text: Duração
+      - generic [ref=e57]:
+        - heading "Regras do Simulado" [level=3] [ref=e58]
+        - list [ref=e59]:
+          - listitem [ref=e60]: "• Tempo limite: 4 horas (igual FUVEST)"
+          - listitem [ref=e61]: • 2 pausas permitidas durante a prova
+          - listitem [ref=e62]: • Navegue livremente entre as questões
+          - listitem [ref=e63]: • Marque questões para revisão
+          - listitem [ref=e64]: • Resultado imediato ao finalizar
+      - button "Começar Simulado" [ref=e65] [cursor=pointer]
+    - text: ✓ GitHub Pages
+    - generic [ref=e66]:
+      - heading "Modo Prova" [level=2] [ref=e67]
+      - paragraph [ref=e68]: Em desenvolvimento
+      - button "Voltar" [ref=e69] [cursor=pointer]:
+        - img [ref=e70]
+        - text: Voltar
+  - status
+```

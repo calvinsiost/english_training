@@ -685,6 +685,10 @@ async function startStudySession() {
     return;
   }
   
+  // Show loading state
+  const loadingEl = document.getElementById('study-loading');
+  if (loadingEl) loadingEl.style.display = 'flex';
+  
   // Start session history tracking
   if (window.sessionHistory) {
     window.sessionHistory.startSession('study');
@@ -747,6 +751,9 @@ async function startStudySession() {
   } catch (error) {
     console.error('Start study error:', error);
     showToast('Erro ao carregar passagem', 'error');
+    // Hide loading state on error
+    const loadingEl = document.getElementById('study-loading');
+    if (loadingEl) loadingEl.style.display = 'none';
   }
 }
 
@@ -828,6 +835,11 @@ function loadPassageIntoUI(passage) {
   const passageTab = document.querySelector('[data-tab="passage"]');
   if (passageTab) {
     document.querySelectorAll('.study-tab').forEach(t => t.classList.remove('active'));
+  }
+  
+  // Hide loading state
+  const loadingEl = document.getElementById('study-loading');
+  if (loadingEl) loadingEl.style.display = 'none';
     passageTab.classList.add('active');
   }
   
@@ -1074,9 +1086,25 @@ function showToast(message, type = 'info') {
 // Service Worker Registration
 function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-      .then(reg => console.log('[SW] Registered:', reg.scope))
-      .catch(err => console.error('[SW] Registration failed:', err));
+    // Unregister any old service workers first to prevent caching issues
+    navigator.serviceWorker.getRegistrations().then(registrations => {
+      registrations.forEach(reg => {
+        if (reg.scope.includes('english_training')) {
+          console.log('[SW] Unregistering old service worker');
+          reg.unregister();
+        }
+      });
+    }).catch(() => {});
+    
+    // Register new service worker with delay to avoid blocking
+    setTimeout(() => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('[SW] Registered:', reg.scope))
+        .catch(err => {
+          console.warn('[SW] Registration failed (non-critical):', err.message);
+          // Don't show error to user - app works without SW
+        });
+    }, 1000);
   }
 }
 

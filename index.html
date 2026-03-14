@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="css/exam-mode.css?v=1">
     <link rel="stylesheet" href="css/flashcards.css?v=1">
     <link rel="stylesheet" href="css/achievements.css?v=1">
+    <link rel="stylesheet" href="css/review.css?v=1">
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
@@ -147,6 +148,12 @@
                 <div class="study-header">
                     <button id="study-back" class="btn-back"><i data-lucide="arrow-left"></i> Voltar</button>
                     <span id="study-progress" class="study-progress">Passagem 1/1 · Questão 1/5</span>
+                </div>
+                
+                <!-- Loading State -->
+                <div id="study-loading" class="study-loading" style="display: none;">
+                    <div class="loading-spinner"></div>
+                    <p>Carregando passagem...</p>
                 </div>
 
                 <!-- Help Features Toolbar -->
@@ -599,9 +606,28 @@
             </section>
 
             <section id="review" class="view">
-                <h2>Revisão SRS</h2>
-                <p>Em desenvolvimento</p>
-                <button class="btn-back" onclick="router.navigate('#/')"><i data-lucide="arrow-left"></i> Voltar</button>
+                <div class="review-header">
+                    <button class="btn-back" onclick="router.navigate('#/')"><i data-lucide="arrow-left"></i> Voltar</button>
+                    <h2>Revisões Pendentes</h2>
+                </div>
+                <div id="review-content">
+                    <div class="review-stats" id="review-stats">
+                        <div class="review-stat">
+                            <span class="review-stat-value" id="review-due-count">0</span>
+                            <span class="review-stat-label">Para revisar agora</span>
+                        </div>
+                        <div class="review-stat">
+                            <span class="review-stat-value" id="review-total-count">0</span>
+                            <span class="review-stat-label">Total no SRS</span>
+                        </div>
+                    </div>
+                    <div id="review-list" class="review-list">
+                        <p class="empty-state">Carregando revisões...</p>
+                    </div>
+                    <button id="btn-start-srs-review" class="btn-primary" style="display: none; margin-top: 20px;">
+                        <i data-lucide="play"></i> Iniciar Revisão
+                    </button>
+                </div>
             </section>
 
             <section id="analytics" class="view">
@@ -653,6 +679,7 @@
     <script src="js/glossary.js"></script>
     <script src="js/achievements.js"></script>
     <script src="js/backup-manager.js"></script>
+    <script src="js/review.js"></script>
     <script type="module" src="js/app.js"></script>
 </body>
 </html>
