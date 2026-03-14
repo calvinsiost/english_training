@@ -8,54 +8,62 @@ import { STORES, DB_NAME, DB_VERSION } from './config/constants.js';
 import { initProviderSettings } from './provider-settings.js';
 import { requestJsonWithFallback } from './core/request-with-fallback.js';
 
-// IndexedDB Promise Helpers
-function idbGet(store, key) {
+// IndexedDB Promise Helpers - Global for all modules
+window.idbGet = function(store, key) {
   return new Promise((resolve, reject) => {
     const request = store.get(key);
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
-}
+};
 
-function idbPut(store, value) {
+window.idbPut = function(store, value) {
   return new Promise((resolve, reject) => {
     const request = store.put(value);
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
-}
+};
 
-function idbAdd(store, value) {
+window.idbAdd = function(store, value) {
   return new Promise((resolve, reject) => {
     const request = store.add(value);
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
-}
+};
 
-function idbCount(store) {
+window.idbCount = function(store) {
   return new Promise((resolve, reject) => {
     const request = store.count();
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
-}
+};
 
-function idbGetAll(store) {
+window.idbGetAll = function(store) {
   return new Promise((resolve, reject) => {
     const request = store.getAll();
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
-}
+};
 
-function idbDelete(store, key) {
+window.idbDelete = function(store, key) {
   return new Promise((resolve, reject) => {
     const request = store.delete(key);
     request.onsuccess = () => resolve();
     request.onerror = () => reject(request.error);
   });
-}
+};
+
+// Local references for this module
+const idbGet = window.idbGet;
+const idbPut = window.idbPut;
+const idbAdd = window.idbAdd;
+const idbCount = window.idbCount;
+const idbGetAll = window.idbGetAll;
+const idbDelete = window.idbDelete;
 
 // Global state
 const state = window.state = {
