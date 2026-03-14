@@ -35,6 +35,42 @@ def clean_text(text: str) -> str:
     return text.strip()
 
 
+def fix_hyphenation(text: str) -> str:
+    """Fix PDF extraction artifacts."""
+    # Fix "word -word" (space before hyphen at word boundary)
+    text = re.sub(r'(\w) -(\w)', r'\1-\2', text)
+    # Fix lost apostrophes in contractions: "can t" -> "can't", "it s" -> "it's"
+    contraction_patterns = [
+        (r"\bcan t\b", "can't"), (r"\bdon t\b", "don't"), (r"\bwon t\b", "won't"),
+        (r"\bdoesn t\b", "doesn't"), (r"\bdidn t\b", "didn't"), (r"\bwasn t\b", "wasn't"),
+        (r"\bisn t\b", "isn't"), (r"\baren t\b", "aren't"), (r"\bcouldn t\b", "couldn't"),
+        (r"\bwouldn t\b", "wouldn't"), (r"\bshouldn t\b", "shouldn't"), (r"\bhaven t\b", "haven't"),
+        (r"\bhasn t\b", "hasn't"), (r"\bweren t\b", "weren't"),
+        (r"\bit s\b", "it's"), (r"\bthat s\b", "that's"), (r"\bwhat s\b", "what's"),
+        (r"\bthere s\b", "there's"), (r"\bhere s\b", "here's"), (r"\bhe s\b", "he's"),
+        (r"\bshe s\b", "she's"), (r"\bwho s\b", "who's"), (r"\blet s\b", "let's"),
+        (r"\bwe ve\b", "we've"), (r"\bthey ve\b", "they've"), (r"\byou ve\b", "you've"),
+        (r"\bI ve\b", "I've"), (r"\bwe re\b", "we're"), (r"\bthey re\b", "they're"),
+        (r"\byou re\b", "you're"), (r"\bwe ll\b", "we'll"), (r"\bthey ll\b", "they'll"),
+        (r"\byou ll\b", "you'll"), (r"\bhe ll\b", "he'll"), (r"\bshe ll\b", "she'll"),
+        (r"\bit ll\b", "it'll"), (r"\bI ll\b", "I'll"), (r"\bI m\b", "I'm"),
+        (r"\bwe d\b", "we'd"), (r"\bthey d\b", "they'd"), (r"\byou d\b", "you'd"),
+        (r"\bhe d\b", "he'd"), (r"\bshe d\b", "she'd"), (r"\bI d\b", "I'd"),
+    ]
+    for pattern, replacement in contraction_patterns:
+        text = re.sub(pattern, replacement, text)
+    # Fix possessives: "city s" -> "city's", "doctor s" -> "doctor's"
+    text = re.sub(r"(\w{2,}) s\b", r"\1's", text)
+    return text
+
+# Common words that get split by PDF extraction
+_COMMON_WORDS = {
+    'but', 'study', 'their', 'the', 'and', 'for', 'not', 'are', 'was', 'his',
+    'her', 'has', 'had', 'have', 'been', 'who', 'with', 'this', 'that', 'from',
+    'they', 'will', 'would', 'could', 'should', 'about', 'which', 'what', 'when',
+    'where', 'how', 'than', 'then', 'into', 'over', 'under', 'stuck', 'author',
+}
+
 def rebuild_paragraphs(text: str) -> str:
     """Join broken lines into proper paragraphs."""
     lines = text.split('\n')
@@ -50,7 +86,8 @@ def rebuild_paragraphs(text: str) -> str:
             current.append(line)
     if current:
         paragraphs.append(' '.join(current))
-    return '\n\n'.join(paragraphs)
+    result = '\n\n'.join(paragraphs)
+    return fix_hyphenation(result)
 
 
 def extract_answers(gabarito_path: Path) -> Dict[str, str]:

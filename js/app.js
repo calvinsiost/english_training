@@ -1,4 +1,4 @@
-/**
+﻿/**
  * English Training - Main Application
  * Entry point and initialization
  */
@@ -6,6 +6,7 @@
 import { AIConfig } from './config/ai-providers.js';
 import { STORES, DB_NAME, DB_VERSION } from './config/constants.js';
 import { initProviderSettings } from './provider-settings.js';
+import { requestJsonWithFallback } from './core/request-with-fallback.js';
 
 // IndexedDB Promise Helpers
 function idbGet(store, key) {
@@ -87,7 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Welcome toast removed - unnecessary on every load
   } catch (error) {
     console.error('Initialization error:', error);
-    showToast('Erro ao inicializar. Recarregue a página.', 'error');
+    showToast('Erro ao inicializar. Recarregue a pÃ¡gina.', 'error');
   }
 });
 
@@ -146,13 +147,13 @@ async function initializeQuestionBank() {
   }
   
   try {
-    console.log('Carregando banco de questões...');
-    
-    // Fetch from same domain (works with GitHub Pages)
-    const response = await fetch('./data/initial-bank.json');
-    if (!response.ok) throw new Error('Failed to load question bank');
-    
-    const data = await response.json();
+    console.log('Carregando banco de questÃµes...');
+    const data = await requestJsonWithFallback('./data/initial-bank.json', {}, {
+      context: 'initial-bank',
+      fallbackMessage: 'Nao foi possivel carregar o banco inicial.',
+      retries: 2,
+      timeoutMs: 10000
+    });
     
     // Populate question bank
     const writeTx = db.transaction(STORES.QUESTION_BANK, 'readwrite');
@@ -182,7 +183,7 @@ async function initializeQuestionBank() {
     console.log(`[App] Initialized question bank with ${data.total_passages} passages`);
   } catch (error) {
     console.error('[App] Failed to initialize question bank:', error);
-    showToast('Usando banco vazio. Configure API para gerar questões.', 'warning');
+    showToast('Usando banco vazio. Configure API para gerar questÃµes.', 'warning');
   }
 }
 
@@ -343,7 +344,7 @@ async function updateDashboard() {
 // Start Study Session
 async function startStudySession() {
   if (!state.db) {
-    showToast('Banco de dados não inicializado', 'error');
+    showToast('Banco de dados nÃ£o inicializado', 'error');
     return;
   }
   
@@ -367,7 +368,7 @@ async function startStudySession() {
       // Pick random from all (for now)
       selectedPassage = passages[Math.floor(Math.random() * passages.length)];
     } else {
-      showToast('Nenhuma passagem disponível. Configure uma API key.', 'error');
+      showToast('Nenhuma passagem disponÃ­vel. Configure uma API key.', 'error');
       return;
     }
     
@@ -440,7 +441,7 @@ function loadPassageIntoUI(passage) {
   
   // Update progress
   if (progressEl) {
-    progressEl.textContent = `Questão ${state.currentQuestionIndex + 1}/${passage.questions.length}`;
+    progressEl.textContent = `QuestÃ£o ${state.currentQuestionIndex + 1}/${passage.questions.length}`;
   }
   
   // Update tab badge
@@ -498,9 +499,8 @@ function handleConfidenceSelect(confidenceLevel, selectedAnswer, question) {
   feedbackSection.style.display = 'block';
   feedbackSection.className = `feedback-section ${isCorrect ? 'correct' : 'incorrect'}`;
   feedbackSection.innerHTML = `
-    <h4>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</h4>
+    <h4>${isCorrect ? 'âœ“ Correto!' : 'âœ— Incorreto'}</h4>
     <p>Resposta correta: ${question.correct_answer}</p>
-    <p>${question.correct_explanation}</p>
   `;
   
   // Show next button
@@ -606,7 +606,7 @@ async function importData(event) {
     
     // Validate structure
     if (!data.stores || typeof data.stores !== 'object') {
-      throw new Error('Formato inválido: campo "stores" ausente');
+      throw new Error('Formato invÃ¡lido: campo "stores" ausente');
     }
 
     const validStores = Object.values(STORES);
@@ -616,7 +616,7 @@ async function importData(event) {
         continue;
       }
       if (!Array.isArray(records)) {
-        console.warn(`[Import] Store ${storeName} não é array, ignorada`);
+        console.warn(`[Import] Store ${storeName} nÃ£o Ã© array, ignorada`);
         continue;
       }
 
@@ -767,3 +767,4 @@ function updateStudyProgressIndicator() {
 document.addEventListener('DOMContentLoaded', () => {
   setupStudyUI();
 });
+

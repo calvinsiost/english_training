@@ -24,7 +24,7 @@
    ===================================================== */
 
 @media (min-width: 900px) {
-  #study {
+  #study.view--active {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto 1fr;
