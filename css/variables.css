@@ -80,7 +80,12 @@
   --touch-target-comfortable: 48px;
 }
 
-/* Light theme (optional, via data attribute) */
+/* Smooth theme transitions */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Light theme (via data attribute) */
 [data-theme="light"] {
   --color-bg-primary: #f5f6f8;
   --color-bg-secondary: #ffffff;
@@ -96,4 +101,30 @@
 
   --color-border: rgba(0, 0, 0, 0.08);
   --color-shadow: rgba(0, 0, 0, 0.06);
+}
+
+/* Legacy variable mapping for compatibility */
+:root {
+  --bg-primary: var(--color-bg-primary);
+  --bg-secondary: var(--color-bg-secondary);
+  --card-bg: var(--color-bg-elevated);
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-tertiary: var(--color-text-muted);
+  --accent-color: var(--color-accent);
+  --accent-hover: var(--color-accent-hover);
+  --border-color: var(--color-border);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-full: var(--radius-full);
+  --spacing-xs: var(--space-1);
+  --spacing-sm: var(--space-2);
+  --spacing-md: var(--space-4);
+  --spacing-lg: var(--space-6);
+  --spacing-xl: var(--space-8);
+  --text-xs: var(--font-size-xs);
+  --text-sm: var(--font-size-sm);
+  --text-base: var(--font-size-base);
+  --text-lg: var(--font-size-lg);
 }
