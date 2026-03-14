@@ -51,7 +51,7 @@ export const PROVIDERS = {
     website: 'https://aistudio.google.com/app/apikey',
     defaultModel: 'gemini-1.5-flash',
     models: [
-      { id: 'gemini-2.0-flash-exp', name: 'Gemini 2.0 Flash Experimental (Mais recente)', context: 1000000 },
+      { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash (Mais recente)', context: 1000000 },
       { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro (Mais capaz)', context: 2000000 },
       { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash (Recomendado)', context: 1000000 },
       { id: 'gemini-1.0-pro', name: 'Gemini 1.0 Pro (Legado)', context: 32000 }
@@ -89,7 +89,7 @@ export const PROVIDERS = {
       { id: 'openai/o1', name: 'o1 (Raciocínio)', context: 128000 },
       { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet', context: 200000 },
       { id: 'anthropic/claude-3-opus', name: 'Claude 3 Opus', context: 200000 },
-      { id: 'google/gemini-2.0-flash-exp:free', name: 'Gemini 2.0 Flash (Grátis)', context: 1000000 },
+      { id: 'google/gemini-2.0-flash', name: 'Gemini 2.0 Flash', context: 1000000 },
       { id: 'google/gemini-1.5-pro', name: 'Gemini 1.5 Pro', context: 2000000 },
       { id: 'meta-llama/llama-3.3-70b-instruct', name: 'Llama 3.3 70B', context: 128000 },
       { id: 'meta-llama/llama-3.1-70b-instruct', name: 'Llama 3.1 70B', context: 128000 },
