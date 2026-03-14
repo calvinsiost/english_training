@@ -8,7 +8,7 @@ import { test, expect, Page, ConsoleMessage } from '@playwright/test';
 import * as path from 'path';
 import * as fs from 'fs';
 
-const BASE_URL = 'https://calvinsiost.github.io/english_training/';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'https://calvinsiost.github.io/english_training/';
 const SS_DIR = '/c/Users/calvi/Github/english_training/test-screenshots/2026';
 const DESKTOP = { width: 1200, height: 800 };
 const MOBILE = { width: 375, height: 812 };

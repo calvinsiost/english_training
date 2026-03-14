@@ -11,10 +11,16 @@ export default defineConfig({
     ['json', { outputFile: 'test-results/results.json' }],
   ],
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://calvinsiost.github.io/english_training/',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:8080',
     trace: 'on',
     video: 'on',
     screenshot: 'on',
+    bypassCSP: true,
+    serviceWorkers: 'block',
+    extraHTTPHeaders: {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+    },
   },
   projects: [
     {
