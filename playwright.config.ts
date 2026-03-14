@@ -11,7 +11,7 @@ export default defineConfig({
     ['json', { outputFile: 'test-results/results.json' }],
   ],
   use: {
-    baseURL: 'https://calvinsiost.github.io/english_training/',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://calvinsiost.github.io/english_training/',
     trace: 'on',
     video: 'on',
     screenshot: 'on',

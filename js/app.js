@@ -8,55 +8,7 @@ import { STORES, DB_NAME, DB_VERSION } from './config/constants.js';
 import { initProviderSettings } from './provider-settings.js';
 import { requestJsonWithFallback } from './core/request-with-fallback.js';
 
-// IndexedDB Promise Helpers - Global for all modules
-window.idbGet = function(store, key) {
-  return new Promise((resolve, reject) => {
-    const request = store.get(key);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-};
-
-window.idbPut = function(store, value) {
-  return new Promise((resolve, reject) => {
-    const request = store.put(value);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-};
-
-window.idbAdd = function(store, value) {
-  return new Promise((resolve, reject) => {
-    const request = store.add(value);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-};
-
-window.idbCount = function(store) {
-  return new Promise((resolve, reject) => {
-    const request = store.count();
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-};
-
-window.idbGetAll = function(store) {
-  return new Promise((resolve, reject) => {
-    const request = store.getAll();
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-};
-
-window.idbDelete = function(store, key) {
-  return new Promise((resolve, reject) => {
-    const request = store.delete(key);
-    request.onsuccess = () => resolve();
-    request.onerror = () => reject(request.error);
-  });
-};
-
+// IndexedDB Promise Helpers - now in idb-helpers.js
 // Local references for this module
 const idbGet = window.idbGet;
 const idbPut = window.idbPut;
