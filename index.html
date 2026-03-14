@@ -19,6 +19,9 @@
     <link rel="stylesheet" href="css/components.css?v=3">
     <link rel="stylesheet" href="css/study-layout.css?v=3">
     <link rel="stylesheet" href="css/srs.css?v=1">
+    <link rel="stylesheet" href="css/stats.css?v=1">
+    <link rel="stylesheet" href="css/session-history.css?v=1">
+    <link rel="stylesheet" href="css/exam-mode.css?v=1">
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
@@ -122,9 +125,9 @@
                         <span class="action-text">Flashcards</span>
                     </button>
 
-                    <button id="btn-errors" class="action-btn">
-                        <span class="action-icon"><i data-lucide="x-circle"></i></span>
-                        <span class="action-text">Rever Erros</span>
+                    <button id="btn-sessions" class="action-btn">
+                        <span class="action-icon"><i data-lucide="history"></i></span>
+                        <span class="action-text">Histórico</span>
                     </button>
                 </div>
 
@@ -257,6 +260,66 @@
                                 <span class="srs-rating-hint">5 dias</span>
                             </button>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics/Stats View -->
+            <section id="analytics" class="view">
+                <div class="settings-header">
+                    <button class="btn-back" onclick="window.location.hash='#/'"><i data-lucide="arrow-left"></i> Voltar</button>
+                    <h2>Estatísticas</h2>
+                </div>
+                <div id="stats-view">
+                    <div class="stats-loading">Carregando estatísticas...</div>
+                </div>
+            </section>
+
+            <!-- Session History View -->
+            <section id="sessions" class="view">
+                <div class="settings-header">
+                    <button class="btn-back" onclick="window.location.hash='#/'"><i data-lucide="arrow-left"></i> Voltar</button>
+                    <h2>Histórico de Sessões</h2>
+                </div>
+                <div id="session-history-view">
+                    <div class="stats-loading">Carregando histórico...</div>
+                </div>
+            </section>
+
+            <!-- Exam Mode View -->
+            <section id="exam" class="view">
+                <div id="exam-container">
+                    <div class="exam-start-screen">
+                        <h2>📝 Simulado FUVEST</h2>
+                        <p>Teste seus conhecimentos em condições de prova real</p>
+                        
+                        <div class="exam-info">
+                            <div class="exam-info-item">
+                                <span class="exam-info-value">30</span>
+                                <span class="exam-info-label">Questões</span>
+                            </div>
+                            <div class="exam-info-item">
+                                <span class="exam-info-value">6</span>
+                                <span class="exam-info-label">Passagens</span>
+                            </div>
+                            <div class="exam-info-item">
+                                <span class="exam-info-value">4h</span>
+                                <span class="exam-info-label">Duração</span>
+                            </div>
+                        </div>
+                        
+                        <div class="exam-rules">
+                            <h3>Regras do Simulado</h3>
+                            <ul>
+                                <li>Tempo limite: 4 horas (igual FUVEST)</li>
+                                <li>2 pausas permitidas durante a prova</li>
+                                <li>Navegue livremente entre as questões</li>
+                                <li>Marque questões para revisão</li>
+                                <li>Resultado imediato ao finalizar</li>
+                            </ul>
+                        </div>
+                        
+                        <button id="btn-start-exam" class="btn-start-exam">Começar Simulado</button>
                     </div>
                 </div>
             </section>
@@ -574,6 +637,11 @@
     <script type="module" src="js/provider-settings.js"></script>
     <script type="module" src="js/help-features.js"></script>
     <script type="module" src="js/srs-engine.js"></script>
+    <script src="js/analytics.js"></script>
+    <script src="js/stats-dashboard.js"></script>
+    <script src="js/session-history.js"></script>
+    <script src="js/exam-mode.js"></script>
+    <script src="js/exam-results.js"></script>
     <script type="module" src="js/app.js"></script>
 </body>
 </html>

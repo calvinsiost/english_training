@@ -189,6 +189,24 @@ document.addEventListener('DOMContentLoaded', async () => {
       await window.srsManager.init();
     }
     
+    // Initialize Analytics Manager
+    if (typeof AnalyticsManager !== 'undefined') {
+      window.analyticsManager = new AnalyticsManager(state.db);
+      await window.analyticsManager.init();
+    }
+    
+    // Initialize Session History
+    if (typeof SessionHistory !== 'undefined') {
+      window.sessionHistory = new SessionHistory(state.db);
+      await window.sessionHistory.init();
+    }
+    
+    // Initialize Exam Mode
+    if (typeof ExamMode !== 'undefined') {
+      window.examMode = new ExamMode(state.db);
+      await window.examMode.init();
+    }
+    
     // Initialize question bank from JSON
     await initializeQuestionBank();
     
@@ -253,6 +271,17 @@ async function initDatabase() {
       
       if (!db.objectStoreNames.contains(STORES.META)) {
         db.createObjectStore(STORES.META, { keyPath: 'key' });
+      }
+      
+      // Analytics stores
+      if (!db.objectStoreNames.contains(STORES.ANALYTICS)) {
+        db.createObjectStore(STORES.ANALYTICS, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(STORES.DAILY_STATS)) {
+        db.createObjectStore(STORES.DAILY_STATS, { keyPath: 'dateKey' });
+      }
+      if (!db.objectStoreNames.contains(STORES.STUDY_SESSIONS)) {
+        db.createObjectStore(STORES.STUDY_SESSIONS, { keyPath: 'id' });
       }
     };
   });
@@ -325,6 +354,7 @@ function handleRoute() {
     '#/exam': 'exam',
     '#/review': 'review',
     '#/analytics': 'analytics',
+    '#/sessions': 'sessions',
     '#/settings': 'settings'
   };
   
@@ -362,6 +392,22 @@ function switchView(viewId) {
   // Update dashboard data if entering dashboard
   if (viewId === 'dashboard') {
     updateDashboard();
+  }
+  
+  // Render stats if entering analytics view
+  if (viewId === 'analytics') {
+    if (typeof StatsDashboard !== 'undefined' && window.analyticsManager) {
+      const dashboard = new StatsDashboard(window.analyticsManager);
+      dashboard.render('stats-view');
+    }
+  }
+  
+  // Render session history if entering sessions view
+  if (viewId === 'sessions') {
+    if (typeof SessionHistoryUI !== 'undefined' && window.sessionHistory) {
+      const historyUI = new SessionHistoryUI(window.sessionHistory);
+      historyUI.render('session-history-view');
+    }
   }
 }
 
@@ -472,7 +518,11 @@ function setupEventListeners() {
     window.location.hash = '#/';
   });
   
-  document.getElementById('study-back')?.addEventListener('click', () => {
+  document.getElementById('study-back')?.addEventListener('click', async () => {
+    // End current session if active
+    if (window.sessionHistory && window.sessionHistory.currentSession) {
+      await window.sessionHistory.endSession();
+    }
     window.location.hash = '#/';
   });
   
@@ -484,8 +534,25 @@ function setupEventListeners() {
   document.getElementById('btn-exam')?.addEventListener('click', () => {
     window.location.hash = '#/exam';
   });
+  
+  // Start exam button
+  document.getElementById('btn-start-exam')?.addEventListener('click', async () => {
+    if (window.examMode) {
+      try {
+        await window.examMode.startExam();
+        // Reload exam view with active exam
+        window.location.hash = '#/exam';
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    }
+  });
   document.getElementById('btn-analytics')?.addEventListener('click', () => {
     window.location.hash = '#/analytics';
+  });
+  
+  document.getElementById('btn-sessions')?.addEventListener('click', () => {
+    window.location.hash = '#/sessions';
   });
   
   // Settings
@@ -580,6 +647,28 @@ async function updateDashboard() {
     if (reviewBadge) reviewBadge.textContent = reviewCount;
     if (reviewBtn) reviewBtn.disabled = reviewCount === 0;
     
+    // Update analytics stats on dashboard
+    try {
+      if (window.analyticsManager) {
+        const stats = await window.analyticsManager.getOverallStats();
+        
+        // Update readiness score
+        const readinessEl = document.getElementById('readiness-score');
+        if (readinessEl) {
+          readinessEl.textContent = stats.totalQuestions > 0 ? stats.predictedScore.toFixed(1) : '--';
+        }
+        
+        // Update streak
+        const streakEl = document.getElementById('streak-days');
+        if (streakEl) {
+          streakEl.innerHTML = `${stats.currentStreak} <i data-lucide="flame" class="streak-icon"></i>`;
+          if (window.lucide) window.lucide.createIcons();
+        }
+      }
+    } catch (e) {
+      console.error('Analytics stats error:', e);
+    }
+    
   } catch (error) {
     console.error('Dashboard update error:', error);
   }
@@ -590,6 +679,11 @@ async function startStudySession() {
   if (!state.db) {
     showToast('Banco de dados não inicializado', 'error');
     return;
+  }
+  
+  // Start session history tracking
+  if (window.sessionHistory) {
+    window.sessionHistory.startSession('study');
   }
   
   try {
@@ -634,6 +728,11 @@ async function startStudySession() {
     // Set current passage
     state.currentPassage = selectedPassage;
     state.currentQuestionIndex = 0;
+    
+    // Add to session history
+    if (window.sessionHistory) {
+      window.sessionHistory.addPassage(selectedPassage.id);
+    }
     
     // Load passage into UI
     loadPassageIntoUI(selectedPassage);
@@ -796,21 +895,24 @@ function handleConfidenceSelect(confidenceLevel, selectedAnswer, question) {
 }
 
 // Handle Next Question
-function handleNextQuestion() {
+async function handleNextQuestion() {
   state.currentQuestionIndex++;
   
   if (state.currentQuestionIndex < state.currentPassage.questions.length) {
     // Load next question
     loadPassageIntoUI(state.currentPassage);
   } else {
-    // Passage complete
+    // Passage complete - end session
+    if (window.sessionHistory) {
+      await window.sessionHistory.endSession();
+    }
     showToast('Passagem completa!', 'success');
     window.location.hash = '#/';
   }
 }
 
 // Save Question Attempt
-async function saveAttempt(question, answer, confidence, isCorrect) {
+async function saveAttempt(question, answer, confidence, isCorrect, timeSpent = 0, helpUsed = []) {
   if (!state.db) return;
   
   try {
@@ -828,6 +930,32 @@ async function saveAttempt(question, answer, confidence, isCorrect) {
       confidence: confidence,
       created_at: new Date().toISOString()
     });
+    
+    // Record in analytics
+    if (window.analyticsManager) {
+      await window.analyticsManager.recordQuestionAttempt(
+        question.id,
+        isCorrect,
+        confidence,
+        timeSpent,
+        helpUsed
+      );
+    }
+    
+    // Record in session history
+    if (window.sessionHistory) {
+      window.sessionHistory.recordQuestionAttempt({
+        questionId: question.id,
+        passageId: state.currentPassage.id,
+        questionText: question.question_text,
+        selectedAnswer: answer,
+        correctAnswer: question.correct_answer,
+        isCorrect: isCorrect,
+        confidence: confidence,
+        timeSpent: timeSpent,
+        helpUsed: helpUsed
+      });
+    }
     
     // Add to SRS if incorrect OR if confidence was low
     if (!isCorrect || confidence < 2) {

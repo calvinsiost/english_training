@@ -66,7 +66,7 @@ export const DEFAULT_DAILY_GOAL_MINUTES = 15;
 
 /** IndexedDB */
 export const DB_NAME = 'english_training';
-export const DB_VERSION = 2;
+export const DB_VERSION = 3;
 
 /** IndexedDB Store Names */
 export const STORES = {
@@ -83,5 +83,6 @@ export const STORES = {
   TOKEN_LOG: 'token_log',
   META: 'meta',
   ANALYTICS: 'analytics',
-  DAILY_STATS: 'daily_stats'
+  DAILY_STATS: 'daily_stats',
+  STUDY_SESSIONS: 'study_sessions'
 };

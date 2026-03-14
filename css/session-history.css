@@ -1,0 +1,329 @@
+/**
+ * Session History Styles
+ * Timeline, session cards, and summary components
+ */
+
+/* Session History Container */
+#session-history-view {
+  padding: var(--spacing-lg);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.session-history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+/* Session Summary */
+.session-summary {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+}
+
+.session-summary h3 {
+  font-size: var(--text-lg);
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-primary);
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.summary-item {
+  text-align: center;
+  padding: var(--spacing-md);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+}
+
+.summary-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.summary-label {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.session-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+}
+
+/* Sessions List */
+.sessions-list h3 {
+  font-size: var(--text-lg);
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-primary);
+}
+
+.sessions-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* Session Card */
+.session-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.session-card:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.session-type {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.session-icon {
+  font-size: 1.25rem;
+}
+
+.session-type-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+}
+
+.session-date {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.session-date .date {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.session-date .time {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.session-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-item .stat-value {
+  display: block;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.stat-item .stat-value.good {
+  color: #10ac84;
+}
+
+.stat-item .stat-value.medium {
+  color: #ff9f43;
+}
+
+.stat-item .stat-value.poor {
+  color: #ee5253;
+}
+
+.stat-item .stat-label {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.session-footer {
+  margin-top: var(--spacing-md);
+}
+
+.btn-expand {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  background: none;
+  border: none;
+  color: var(--accent-color);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  padding: 0;
+}
+
+.btn-expand:hover {
+  text-decoration: underline;
+}
+
+/* Session Details */
+.session-details {
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px dashed var(--border-color);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.no-details {
+  color: var(--text-tertiary);
+  font-style: italic;
+  text-align: center;
+  padding: var(--spacing-md);
+}
+
+/* Questions List in Details */
+.questions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.question-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+}
+
+.question-item.correct {
+  background: rgba(16, 172, 132, 0.1);
+}
+
+.question-item.incorrect {
+  background: rgba(238, 82, 83, 0.1);
+}
+
+.question-num {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.question-text {
+  flex: 1;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.question-result {
+  font-weight: 600;
+  font-size: var(--text-sm);
+  flex-shrink: 0;
+}
+
+.question-item.correct .question-result {
+  color: #10ac84;
+}
+
+.question-item.incorrect .question-result {
+  color: #ee5253;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--text-secondary);
+}
+
+.empty-state i {
+  width: 48px;
+  height: 48px;
+  margin-bottom: var(--spacing-md);
+  color: var(--text-tertiary);
+}
+
+.empty-hint {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  margin-top: var(--spacing-xs);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .session-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .session-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .session-date {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 400px) {
+  .session-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stat-item:nth-child(3),
+  .stat-item:nth-child(4) {
+    border-top: 1px solid var(--border-color);
+    padding-top: var(--spacing-sm);
+  }
+}

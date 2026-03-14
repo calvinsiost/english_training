@@ -1,0 +1,23 @@
+{
+  "name": "english_training",
+  "version": "1.0.0",
+  "description": "Preparação para o Exame de Proficiência em Inglês da FUVEST (Universidade de São Paulo).",
+  "main": "sw.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/calvinsiost/english_training.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/calvinsiost/english_training/issues"
+  },
+  "homepage": "https://github.com/calvinsiost/english_training#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
+  }
+}
