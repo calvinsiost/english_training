@@ -3,6 +3,8 @@
  * Multi-provider support with model selection
  */
 
+import { requestWithFallback } from '../core/request-with-fallback.js';
+
 export const PROVIDERS = {
   openai: {
     id: 'openai',
@@ -229,12 +231,18 @@ export class AIConfig {
   
   static async testConnection(providerId, key, model) {
     const config = PROVIDERS[providerId];
-    
+
     try {
       let response;
-      
+      const retryConfig = {
+        context: `testConnection:${providerId}`,
+        fallbackMessage: 'Sem resposta da API ao testar conexao.',
+        retries: 2,
+        timeoutMs: 12000
+      };
+
       if (providerId === 'openai') {
-        response = await fetch(config.baseUrl, {
+        response = await requestWithFallback(config.baseUrl, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${key}`,
@@ -245,9 +253,9 @@ export class AIConfig {
             messages: [{ role: 'user', content: 'Hi' }],
             max_tokens: 5
           })
-        });
+        }, retryConfig);
       } else if (providerId === 'anthropic') {
-        response = await fetch(config.baseUrl, {
+        response = await requestWithFallback(config.baseUrl, {
           method: 'POST',
           headers: {
             'x-api-key': key,
@@ -259,31 +267,38 @@ export class AIConfig {
             messages: [{ role: 'user', content: 'Hi' }],
             max_tokens: 5
           })
-        });
+        }, retryConfig);
       } else if (providerId === 'gemini') {
-        response = await fetch(`${config.baseUrl}/${model || config.defaultModel}:generateContent?key=${key}`, {
+        response = await requestWithFallback(`${config.baseUrl}/${model || config.defaultModel}:generateContent?key=${key}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ parts: [{ text: 'Hi' }] }]
           })
-        });
+        }, retryConfig);
       } else if (providerId === 'local') {
-        response = await fetch(config.baseUrl.replace('/generate', '/tags'));
+        response = await requestWithFallback(config.baseUrl.replace('/generate', '/tags'), {}, {
+          context: `testConnection:${providerId}`,
+          fallbackMessage: 'Ollama local nao respondeu.',
+          retries: 1,
+          timeoutMs: 4000
+        });
         return { success: response.ok, error: null };
       } else {
         // Generic test for other providers
         return { success: true, error: null, message: 'Teste manual necessário' };
       }
-      
+
       if (response.ok) {
         return { success: true, error: null };
-      } else {
-        const data = await response.json().catch(() => ({}));
-        return { success: false, error: data.error?.message || `Erro ${response.status}` };
       }
+
+      const data = await response.json().catch(() => ({}));
+      const providerMessage = data.error?.message || data.error || data.message;
+      return { success: false, error: providerMessage || `Erro ${response.status}` };
     } catch (error) {
       return { success: false, error: error.message };
     }
   }
 }
+

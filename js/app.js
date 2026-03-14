@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Welcome toast removed - unnecessary on every load
   } catch (error) {
     console.error('Initialization error:', error);
-    showToast('Erro ao inicializar. Recarregue a pÃ¡gina.', 'error');
+    showToast('Erro ao inicializar. Recarregue a página.', 'error');
   }
 });
 
@@ -139,7 +139,7 @@ async function initializeQuestionBank() {
   const db = state.db;
   const tx = db.transaction(STORES.META, 'readonly');
   const metaStore = tx.objectStore(STORES.META);
-  const isInitialized = await metaStore.get('bank_initialized');
+  const isInitialized = await idbGet(metaStore, 'bank_initialized');
   
   if (isInitialized?.value) {
     console.log('[App] Question bank already initialized');
@@ -147,7 +147,7 @@ async function initializeQuestionBank() {
   }
   
   try {
-    console.log('Carregando banco de questÃµes...');
+    console.log('Carregando banco de questões...');
     const data = await requestJsonWithFallback('./data/initial-bank.json', {}, {
       context: 'initial-bank',
       fallbackMessage: 'Nao foi possivel carregar o banco inicial.',
@@ -183,7 +183,7 @@ async function initializeQuestionBank() {
     console.log(`[App] Initialized question bank with ${data.total_passages} passages`);
   } catch (error) {
     console.error('[App] Failed to initialize question bank:', error);
-    showToast('Usando banco vazio. Configure API para gerar questÃµes.', 'warning');
+    showToast('Usando banco vazio. Configure API para gerar questões.', 'warning');
   }
 }
 
@@ -344,7 +344,7 @@ async function updateDashboard() {
 // Start Study Session
 async function startStudySession() {
   if (!state.db) {
-    showToast('Banco de dados nÃ£o inicializado', 'error');
+    showToast('Banco de dados não inicializado', 'error');
     return;
   }
   
@@ -368,7 +368,7 @@ async function startStudySession() {
       // Pick random from all (for now)
       selectedPassage = passages[Math.floor(Math.random() * passages.length)];
     } else {
-      showToast('Nenhuma passagem disponÃ­vel. Configure uma API key.', 'error');
+      showToast('Nenhuma passagem disponível. Configure uma API key.', 'error');
       return;
     }
     
@@ -377,7 +377,7 @@ async function startStudySession() {
     const writeStore = writeTx.objectStore(STORES.QUESTION_BANK);
     selectedPassage.times_served++;
     selectedPassage.last_served_at = new Date().toISOString();
-    await writeStore.put(selectedPassage);
+    await idbPut(writeStore, selectedPassage);
     
     // Set current passage
     state.currentPassage = selectedPassage;
@@ -441,7 +441,7 @@ function loadPassageIntoUI(passage) {
   
   // Update progress
   if (progressEl) {
-    progressEl.textContent = `QuestÃ£o ${state.currentQuestionIndex + 1}/${passage.questions.length}`;
+    progressEl.textContent = `Questão ${state.currentQuestionIndex + 1}/${passage.questions.length}`;
   }
   
   // Update tab badge
@@ -499,7 +499,7 @@ function handleConfidenceSelect(confidenceLevel, selectedAnswer, question) {
   feedbackSection.style.display = 'block';
   feedbackSection.className = `feedback-section ${isCorrect ? 'correct' : 'incorrect'}`;
   feedbackSection.innerHTML = `
-    <h4>${isCorrect ? 'âœ“ Correto!' : 'âœ— Incorreto'}</h4>
+    <h4>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</h4>
     <p>Resposta correta: ${question.correct_answer}</p>
   `;
   
@@ -606,7 +606,7 @@ async function importData(event) {
     
     // Validate structure
     if (!data.stores || typeof data.stores !== 'object') {
-      throw new Error('Formato invÃ¡lido: campo "stores" ausente');
+      throw new Error('Formato inválido: campo "stores" ausente');
     }
 
     const validStores = Object.values(STORES);
@@ -616,7 +616,7 @@ async function importData(event) {
         continue;
       }
       if (!Array.isArray(records)) {
-        console.warn(`[Import] Store ${storeName} nÃ£o Ã© array, ignorada`);
+        console.warn(`[Import] Store ${storeName} não é array, ignorada`);
         continue;
       }
 
