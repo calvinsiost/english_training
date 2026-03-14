@@ -66,7 +66,7 @@ export const DEFAULT_DAILY_GOAL_MINUTES = 15;
 
 /** IndexedDB */
 export const DB_NAME = 'english_training';
-export const DB_VERSION = 3;
+export const DB_VERSION = 4;
 
 /** IndexedDB Store Names */
 export const STORES = {

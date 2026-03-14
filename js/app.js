@@ -207,6 +207,35 @@ document.addEventListener('DOMContentLoaded', async () => {
       await window.examMode.init();
     }
     
+    // Initialize Notes System
+    if (typeof NotesSystem !== 'undefined') {
+      window.notesSystem = new NotesSystem(state.db);
+      await window.notesSystem.init();
+    }
+    
+    // Initialize Flashcard System
+    if (typeof FlashcardSystem !== 'undefined') {
+      window.flashcardSystem = new FlashcardSystem(state.db);
+      await window.flashcardSystem.init();
+    }
+    
+    // Initialize Glossary
+    if (typeof Glossary !== 'undefined') {
+      window.glossary = new Glossary(state.db);
+      await window.glossary.init();
+    }
+    
+    // Initialize Achievements
+    if (typeof AchievementsManager !== 'undefined') {
+      window.achievementsManager = new AchievementsManager(state.db);
+      await window.achievementsManager.init();
+    }
+    
+    // Initialize Backup Manager
+    if (typeof BackupManager !== 'undefined') {
+      window.backupManager = new BackupManager(state.db);
+    }
+    
     // Initialize question bank from JSON
     await initializeQuestionBank();
     
@@ -282,6 +311,21 @@ async function initDatabase() {
       }
       if (!db.objectStoreNames.contains(STORES.STUDY_SESSIONS)) {
         db.createObjectStore(STORES.STUDY_SESSIONS, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('notes')) {
+        db.createObjectStore('notes', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('flashcards')) {
+        db.createObjectStore('flashcards', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('glossary')) {
+        db.createObjectStore('glossary', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('achievements')) {
+        db.createObjectStore('achievements', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('exam_attempts')) {
+        db.createObjectStore('exam_attempts', { keyPath: 'id' });
       }
     };
   });
