@@ -104,9 +104,13 @@ def detect_question_type(text: str) -> str:
 
 def remove_page_headers(text: str) -> str:
     """Remove repeated page headers from text."""
+    # After clean_text, accented chars may become spaces (e.g. PROFICIÊNCIA -> PROFICI NCIA)
     text = re.sub(r'Exame de Profici.*?Inglesa\)?\s*', '', text, flags=re.IGNORECASE)
-    text = re.sub(r'EXAME DE PROFICI.*?Ingl.s\s*', '', text, flags=re.IGNORECASE)
+    text = re.sub(r'EXAME DE PROFICI\S*.*?(?:Ingl.sa?|ESTRANGEIRA)\s*', '', text, flags=re.IGNORECASE)
     text = re.sub(r'Prova de Ingl.s\s*\d{2}/\d{2}/\d{4}\s*', '', text)
+    # Catch cleaned versions where accents became spaces or other artifacts
+    text = re.sub(r'EXAME DE PROFIC\s*I\s*.?\s*NCIA EM L\s*.?\s*NGUA ESTRANGEIRA\s*', '', text)
+    text = re.sub(r'Prova de Ingl.s\s*-?\s*(?:Manha|Tarde|Manh.)?\s*\d{2}/\d{2}/\d{4}\s*', '', text)
     return text
 
 

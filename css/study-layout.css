@@ -36,6 +36,10 @@
     overflow: hidden;
   }
 
+  .study-content {
+    display: contents; /* Let children participate in parent grid */
+  }
+
   .study-header {
     grid-area: header;
     margin-bottom: 0;
