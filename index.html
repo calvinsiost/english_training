@@ -121,6 +121,22 @@
                     <span id="study-progress" class="study-progress">Passagem 1/1 · Questão 1/5</span>
                 </div>
 
+                <!-- Help Features Toolbar -->
+                <div class="study-help-toolbar" id="study-help-toolbar" style="display: none;">
+                    <button class="help-btn" id="help-btn-lesson" title="Aula Rápida sobre esta questão">
+                        <i data-lucide="lightbulb"></i> Aula
+                    </button>
+                    <button class="help-btn" id="help-btn-alternatives" title="Explicação das alternativas">
+                        <i data-lucide="list-checks"></i> Alternativas
+                    </button>
+                    <button class="help-btn" id="help-btn-hints" title="Dicas contextuais">
+                        <i data-lucide="graduation-cap"></i> Dicas
+                    </button>
+                    <button class="help-btn" id="help-btn-tts" title="Ouvir texto em voz alta">
+                        <i data-lucide="volume-2"></i> Ouvir
+                    </button>
+                </div>
+
                 <!-- Mobile Tabs -->
                 <div class="study-tabs" id="study-tabs">
                     <button class="study-tab active" data-tab="passage">
@@ -324,6 +340,67 @@
                     </div>
                 </div>
 
+                <!-- Help Features Settings -->
+                <div class="settings-category" data-category="help">
+                    <h3><i data-lucide="help-circle"></i> Funções de Ajuda</h3>
+                    <p class="settings-description">Habilite assistências durante o estudo. Requer chave de API configurada.</p>
+                    
+                    <div class="input-group">
+                        <label class="checkbox-label checkbox-toggle">
+                            <input type="checkbox" id="help-translate" checked>
+                            <span class="toggle-switch"></span>
+                            <span class="toggle-label">
+                                <strong>🔤 Tradução por Clique</strong>
+                                <small>Clique em qualquer palavra ou selecione uma frase para traduzir</small>
+                            </span>
+                        </label>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="checkbox-label checkbox-toggle">
+                            <input type="checkbox" id="help-lesson" checked>
+                            <span class="toggle-switch"></span>
+                            <span class="toggle-label">
+                                <strong>💡 Aula Rápida</strong>
+                                <small>Botão de lâmpada com explicação gramatical da questão</small>
+                            </span>
+                        </label>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="checkbox-label checkbox-toggle">
+                            <input type="checkbox" id="help-alternatives">
+                            <span class="toggle-switch"></span>
+                            <span class="toggle-label">
+                                <strong>🎯 Explicação das Alternativas</strong>
+                                <small>Mostra por que cada alternativa está certa ou errada</small>
+                            </span>
+                        </label>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="checkbox-label checkbox-toggle">
+                            <input type="checkbox" id="help-hints">
+                            <span class="toggle-switch"></span>
+                            <span class="toggle-label">
+                                <strong>🎓 Dicas Contextuais</strong>
+                                <small>Dicas sobre vocabulário e estratégias de leitura</small>
+                            </span>
+                        </label>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="checkbox-label checkbox-toggle">
+                            <input type="checkbox" id="help-tts">
+                            <span class="toggle-switch"></span>
+                            <span class="toggle-label">
+                                <strong>🔊 Leitura em Voz Alta</strong>
+                                <small>Ouça a pronúncia do texto (TTS do navegador)</small>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="settings-category" data-category="bank">
                     <h3><i data-lucide="database"></i> Banco de Questões</h3>
                     <div class="bank-stats">
@@ -435,6 +512,7 @@
 
     <!-- App Scripts -->
     <script type="module" src="js/provider-settings.js"></script>
+    <script type="module" src="js/help-features.js"></script>
     <script type="module" src="js/app.js"></script>
 </body>
 </html>

@@ -1174,3 +1174,500 @@
 .provider-card.cors-friendly .provider-name {
   color: var(--color-success);
 }
+
+/* ============================================
+   HELP FEATURES - Toggle Switches & UI
+   ============================================ */
+
+/* Toggle Switch for Help Features */
+.checkbox-toggle {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.checkbox-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.checkbox-toggle input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background-color: var(--color-bg-tertiary);
+  border-radius: 12px;
+  transition: background-color 0.3s;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.checkbox-toggle input[type="checkbox"]:checked + .toggle-switch {
+  background-color: var(--color-accent);
+}
+
+.checkbox-toggle input[type="checkbox"]:checked + .toggle-switch::after {
+  transform: translateX(20px);
+}
+
+.toggle-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.toggle-label strong {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-size: 14px;
+}
+
+.toggle-label small {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Study Help Toolbar */
+.study-help-toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.help-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.help-btn:hover {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+}
+
+.help-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.help-btn.active {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+}
+
+.help-btn i {
+  width: 16px;
+  height: 16px;
+}
+
+/* Translation highlight on passage text */
+.passage-text.translate-enabled {
+  cursor: pointer;
+  user-select: text;
+}
+
+.passage-text.translate-enabled .word {
+  cursor: pointer;
+  border-bottom: 1px dotted rgba(78, 173, 138, 0.3);
+  transition: background-color 0.2s;
+}
+
+.passage-text.translate-enabled .word:hover {
+  background-color: rgba(78, 173, 138, 0.15);
+  border-bottom-color: var(--color-accent);
+}
+
+/* Help Modal */
+.help-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.help-modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.help-modal {
+  background: var(--color-bg-primary);
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.95);
+  transition: transform 0.3s;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.help-modal-overlay.active .help-modal {
+  transform: scale(1);
+}
+
+.help-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+}
+
+.help-modal-header h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.help-modal-header h3 i {
+  width: 20px;
+  height: 20px;
+  color: var(--color-accent);
+}
+
+.help-modal-close {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.help-modal-close:hover {
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.help-modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  line-height: 1.7;
+}
+
+.help-modal-body.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  gap: 16px;
+  color: var(--color-text-muted);
+}
+
+.help-modal-body .spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-bg-tertiary);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.help-modal-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: var(--color-bg-secondary);
+}
+
+/* Translation Popup (for word click) */
+.translation-popup {
+  position: absolute;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  max-width: 300px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  animation: popup-in 0.2s ease-out;
+}
+
+@keyframes popup-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.translation-popup::before {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--color-border);
+}
+
+.translation-popup::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--color-bg-primary);
+}
+
+.translation-popup-header {
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.translation-popup-body {
+  color: var(--color-text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.translation-popup-close {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px;
+  font-size: 12px;
+}
+
+/* Selected text tooltip */
+.text-selection-tooltip {
+  position: absolute;
+  background: var(--color-accent);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  animation: tooltip-in 0.2s ease-out;
+}
+
+.text-selection-tooltip::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid var(--color-accent);
+}
+
+@keyframes tooltip-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Alternative explanations */
+.alternative-explanation {
+  margin: 12px 0;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border-left: 3px solid;
+}
+
+.alternative-explanation.correct {
+  background: rgba(78, 173, 138, 0.1);
+  border-left-color: var(--color-success);
+}
+
+.alternative-explanation.incorrect {
+  background: rgba(239, 68, 68, 0.1);
+  border-left-color: var(--color-error);
+}
+
+.alternative-explanation .alt-label {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.alternative-explanation.correct .alt-label {
+  color: var(--color-success);
+}
+
+.alternative-explanation.incorrect .alt-label {
+  color: var(--color-error);
+}
+
+.alternative-explanation .alt-text {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+/* Grammar lesson content styling */
+.lesson-content h4 {
+  color: var(--color-accent);
+  margin: 16px 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.lesson-content h4:first-child {
+  margin-top: 0;
+}
+
+.lesson-content p {
+  margin: 8px 0;
+  color: var(--color-text-secondary);
+}
+
+.lesson-content ul {
+  margin: 8px 0;
+  padding-left: 20px;
+  color: var(--color-text-secondary);
+}
+
+.lesson-content li {
+  margin: 4px 0;
+}
+
+.lesson-content code {
+  background: var(--color-bg-tertiary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13px;
+  color: var(--color-accent);
+}
+
+.lesson-content .example {
+  background: var(--color-bg-secondary);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 12px 0;
+  border-left: 3px solid var(--color-accent);
+}
+
+.lesson-content .example-label {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+/* TTS Button on passage */
+.passage-tts-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, background-color 0.2s, color 0.2s;
+}
+
+.passage-card:hover .passage-tts-btn {
+  opacity: 1;
+}
+
+.passage-tts-btn:hover {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+}
+
+.passage-tts-btn.playing {
+  background: var(--color-accent);
+  color: white;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}

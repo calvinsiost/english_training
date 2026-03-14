@@ -50,7 +50,7 @@ function idbGetAll(store) {
 }
 
 // Global state
-const state = {
+const state = window.state = {
   db: null,
   currentView: 'dashboard',
   activeSession: null,
@@ -395,6 +395,34 @@ function initFilterSettings() {
   updateFilterSummary();
 }
 
+// Initialize Help Feature Settings
+function initHelpFeatureSettings() {
+  const checkboxes = [
+    { id: 'help-translate', key: 'translate' },
+    { id: 'help-lesson', key: 'lesson' },
+    { id: 'help-alternatives', key: 'alternatives' },
+    { id: 'help-hints', key: 'hints' },
+    { id: 'help-tts', key: 'tts' }
+  ];
+  
+  checkboxes.forEach(({ id, key }) => {
+    const cb = document.getElementById(id);
+    if (!cb) return;
+    
+    // Load saved value
+    if (window.helpFeatures) {
+      cb.checked = window.helpFeatures.settings[key];
+    }
+    
+    // Add change listener
+    cb.addEventListener('change', () => {
+      if (window.helpFeatures) {
+        window.helpFeatures.updateSettings({ [key]: cb.checked });
+      }
+    });
+  });
+}
+
 // Update filter summary display
 async function updateFilterSummary() {
   if (!state.db) return;
@@ -416,6 +444,9 @@ async function updateFilterSummary() {
 function setupEventListeners() {
   // Initialize filter settings
   initFilterSettings();
+  
+  // Initialize help feature settings
+  initHelpFeatureSettings();
   
   // Navigation
   document.getElementById('settings-btn')?.addEventListener('click', () => {
@@ -612,6 +643,12 @@ function loadPassageIntoUI(passage) {
     
     // Reset scroll
     passageEl.scrollTop = 0;
+    
+    // Enable help features
+    if (window.helpFeatures) {
+      window.helpFeatures.wrapWordsInPassage();
+      window.helpFeatures.setContext(passage, passage.questions[state.currentQuestionIndex]);
+    }
   }
   
   // Load first question
@@ -948,6 +985,51 @@ function setupStudyUI() {
       }
     }
   });
+  
+  // Help Features Toolbar
+  setupHelpToolbar();
+}
+
+// Setup Help Toolbar Buttons
+function setupHelpToolbar() {
+  const toolbar = document.getElementById('study-help-toolbar');
+  if (!toolbar) return;
+  
+  // Lesson button
+  const lessonBtn = document.getElementById('help-btn-lesson');
+  if (lessonBtn) {
+    lessonBtn.addEventListener('click', () => {
+      if (window.helpFeatures) window.helpFeatures.getGrammarLesson();
+    });
+  }
+  
+  // Alternatives button
+  const altBtn = document.getElementById('help-btn-alternatives');
+  if (altBtn) {
+    altBtn.addEventListener('click', () => {
+      if (window.helpFeatures) window.helpFeatures.getAlternativeExplanations();
+    });
+  }
+  
+  // Hints button
+  const hintsBtn = document.getElementById('help-btn-hints');
+  if (hintsBtn) {
+    hintsBtn.addEventListener('click', () => {
+      if (window.helpFeatures) window.helpFeatures.getHints();
+    });
+  }
+  
+  // TTS button
+  const ttsBtn = document.getElementById('help-btn-tts');
+  if (ttsBtn) {
+    ttsBtn.addEventListener('click', () => {
+      const passageText = document.getElementById('passage-text');
+      if (window.helpFeatures && passageText) {
+        const text = passageText.textContent;
+        window.helpFeatures.speakText(text);
+      }
+    });
+  }
 }
 
 // Update loadPassageIntoUI to handle new elements
@@ -961,5 +1043,10 @@ function updateStudyProgressIndicator() {
 // Initialize Study UI on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   setupStudyUI();
+  
+  // Initialize Help Features
+  if (typeof initHelpFeatures === 'function') {
+    window.helpFeatures = initHelpFeatures();
+  }
 });
 
