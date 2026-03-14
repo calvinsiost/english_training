@@ -242,6 +242,79 @@
                     <div id="connection-status" class="connection-status" style="display: none;"></div>
                 </div>
 
+                <div class="settings-category" data-category="source">
+                    <h3><i data-lucide="filter"></i> Fonte de Questões</h3>
+                    <p class="settings-description">Filtre de quais instituições e anos as questões serão exibidas</p>
+                    
+                    <div class="input-group">
+                        <label>Instituições</label>
+                        <div class="source-filters" id="source-filters">
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="FUVEST" checked>
+                                <span>FUVEST (USP)</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="FUVEST-ADM">
+                                <span>FUVEST (Administração)</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="UNICAMP">
+                                <span>UNICAMP</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="UFRGS">
+                                <span>UFRGS</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="UFSC">
+                                <span>UFSC</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="TEAP">
+                                <span>TEAP</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="CENEX-UFMG">
+                                <span>CENEX (UFMG)</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Ano das Questões</label>
+                        <div class="year-range">
+                            <div class="year-input">
+                                <span>De</span>
+                                <select id="year-min">
+                                    <option value="2020">2020</option>
+                                    <option value="2021">2021</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025" selected>2025</option>
+                                    <option value="2026">2026</option>
+                                </select>
+                            </div>
+                            <div class="year-input">
+                                <span>Até</span>
+                                <select id="year-max">
+                                    <option value="2020">2020</option>
+                                    <option value="2021">2021</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2026" selected>2026</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-summary" id="filter-summary">
+                        <span id="filter-count">Carregando...</span>
+                    </div>
+                </div>
+
                 <div class="settings-category" data-category="bank">
                     <h3><i data-lucide="database"></i> Banco de Questões</h3>
                     <div class="bank-stats">

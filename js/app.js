@@ -59,6 +59,116 @@ const state = {
   isProcessing: false
 };
 
+// Question Source Metadata Helper
+const SourceMetadata = {
+  // Extract metadata from exam_id (e.g., "2026-2ed" -> {year: 2025, edition: "2a", institution: "FUVEST"})
+  extract(examId, examName, source) {
+    const metadata = {
+      examId,
+      examName,
+      source: source || 'FUVEST',
+      year: null,
+      edition: null,
+      institution: 'FUVEST',
+      fullName: examName || 'FUVEST'
+    };
+    
+    // Parse exam_id like "2026-2ed" or "2025-1ed-manha"
+    if (examId) {
+      const match = examId.match(/(\d{4})-(\d)(?:ed)?(?:-(manha|tarde))?/i);
+      if (match) {
+        const yearPrefix = match[1];
+        // Convert academic year to civil year (e.g., 2026 -> 2025/2026)
+        metadata.year = parseInt(yearPrefix);
+        metadata.edition = match[2];
+        metadata.period = match[3] || null;
+      }
+    }
+    
+    // Parse exam name for more details
+    if (examName) {
+      if (examName.includes('UNICAMP')) metadata.institution = 'UNICAMP';
+      else if (examName.includes('UFRGS')) metadata.institution = 'UFRGS';
+      else if (examName.includes('UFSC')) metadata.institution = 'UFSC';
+      else if (examName.includes('TEAP')) metadata.institution = 'TEAP';
+      else if (examName.includes('CENEX') || examName.includes('UFMG')) metadata.institution = 'CENEX-UFMG';
+      else if (examName.includes('Administração') || examName.includes('ADM')) metadata.institution = 'FUVEST-ADM';
+    }
+    
+    return metadata;
+  },
+  
+  // Format for display
+  format(metadata) {
+    const parts = [];
+    if (metadata.institution) parts.push(metadata.institution);
+    if (metadata.year) parts.push(metadata.year);
+    if (metadata.edition) parts.push(`${metadata.edition}ª ed.`);
+    if (metadata.period) parts.push(metadata.period === 'manha' ? 'Manhã' : 'Tarde');
+    return parts.join(' · ');
+  },
+  
+  // Get badge color based on institution
+  getBadgeColor(institution) {
+    const colors = {
+      'FUVEST': '#e94560',
+      'FUVEST-ADM': '#ff6b6b',
+      'UNICAMP': '#00d9ff',
+      'UFRGS': '#ff9f43',
+      'UFSC': '#10ac84',
+      'TEAP': '#5f27cd',
+      'CENEX-UFMG': '#f368e0'
+    };
+    return colors[institution] || '#666';
+  }
+};
+
+// Filter Settings Manager
+const FilterSettings = {
+  // Default filters
+  defaults: {
+    sources: ['FUVEST'],
+    yearMin: 2024,
+    yearMax: 2026
+  },
+  
+  // Load from localStorage
+  load() {
+    const saved = localStorage.getItem('question_filters');
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    return this.defaults;
+  },
+  
+  // Save to localStorage
+  save(filters) {
+    localStorage.setItem('question_filters', JSON.stringify(filters));
+  },
+  
+  // Filter passages based on settings
+  filter(passages, filters) {
+    return passages.filter(p => {
+      const metadata = SourceMetadata.extract(p.exam_id, p.exam_name, p.source);
+      
+      // Check source
+      if (filters.sources && filters.sources.length > 0) {
+        if (!filters.sources.includes(metadata.institution)) {
+          return false;
+        }
+      }
+      
+      // Check year range
+      if (metadata.year) {
+        if (filters.yearMin && metadata.year < filters.yearMin) return false;
+        if (filters.yearMax && metadata.year > filters.yearMax) return false;
+      }
+      
+      return true;
+    });
+  }
+};
+
 // Initialize application
 document.addEventListener('DOMContentLoaded', async () => {
   try {
@@ -241,11 +351,76 @@ function switchView(viewId) {
   }
 }
 
+// Initialize Filter Settings UI
+function initFilterSettings() {
+  const filters = FilterSettings.load();
+  
+  // Set source checkboxes
+  document.querySelectorAll('#source-filters input[type="checkbox"]').forEach(cb => {
+    cb.checked = filters.sources.includes(cb.value);
+    
+    // Add change listener
+    cb.addEventListener('change', () => {
+      const selectedSources = Array.from(
+        document.querySelectorAll('#source-filters input[type="checkbox"]:checked')
+      ).map(cb => cb.value);
+      
+      filters.sources = selectedSources;
+      FilterSettings.save(filters);
+      updateFilterSummary();
+    });
+  });
+  
+  // Set year range
+  const yearMinEl = document.getElementById('year-min');
+  const yearMaxEl = document.getElementById('year-max');
+  
+  if (yearMinEl) yearMinEl.value = filters.yearMin;
+  if (yearMaxEl) yearMaxEl.value = filters.yearMax;
+  
+  // Add change listeners
+  yearMinEl?.addEventListener('change', (e) => {
+    filters.yearMin = parseInt(e.target.value);
+    FilterSettings.save(filters);
+    updateFilterSummary();
+  });
+  
+  yearMaxEl?.addEventListener('change', (e) => {
+    filters.yearMax = parseInt(e.target.value);
+    FilterSettings.save(filters);
+    updateFilterSummary();
+  });
+  
+  // Initial summary update
+  updateFilterSummary();
+}
+
+// Update filter summary display
+async function updateFilterSummary() {
+  if (!state.db) return;
+  
+  const filters = FilterSettings.load();
+  const tx = state.db.transaction(STORES.QUESTION_BANK, 'readonly');
+  const store = tx.objectStore(STORES.QUESTION_BANK);
+  const passages = await idbGetAll(store);
+  const filtered = FilterSettings.filter(passages, filters);
+  const totalQuestions = filtered.reduce((sum, p) => sum + (p.questions?.length || 0), 0);
+  
+  const summaryEl = document.getElementById('filter-summary');
+  if (summaryEl) {
+    summaryEl.innerHTML = `<span class="filter-count">${filtered.length} passagens · ${totalQuestions} questões disponíveis</span>`;
+  }
+}
+
 // Event Listeners
 function setupEventListeners() {
+  // Initialize filter settings
+  initFilterSettings();
+  
   // Navigation
   document.getElementById('settings-btn')?.addEventListener('click', () => {
     window.location.hash = '#/settings';
+    updateFilterSummary();
   });
   
   document.getElementById('settings-back')?.addEventListener('click', () => {
@@ -349,12 +524,23 @@ async function startStudySession() {
   }
   
   try {
+    // Get filter settings
+    const filters = FilterSettings.load();
+    
     // Get a fresh passage from question bank
     const tx = state.db.transaction(STORES.QUESTION_BANK, 'readonly');
     const store = tx.objectStore(STORES.QUESTION_BANK);
     
     // Get all passages
-    const passages = await idbGetAll(store);
+    let passages = await idbGetAll(store);
+    
+    // Apply source filters
+    passages = FilterSettings.filter(passages, filters);
+    
+    if (passages.length === 0) {
+      showToast('Nenhuma passagem disponível com os filtros atuais. Ajuste as configurações.', 'warning');
+      return;
+    }
     
     // Filter fresh passages (times_served === 0)
     const freshPassages = passages.filter(p => p.times_served === 0);
@@ -364,12 +550,9 @@ async function startStudySession() {
     if (freshPassages.length > 0) {
       // Pick random fresh passage
       selectedPassage = freshPassages[Math.floor(Math.random() * freshPassages.length)];
-    } else if (passages.length > 0) {
-      // Pick random from all (for now)
-      selectedPassage = passages[Math.floor(Math.random() * passages.length)];
     } else {
-      showToast('Nenhuma passagem disponível. Configure uma API key.', 'error');
-      return;
+      // Pick random from filtered passages
+      selectedPassage = passages[Math.floor(Math.random() * passages.length)];
     }
     
     // Update times_served
@@ -402,14 +585,26 @@ function loadPassageIntoUI(passage) {
   const optionsEl = document.getElementById('options-list');
   const progressEl = document.getElementById('study-progress');
   
+  // Get source metadata
+  const metadata = SourceMetadata.extract(passage.exam_id, passage.exam_name, passage.source);
+  const sourceBadge = SourceMetadata.format(metadata);
+  const badgeColor = SourceMetadata.getBadgeColor(metadata.institution);
+  
   if (passageEl) {
-    // Format passage with paragraphs
+    // Format passage with paragraphs and source badge
     const formattedText = passage.text
       .split('\n\n')
       .filter(p => p.trim())
       .map(p => `<p>${p.trim()}</p>`)
       .join('');
-    passageEl.innerHTML = formattedText;
+    
+    // Add source badge at the top
+    const badgeHTML = `<div class="source-badge" style="background: ${badgeColor}20; color: ${badgeColor}; border: 1px solid ${badgeColor}40; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; margin-bottom: 12px; display: inline-block; font-weight: 500;">
+      <i data-lucide="graduation-cap" style="width: 12px; height: 12px; vertical-align: middle; margin-right: 4px;"></i>
+      ${sourceBadge}
+    </div>`;
+    
+    passageEl.innerHTML = badgeHTML + formattedText;
     
     // Reset reading progress
     const progressBar = document.getElementById('reading-progress');
