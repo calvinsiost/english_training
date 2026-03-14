@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="css/base.css?v=3">
     <link rel="stylesheet" href="css/components.css?v=3">
     <link rel="stylesheet" href="css/study-layout.css?v=3">
+    <link rel="stylesheet" href="css/srs.css?v=1">
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
@@ -66,9 +67,31 @@
                     </div>
                 </div>
 
+                <!-- SRS Status Card -->
+                <div class="srs-status-card" id="srs-status" style="display: none;">
+                    <div class="srs-status-header">
+                        <i data-lucide="brain"></i>
+                        <span>Revisão Espaçada</span>
+                    </div>
+                    <div class="srs-status-stats">
+                        <div class="srs-stat">
+                            <span class="srs-stat-value" id="srs-due">0</span>
+                            <span class="srs-stat-label">para revisar</span>
+                        </div>
+                        <div class="srs-stat">
+                            <span class="srs-stat-value" id="srs-new">0</span>
+                            <span class="srs-stat-label">novos</span>
+                        </div>
+                        <div class="srs-stat">
+                            <span class="srs-stat-value" id="srs-total">0</span>
+                            <span class="srs-stat-label">total</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Action Buttons -->
                 <div class="action-grid">
-                    <button id="btn-review" class="action-btn action-btn--primary" disabled title="Responda questões para desbloquear revisões">
+                    <button id="btn-review" class="action-btn action-btn--primary" title="Revisar questões agendadas">
                         <span class="action-icon"><i data-lucide="refresh-cw"></i></span>
                         <span class="action-text">Revisões</span>
                         <span id="review-count" class="action-badge">0</span>
@@ -196,6 +219,43 @@
                             <span class="shortcut"><kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> <kbd>D</kbd> <kbd>E</kbd> Responder</span>
                             <span class="shortcut"><kbd>1-4</kbd> Confiança</span>
                             <span class="shortcut"><kbd>Enter</kbd> Próxima</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SRS Review View -->
+            <section id="srs-review" class="view">
+                <div class="srs-review-container">
+                    <div class="srs-review-header">
+                        <button id="srs-back" class="btn-back"><i data-lucide="arrow-left"></i> Voltar</button>
+                        <h2><i data-lucide="brain"></i> Revisão Espaçada</h2>
+                        <span class="srs-review-progress" id="srs-progress">Card 1 de 5</span>
+                    </div>
+                    
+                    <div id="srs-card-container">
+                        <!-- Card content loaded dynamically -->
+                    </div>
+                    
+                    <div id="srs-rating-section" style="display: none;">
+                        <p style="text-align: center; color: var(--color-text-muted); margin-bottom: 12px; font-size: 13px;">Como foi sua resposta?</p>
+                        <div class="srs-rating-container">
+                            <button class="srs-rating-btn again" data-rating="0">
+                                <span class="srs-rating-label">De Novo</span>
+                                <span class="srs-rating-hint">< 1 min</span>
+                            </button>
+                            <button class="srs-rating-btn hard" data-rating="2">
+                                <span class="srs-rating-label">Difícil</span>
+                                <span class="srs-rating-hint">2 dias</span>
+                            </button>
+                            <button class="srs-rating-btn good" data-rating="3">
+                                <span class="srs-rating-label">Bom</span>
+                                <span class="srs-rating-hint">3 dias</span>
+                            </button>
+                            <button class="srs-rating-btn easy" data-rating="5">
+                                <span class="srs-rating-label">Fácil</span>
+                                <span class="srs-rating-hint">5 dias</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -513,6 +573,7 @@
     <!-- App Scripts -->
     <script type="module" src="js/provider-settings.js"></script>
     <script type="module" src="js/help-features.js"></script>
+    <script type="module" src="js/srs-engine.js"></script>
     <script type="module" src="js/app.js"></script>
 </body>
 </html>

@@ -1,0 +1,284 @@
+/* SRS (Spaced Repetition) Styles */
+
+/* SRS Status Card */
+.srs-status-card {
+  background: linear-gradient(135deg, rgba(78, 173, 138, 0.15), rgba(78, 173, 138, 0.05));
+  border: 1px solid rgba(78, 173, 138, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  animation: srs-pulse 2s ease-in-out infinite;
+}
+
+@keyframes srs-pulse {
+  0%, 100% { border-color: rgba(78, 173, 138, 0.3); }
+  50% { border-color: rgba(78, 173, 138, 0.6); }
+}
+
+.srs-status-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-success);
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.srs-status-header i {
+  width: 18px;
+  height: 18px;
+}
+
+.srs-status-stats {
+  display: flex;
+  gap: 24px;
+}
+
+.srs-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.srs-stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+
+.srs-stat-label {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* SRS Review View */
+.srs-review-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.srs-review-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.srs-review-header h2 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.srs-review-progress {
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.srs-question-card {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.srs-question-context {
+  background: var(--color-bg-tertiary);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.srs-question-text {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.srs-answer-options {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.srs-answer-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--color-bg-tertiary);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.srs-answer-btn:hover {
+  border-color: var(--color-accent);
+  background: rgba(78, 173, 138, 0.1);
+}
+
+.srs-answer-btn.selected {
+  border-color: var(--color-accent);
+  background: rgba(78, 173, 138, 0.15);
+}
+
+.srs-answer-btn.correct {
+  border-color: var(--color-success);
+  background: rgba(78, 173, 138, 0.2);
+}
+
+.srs-answer-btn.incorrect {
+  border-color: var(--color-error);
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.srs-answer-label {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-primary);
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.srs-answer-text {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* SRS Rating Buttons */
+.srs-rating-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.srs-rating-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  background: var(--color-bg-tertiary);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.srs-rating-btn:hover {
+  transform: translateY(-2px);
+}
+
+.srs-rating-btn.again {
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.srs-rating-btn.again:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.srs-rating-btn.hard {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+.srs-rating-btn.hard:hover {
+  background: rgba(245, 158, 11, 0.15);
+}
+
+.srs-rating-btn.good {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.srs-rating-btn.good:hover {
+  background: rgba(78, 173, 138, 0.15);
+}
+
+.srs-rating-btn.easy {
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.srs-rating-btn.easy:hover {
+  background: rgba(78, 173, 138, 0.2);
+}
+
+.srs-rating-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.srs-rating-hint {
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+/* SRS Complete Screen */
+.srs-complete {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.srs-complete-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+  color: var(--color-success);
+}
+
+.srs-complete h3 {
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.srs-complete p {
+  color: var(--color-text-muted);
+  margin-bottom: 24px;
+}
+
+.srs-complete-stats {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+
+/* Empty SRS State */
+.srs-empty {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.srs-empty-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  color: var(--color-text-muted);
+}
+
+.srs-empty h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.srs-empty p {
+  color: var(--color-text-muted);
+  font-size: 14px;
+}

@@ -49,6 +49,14 @@ function idbGetAll(store) {
   });
 }
 
+function idbDelete(store, key) {
+  return new Promise((resolve, reject) => {
+    const request = store.delete(key);
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+}
+
 // Global state
 const state = window.state = {
   db: null,
@@ -174,6 +182,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     // Initialize IndexedDB
     await initDatabase();
+    
+    // Initialize SRS Manager
+    if (typeof SRSManager !== 'undefined') {
+      window.srsManager = new SRSManager(state.db);
+      await window.srsManager.init();
+    }
     
     // Initialize question bank from JSON
     await initializeQuestionBank();
@@ -534,8 +548,32 @@ async function updateDashboard() {
     if (bankOfficialEl) bankOfficialEl.textContent = officialCount;
     
     // Check for review count (SRS cards due)
-    // TODO: Implement SRS review count
-    const reviewCount = 0;
+    let reviewCount = 0;
+    try {
+      if (window.srsManager) {
+        const dueCards = await window.srsManager.getDueCards();
+        reviewCount = dueCards.length;
+        
+        // Update SRS status card
+        const srsStatus = document.getElementById('srs-status');
+        const srsDue = document.getElementById('srs-due');
+        const srsNew = document.getElementById('srs-new');
+        const srsTotal = document.getElementById('srs-total');
+        
+        if (srsStatus && reviewCount > 0) {
+          srsStatus.style.display = 'block';
+          const stats = await window.srsManager.getStats();
+          if (srsDue) srsDue.textContent = reviewCount;
+          if (srsNew) srsNew.textContent = stats.new;
+          if (srsTotal) srsTotal.textContent = stats.total;
+        } else if (srsStatus) {
+          srsStatus.style.display = 'none';
+        }
+      }
+    } catch (e) {
+      console.error('SRS stats error:', e);
+    }
+    
     const reviewBtn = document.getElementById('btn-review');
     const reviewBadge = document.getElementById('review-count');
     
@@ -790,6 +828,17 @@ async function saveAttempt(question, answer, confidence, isCorrect) {
       confidence: confidence,
       created_at: new Date().toISOString()
     });
+    
+    // Add to SRS if incorrect OR if confidence was low
+    if (!isCorrect || confidence < 2) {
+      if (window.srsManager) {
+        await window.srsManager.scheduleQuestion(question.id, {
+          question_text: question.question_text,
+          passage_id: state.currentPassage.id,
+          passage_title: state.currentPassage.exam_name
+        });
+      }
+    }
   } catch (error) {
     console.error('Save attempt error:', error);
   }
