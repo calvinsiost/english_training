@@ -1114,3 +1114,63 @@
     transform: translateY(0);
   }
 }
+
+/* CORS Notice */
+.cors-notice {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: rgba(78, 173, 138, 0.1);
+  border: 1px solid rgba(78, 173, 138, 0.3);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-sm);
+}
+
+.cors-notice i {
+  width: 20px;
+  height: 20px;
+  color: var(--color-success);
+  flex-shrink: 0;
+}
+
+.cors-notice div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.cors-notice strong {
+  color: var(--color-success);
+}
+
+.cors-notice span {
+  color: var(--color-text-secondary);
+}
+
+.cors-notice.hidden {
+  display: none;
+}
+
+/* Provider card CORS-friendly indicator */
+.provider-card.cors-friendly {
+  border-color: rgba(78, 173, 138, 0.5);
+  position: relative;
+}
+
+.provider-card.cors-friendly::after {
+  content: '✓ GitHub Pages';
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--color-success);
+  color: white;
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.provider-card.cors-friendly .provider-name {
+  color: var(--color-success);
+}

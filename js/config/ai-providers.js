@@ -79,7 +79,7 @@ export const PROVIDERS = {
   },
   openrouter: {
     id: 'openrouter',
-    name: 'OpenRouter',
+    name: 'OpenRouter ✓ GitHub Pages',
     icon: 'plug',
     website: 'https://openrouter.ai/keys',
     defaultModel: 'openai/gpt-4o-mini',
@@ -99,7 +99,9 @@ export const PROVIDERS = {
     baseUrl: 'https://openrouter.ai/api/v1/chat/completions',
     keyPrefix: 'sk-or',
     keyPlaceholder: 'sk-or-...',
-    validateKey: (key) => key.startsWith('sk-or') && key.length > 20
+    validateKey: (key) => key.startsWith('sk-or') && key.length > 20,
+    corsFriendly: true,
+    description: 'Funciona no GitHub Pages! Acesso a GPT, Claude, Gemini e mais.'
   },
   local: {
     id: 'local',

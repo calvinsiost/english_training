@@ -11,11 +11,20 @@ export function initProviderSettings(showToast) {
   const customEndpoint = document.getElementById('custom-endpoint');
   const providerLink = document.getElementById('provider-link');
   const connectionStatus = document.getElementById('connection-status');
+  const corsNotice = document.getElementById('cors-notice');
   
   // Check if elements exist
   if (!providerGrid) {
     console.error('[ProviderSettings] provider-grid element not found');
     return;
+  }
+  
+  // Check if we're on GitHub Pages (CORS restricted)
+  const isGitHubPages = window.location.hostname.includes('github.io');
+  
+  // Show/hide CORS notice
+  if (corsNotice) {
+    corsNotice.classList.toggle('hidden', !isGitHubPages);
   }
   
   let selectedProvider = AIConfig.getSelectedProvider();
@@ -29,6 +38,9 @@ export function initProviderSettings(showToast) {
     Object.values(PROVIDERS).forEach(provider => {
       const card = document.createElement('div');
       card.className = 'provider-card';
+      if (provider.corsFriendly) {
+        card.classList.add('cors-friendly');
+      }
       card.dataset.provider = provider.id;
       
       const hasKey = AIConfig.hasValidKey(provider.id);
@@ -36,10 +48,13 @@ export function initProviderSettings(showToast) {
       
       if (isSelected) card.classList.add('selected');
       
+      const statusText = hasKey ? '✓ Configurado' : 
+                        (isGitHubPages && !provider.corsFriendly ? '⚠️ Apenas localhost' : 'Não configurado');
+      
       card.innerHTML = `
         <span class="provider-icon"><i data-lucide="${provider.icon}"></i></span>
         <span class="provider-name">${provider.name}</span>
-        <span class="provider-status">${hasKey ? '✓ Configurado' : 'Não configurado'}</span>
+        <span class="provider-status">${statusText}</span>
       `;
       
       card.addEventListener('click', () => selectProvider(provider.id));
@@ -108,7 +123,20 @@ export function initProviderSettings(showToast) {
       providerLink.style.display = 'none';
     }
     
-    connectionStatus.style.display = 'none';
+    // Show CORS warning for non-friendly providers on GitHub Pages
+    if (isGitHubPages && !config.corsFriendly && config.requireKey !== false) {
+      connectionStatus.style.display = 'block';
+      connectionStatus.className = 'connection-status warning';
+      connectionStatus.innerHTML = `
+        <strong>⚠️ Teste indisponível no GitHub Pages</strong><br>
+        <small>Este provedor bloqueia requisições de sites hospedados (CORS). 
+        A API ainda funcionará se sua key for válida, mas o teste de conexão só funciona no localhost.
+        <br><br>
+        <strong>Dica:</strong> Use <strong>OpenRouter</strong> para testar conexões no GitHub Pages.</small>
+      `;
+    } else {
+      connectionStatus.style.display = 'none';
+    }
   }
   
   // Update model info
