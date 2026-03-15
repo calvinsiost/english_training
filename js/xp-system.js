@@ -122,6 +122,11 @@ class XPSystem {
       console.error('[XPSystem] Save error:', e);
     }
 
+    // Trigger cloud sync (debounced)
+    if (window.syncManager) {
+      window.syncManager._scheduleSyncToCloud();
+    }
+
     const leveledUp = newLevel > oldLevel;
 
     // Show UI feedback

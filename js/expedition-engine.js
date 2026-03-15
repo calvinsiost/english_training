@@ -194,6 +194,11 @@ class ExpeditionEngine {
       detail: { runId: summary.runId, status, summary }
     }));
 
+    // Trigger cloud sync (debounced)
+    if (window.syncManager) {
+      window.syncManager._scheduleSyncToCloud();
+    }
+
     return summary;
   }
 

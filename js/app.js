@@ -236,6 +236,68 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.expeditionUI = new ExpeditionUI(window.expeditionEngine);
     }
 
+    // Initialize Auth, Sync, Social (graceful degradation if SDK unavailable)
+    if (typeof initSupabase === 'function') {
+      const sbResult = initSupabase();
+      if (sbResult.ok) {
+        const supabaseClient = sbResult.client;
+
+        if (typeof AuthManager !== 'undefined') {
+          window.authManager = new AuthManager(supabaseClient);
+          await window.authManager.init();
+
+          if (typeof AuthUI !== 'undefined') {
+            window.authUI = new AuthUI(window.authManager);
+            window.authUI.updateHeaderState();
+
+            // Listen for auth state changes
+            window.authManager.onAuthChange(async (event, session) => {
+              window.authUI.updateHeaderState();
+
+              if (event === 'SIGNED_IN' && window.syncManager) {
+                // Check if username needs setup (Google OAuth)
+                if (window.authManager.needsUsernameSetup() && window.authUI) {
+                  await window.authUI.showUsernamePrompt();
+                }
+
+                // Check for local data migration
+                const hasLocalData = await _checkLocalData();
+                if (hasLocalData) {
+                  const stats = await _getLocalStats();
+                  const shouldMigrate = await window.authUI.showMigrationPrompt(stats);
+                  if (shouldMigrate) {
+                    await window.syncManager.migrateLocalData();
+                  }
+                }
+
+                await window.syncManager.fullSync();
+              }
+            });
+
+            // Restore route after OAuth redirect
+            const savedRoute = localStorage.getItem('auth_redirect_route');
+            if (savedRoute) {
+              localStorage.removeItem('auth_redirect_route');
+              window.location.hash = savedRoute;
+            }
+          }
+        }
+
+        if (typeof SyncManager !== 'undefined') {
+          window.syncManager = new SyncManager(supabaseClient, state.db, window.authManager);
+          await window.syncManager.init();
+        }
+
+        if (typeof SocialManager !== 'undefined') {
+          window.socialManager = new SocialManager(supabaseClient, window.authManager);
+        }
+
+        if (typeof SocialUI !== 'undefined' && window.socialManager) {
+          window.socialUI = new SocialUI(window.socialManager, window.authManager);
+        }
+      }
+    }
+
     // Initialize question bank from JSON
     await initializeQuestionBank();
 
@@ -273,6 +335,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     showToast('Erro ao inicializar. Recarregue a página.', 'error');
   }
 });
+
+// Auth helpers: check if user has local data worth migrating
+async function _checkLocalData() {
+  try {
+    const tx = state.db.transaction('meta', 'readonly');
+    const store = tx.objectStore('meta');
+    const profile = await idbGet(store, 'xp_profile');
+    return profile && profile.totalXP > 0;
+  } catch { return false; }
+}
+
+async function _getLocalStats() {
+  try {
+    const tx = state.db.transaction('meta', 'readonly');
+    const store = tx.objectStore('meta');
+    const profile = await idbGet(store, 'xp_profile');
+    return { level: profile?.level || 0, totalXP: profile?.totalXP || 0 };
+  } catch { return { level: 0, totalXP: 0 }; }
+}
 
 // IndexedDB Initialization
 async function initDatabase() {
@@ -899,7 +980,8 @@ function handleRoute() {
     '#/analytics': 'analytics',
     '#/sessions': 'sessions',
     '#/settings': 'settings',
-    '#/expedition': 'expedition'
+    '#/expedition': 'expedition',
+    '#/social': 'social'
   };
 
   const viewId = viewMap[hash] || 'dashboard';
@@ -939,7 +1021,7 @@ function switchView(viewId) {
   }
 
   // Update bottom nav active state (map sub-views to nearest nav item)
-  const navMap = { review: 'dashboard', 'srs-review': 'dashboard', sessions: 'dashboard', exam: 'study', 'flashcard-list': 'dashboard', expedition: 'dashboard' };
+  const navMap = { review: 'dashboard', 'srs-review': 'dashboard', sessions: 'dashboard', exam: 'study', 'flashcard-list': 'dashboard', expedition: 'dashboard', social: 'social' };
   const navViewId = navMap[viewId] || viewId;
   document.querySelectorAll('.nav-item').forEach(item => {
     item.classList.toggle('active', item.dataset.view === navViewId);
@@ -978,6 +1060,13 @@ function switchView(viewId) {
   if (viewId === 'expedition') {
     if (window.expeditionUI) {
       window.expeditionUI.render();
+    }
+  }
+
+  // Render social/ranking view
+  if (viewId === 'social') {
+    if (window.socialUI) {
+      window.socialUI.render('social-content');
     }
   }
 }

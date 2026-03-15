@@ -158,6 +158,11 @@ class AchievementsManager {
       id: achievementId,
       unlockedAt: new Date().toISOString()
     });
+
+    // Trigger cloud sync (debounced)
+    if (window.syncManager) {
+      window.syncManager._scheduleSyncToCloud();
+    }
   }
 
   async getUnlockedAchievements() {
