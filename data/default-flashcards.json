@@ -1,0 +1,1212 @@
+{
+  "schema_version": "1.2",
+  "generated_at": "2026-03-14",
+  "total_cards": 150,
+  "metadata": {
+    "source": "curated",
+    "target_exam": "FUVEST",
+    "language_pair": "en-pt"
+  },
+  "cards": [
+    {
+      "word": "actually",
+      "translation": "na verdade, realmente",
+      "context": "She actually enjoyed the lecture on climate change.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "pretend",
+      "translation": "fingir",
+      "context": "Don't pretend you didn't see the warning signs.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "realize",
+      "translation": "perceber, dar-se conta",
+      "context": "I didn't realize how late it was until I looked at my phone.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "fabric",
+      "translation": "tecido",
+      "context": "The fabric of her dress was made from organic cotton.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "library",
+      "translation": "biblioteca",
+      "context": "The university library has over two million volumes.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "college",
+      "translation": "faculdade",
+      "context": "After college, she decided to pursue a career in journalism.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "sensible",
+      "translation": "sensato, prudente",
+      "context": "It would be sensible to save money before traveling abroad.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "attend",
+      "translation": "comparecer, assistir a",
+      "context": "Over 500 students attended the opening ceremony.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "eventually",
+      "translation": "finalmente, por fim",
+      "context": "He eventually found a job after months of searching.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "sympathetic",
+      "translation": "compreensivo, solidario",
+      "context": "The teacher was sympathetic to the student's difficulties.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "costume",
+      "translation": "fantasia (roupa)",
+      "context": "Children wore costumes for the Halloween party.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "push",
+      "translation": "empurrar",
+      "context": "Please push the door to open it.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "parents",
+      "translation": "pais (mae e pai)",
+      "context": "Her parents moved to the countryside after retirement.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "lunch",
+      "translation": "almoco",
+      "context": "We had lunch at a small restaurant near the office.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "intend",
+      "translation": "ter a intencao, pretender",
+      "context": "I intend to finish this project by the end of the week.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "prejudice",
+      "translation": "preconceito",
+      "context": "Prejudice against minorities remains a serious social issue.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "comprehensive",
+      "translation": "abrangente, completo",
+      "context": "The report provides a comprehensive analysis of the data.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "particular",
+      "translation": "especifico, determinado",
+      "context": "Is there a particular reason you chose this university?",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "novel",
+      "translation": "romance (livro)",
+      "context": "Her latest novel became an international bestseller.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "data",
+      "translation": "dados, informacoes",
+      "context": "The data suggests a significant increase in global temperatures.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "resume",
+      "translation": "retomar, continuar",
+      "context": "Classes will resume after the winter break.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "assume",
+      "translation": "supor, presumir",
+      "context": "Don't assume that everyone agrees with your opinion.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "policy",
+      "translation": "politica (de empresa/governo), norma",
+      "context": "The company's privacy policy was updated last month.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "ordinary",
+      "translation": "comum, normal",
+      "context": "It was just an ordinary day until the storm hit.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "expert",
+      "translation": "especialista, perito",
+      "context": "She is an expert in artificial intelligence and machine learning.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "journal",
+      "translation": "diario, periodico cientifico",
+      "context": "The study was published in a prestigious medical journal.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "support",
+      "translation": "apoiar, dar suporte",
+      "context": "The government pledged to support small businesses.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "lecture",
+      "translation": "palestra, aula expositiva",
+      "context": "The professor gave a fascinating lecture on quantum physics.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "domestic",
+      "translation": "interno, do pais, domestico",
+      "context": "Domestic flights are cheaper than international ones.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "ultimately",
+      "translation": "no final das contas, em ultima analise",
+      "context": "Ultimately, the decision rests with the board of directors.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "give up",
+      "translation": "desistir",
+      "context": "She refused to give up despite the challenges she faced.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "find out",
+      "translation": "descobrir",
+      "context": "We need to find out what caused the power outage.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "look for",
+      "translation": "procurar",
+      "context": "I've been looking for my keys all morning.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "turn off",
+      "translation": "desligar",
+      "context": "Please turn off the lights when you leave the room.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "come up with",
+      "translation": "inventar, criar, ter uma ideia",
+      "context": "The team came up with an innovative solution to the problem.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "figure out",
+      "translation": "entender, resolver, descobrir",
+      "context": "It took me hours to figure out how the software works.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "look forward to",
+      "translation": "aguardar ansiosamente",
+      "context": "I look forward to hearing from you soon.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "put off",
+      "translation": "adiar, postergar",
+      "context": "We had to put off the meeting until next week.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "carry out",
+      "translation": "realizar, executar",
+      "context": "Scientists carried out extensive research on the vaccine.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "bring about",
+      "translation": "causar, provocar",
+      "context": "Technology has brought about significant changes in education.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "break down",
+      "translation": "quebrar, decompor, falhar",
+      "context": "The car broke down on the highway during rush hour.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "set up",
+      "translation": "configurar, estabelecer, montar",
+      "context": "They set up a committee to investigate the incident.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "turn out",
+      "translation": "acabar sendo, resultar",
+      "context": "The experiment turned out to be more successful than expected.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "point out",
+      "translation": "apontar, indicar, chamar atencao",
+      "context": "The author points out that inequality has been rising steadily.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "make up",
+      "translation": "inventar, compensar, compor",
+      "context": "Women make up nearly half of the workforce in this country.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "give in",
+      "translation": "ceder, render-se",
+      "context": "After weeks of negotiation, the company finally gave in.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "stand out",
+      "translation": "destacar-se, sobressair",
+      "context": "Her essay stood out among hundreds of applications.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "run out of",
+      "translation": "ficar sem, esgotar",
+      "context": "We're running out of time to submit the proposal.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "take over",
+      "translation": "assumir o controle",
+      "context": "A larger corporation took over the struggling company.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "look into",
+      "translation": "investigar, examinar",
+      "context": "The police are looking into the cause of the accident.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "deal with",
+      "translation": "lidar com, tratar de",
+      "context": "The article deals with the impact of social media on youth.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "get along with",
+      "translation": "dar-se bem com",
+      "context": "She gets along with all her colleagues at the office.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "put up with",
+      "translation": "tolerar, aguentar",
+      "context": "I can't put up with this noise any longer.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "come across",
+      "translation": "encontrar por acaso, deparar-se com",
+      "context": "I came across an interesting article about renewable energy.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "break out",
+      "translation": "eclodir, surgir repentinamente",
+      "context": "A fire broke out in the building late at night.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "account for",
+      "translation": "representar, explicar, ser responsavel por",
+      "context": "Renewable sources account for 30% of the country's energy.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "rule out",
+      "translation": "descartar, excluir",
+      "context": "Doctors have ruled out the possibility of a serious illness.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "draw on",
+      "translation": "basear-se em, recorrer a",
+      "context": "The author draws on personal experience to tell the story.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "bring up",
+      "translation": "mencionar, levantar (assunto), criar (filhos)",
+      "context": "She brought up an important point during the discussion.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "lay off",
+      "translation": "demitir, dispensar",
+      "context": "The factory laid off hundreds of workers due to automation.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "threshold",
+      "translation": "limiar, patamar critico",
+      "context": "Once the density of people crosses a critical threshold, stampedes become possible.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "onset",
+      "translation": "inicio, aparecimento, surgimento",
+      "context": "For climate scientists, living through the onset of rapid global warming has been disturbing.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "reshaping",
+      "translation": "remodelar, reformular",
+      "context": "Rising temperatures and ecological destruction are reshaping the way the planet sounds.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "footprint",
+      "translation": "pegada, marca, impacto",
+      "context": "Researchers strapped recording devices to document the sonic footprint of lion hunts.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "anticipate",
+      "translation": "prever, antecipar, esperar",
+      "context": "The medical community largely anticipated that combining doctors and A.I. would be the best of both worlds.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "deliberate",
+      "translation": "deliberado, intencional, proposital",
+      "context": "The solution is a deliberate division of labor instead of forcing both to review every case.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "torrent",
+      "translation": "torrente, fluxo intenso",
+      "context": "There seems to be just one way left to even start to slow down that torrent of carbon.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "curator",
+      "translation": "curador, conservador de museu",
+      "context": "The curator of the exhibit spoke to the Gazette about the history of mapmaking.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "empowering",
+      "translation": "capacitador, que da poder e autonomia",
+      "context": "Realizing the potential of fostering intimate relationships can be empowering.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "eerie",
+      "translation": "sinistro, estranho, perturbador",
+      "context": "What do twins tell us about who we are that produce such eerie out-of-body feelings?",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "incidental",
+      "translation": "acidental, acessorio, secundario",
+      "context": "Their presence has never been incidental, never benign in cultural history.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "stave off",
+      "translation": "prevenir, evitar, afastar",
+      "context": "Can learning a new language stave off dementia in older adults?",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "yearning",
+      "translation": "anseio, desejo profundo",
+      "context": "Sueur acknowledges something possibly selfish in his yearning for silence.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "proclaim",
+      "translation": "proclamar, declarar, anunciar",
+      "context": "The frog proclaims its romantic longings to the stars with a distinctive call.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "underperforming",
+      "translation": "com desempenho inferior ao esperado",
+      "context": "A.I. is outperforming doctors, even when they use it as a tool they end up underperforming.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "undervalue",
+      "translation": "subestimar, nao dar valor suficiente",
+      "context": "Radiologists often undervalued the A.I. input compared to their own judgment.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "outperform",
+      "translation": "superar em desempenho, ter resultado melhor",
+      "context": "In study after study, A.I. alone outperforms the combination of human and machine.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "overextended",
+      "translation": "sobrecarregado, esticado demais",
+      "context": "You find yourself choosing between a whittled-down social circle or becoming overextended.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "shrunk",
+      "translation": "encolhido, diminuido",
+      "context": "People may feel renewed due to the realization that their friend group has shrunk to an all-time minimum.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "anomaly",
+      "translation": "anomalia, desvio do normal",
+      "context": "The 2023 temperature anomaly has come out of the blue, shocking climate scientists.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "bewildering",
+      "translation": "desconcertante, confuso, perturbador",
+      "context": "Life increasingly seems like a series of bewildering blows for those studying climate.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "erratic",
+      "translation": "erratico, irregular, imprevisivel",
+      "context": "The dynamics seem to be erratic, turbulent when you look at the video footage.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "undergird",
+      "translation": "sustentar, apoiar, fundamentar",
+      "context": "There is a Western tradition of mathematical mapping that undergirds digital wayfinding.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "jettison",
+      "translation": "descartar, jogar fora, abandonar",
+      "context": "The rise of EVs is giving the auto industry a chance to jettison ideas of the past.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "imbued",
+      "translation": "imbuido, permeado, cheio de",
+      "context": "Their presence has been imbued with meaning throughout human history.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "byzantine",
+      "translation": "bizantino, excessivamente complexo",
+      "context": "The makers wrestled with the byzantine process surrounding video game age classifications.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "oscillation",
+      "translation": "oscilacao, movimento ciclico",
+      "context": "The researchers detected circular oscillations within the sea of people at the event.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "dwindling",
+      "translation": "diminuindo, minguando, declinando",
+      "context": "The dwindling number of species raises concerns about biodiversity worldwide.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "uncharted",
+      "translation": "inexplorado, desconhecido, sem mapa",
+      "context": "Scientists found themselves in uncharted territory as temperatures kept breaking records.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "whittled-down",
+      "translation": "reduzido gradualmente, diminuido aos poucos",
+      "context": "You find yourself choosing between a whittled-down social circle or becoming overextended.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "alleged",
+      "translation": "suposto, alegado",
+      "context": "The alleged benefits of the new policy remain unproven.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "argument",
+      "translation": "argumento, discussao (nao briga fisica)",
+      "context": "The author presents a compelling argument against deforestation.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "assignment",
+      "translation": "tarefa, trabalho escolar",
+      "context": "Students were given an assignment on climate change.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "balcony",
+      "translation": "sacada, varanda (nao balcao)",
+      "context": "She watched the sunset from her balcony overlooking the park.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "cargo",
+      "translation": "carga, mercadoria (nao cargo/emprego)",
+      "context": "The ship was loaded with cargo destined for Europe.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "commodity",
+      "translation": "mercadoria, bem de consumo",
+      "context": "Water is becoming an increasingly valuable commodity worldwide.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "contest",
+      "translation": "competicao, concurso (nao contestar)",
+      "context": "She won the essay contest organized by the university.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "deception",
+      "translation": "engano, fraude (nao decepcao)",
+      "context": "The study revealed widespread deception in advertising practices.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "disgrace",
+      "translation": "desonra, vergonha (nao desgraca)",
+      "context": "The scandal was a disgrace to the entire institution.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "enroll",
+      "translation": "matricular-se, inscrever-se",
+      "context": "Over 5,000 students enrolled in the online course last semester.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "exquisite",
+      "translation": "requintado, primoroso (nao esquisito)",
+      "context": "The museum displayed exquisite artifacts from ancient civilizations.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "hazard",
+      "translation": "perigo, risco (nao azar)",
+      "context": "Air pollution poses a serious health hazard to urban populations.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "injury",
+      "translation": "lesao, ferimento (nao injuria)",
+      "context": "The number of workplace injuries has decreased significantly this decade.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "mayor",
+      "translation": "prefeito (nao maior)",
+      "context": "The mayor announced a new plan to reduce carbon emissions by 2030.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "notorious",
+      "translation": "famoso por algo ruim (nao notorio positivo)",
+      "context": "The city is notorious for its heavy traffic congestion.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "preservative",
+      "translation": "conservante (nao preservativo)",
+      "context": "Many consumers prefer foods without artificial preservatives.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "record",
+      "translation": "registro, recorde, gravar (nao recordar)",
+      "context": "Scientists recorded the highest temperatures in human history.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "retire",
+      "translation": "aposentar-se (nao retirar)",
+      "context": "Many workers cannot afford to retire before the age of 65.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "scholar",
+      "translation": "estudioso, academico (nao escolar)",
+      "context": "The scholar published groundbreaking research on language acquisition.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "tax",
+      "translation": "imposto (nao taxa generica)",
+      "context": "The government proposed a new tax on carbon emissions.",
+      "deck": "Falsos Cognatos",
+      "category": "false_cognate",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "drop out",
+      "translation": "abandonar (escola/curso), desistir",
+      "context": "Many students drop out of college due to financial difficulties.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "hold on",
+      "translation": "esperar, aguardar, segurar",
+      "context": "Hold on a moment while I check the latest data.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "keep up with",
+      "translation": "acompanhar, manter o ritmo",
+      "context": "It's hard to keep up with the pace of technological change.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "pass away",
+      "translation": "falecer, morrer (eufemismo)",
+      "context": "The renowned author passed away at the age of 92.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "pick up",
+      "translation": "pegar, buscar, aprender informalmente",
+      "context": "Children pick up new languages faster than adults.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "pull off",
+      "translation": "conseguir realizar algo dificil",
+      "context": "The team managed to pull off an impressive comeback in the final quarter.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "shut down",
+      "translation": "fechar, encerrar, desligar",
+      "context": "The factory was shut down due to environmental violations.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "sort out",
+      "translation": "resolver, organizar",
+      "context": "We need to sort out this issue before the deadline.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "sum up",
+      "translation": "resumir, sintetizar",
+      "context": "To sum up, the evidence suggests a clear link between diet and health.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "take on",
+      "translation": "assumir, aceitar (tarefa/desafio)",
+      "context": "She decided to take on the challenge of running a marathon.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "turn down",
+      "translation": "rejeitar, recusar",
+      "context": "He turned down the job offer because the salary was too low.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "wear off",
+      "translation": "passar (efeito), diminuir gradualmente",
+      "context": "The novelty of social media tends to wear off after a while.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "wipe out",
+      "translation": "eliminar, destruir completamente",
+      "context": "The disease nearly wiped out the entire population of the island.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "back up",
+      "translation": "apoiar, dar suporte, fazer backup",
+      "context": "The claims are backed up by extensive scientific research.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "call off",
+      "translation": "cancelar",
+      "context": "The outdoor event was called off due to severe weather conditions.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "cut back on",
+      "translation": "reduzir, diminuir",
+      "context": "Governments need to cut back on fossil fuel subsidies.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "end up",
+      "translation": "acabar, terminar (resultado inesperado)",
+      "context": "Many graduates end up working in fields unrelated to their degree.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "beginner"
+    },
+    {
+      "word": "go through",
+      "translation": "passar por, experimentar",
+      "context": "The country is going through a period of economic uncertainty.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "phase out",
+      "translation": "eliminar gradualmente, descontinuar",
+      "context": "Several countries plan to phase out coal-fired power plants by 2035.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "stem from",
+      "translation": "originar-se de, derivar de",
+      "context": "Many environmental problems stem from unsustainable consumption patterns.",
+      "deck": "Phrasal Verbs",
+      "category": "phrasal_verb",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "compelling",
+      "translation": "convincente, irresistivel",
+      "context": "The documentary presents compelling evidence of ocean pollution.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "contentious",
+      "translation": "controverso, polemico",
+      "context": "The use of artificial intelligence in hiring remains a contentious issue.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "detrimental",
+      "translation": "prejudicial, nocivo",
+      "context": "Excessive screen time can be detrimental to children's development.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "elusive",
+      "translation": "esquivo, dificil de encontrar/definir",
+      "context": "A lasting solution to inequality remains elusive despite decades of effort.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "foster",
+      "translation": "fomentar, promover, cultivar",
+      "context": "Education should foster critical thinking and creativity.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "hinder",
+      "translation": "dificultar, impedir, atrapalhar",
+      "context": "Lack of funding continues to hinder scientific progress in developing nations.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "misconception",
+      "translation": "concepcao errada, equivoco",
+      "context": "There is a common misconception that vaccines cause autism.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "nuanced",
+      "translation": "sutil, cheio de nuances",
+      "context": "The debate requires a more nuanced understanding of the cultural context.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "pervasive",
+      "translation": "generalizado, onipresente, difuso",
+      "context": "Social media's influence has become pervasive in modern society.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "plausible",
+      "translation": "plausivel, verossimil",
+      "context": "The researcher offered a plausible explanation for the anomaly.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "prevalent",
+      "translation": "predominante, comum, prevalente",
+      "context": "Misinformation is increasingly prevalent on online platforms.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "resilience",
+      "translation": "resiliencia, capacidade de recuperacao",
+      "context": "Building community resilience is essential for surviving natural disasters.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "scrutiny",
+      "translation": "escrutinio, exame minucioso",
+      "context": "Tech companies face increasing scrutiny over their data practices.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "shortcoming",
+      "translation": "deficiencia, falha, ponto fraco",
+      "context": "The study acknowledges several shortcomings in the methodology used.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "stark",
+      "translation": "nitido, duro, severo",
+      "context": "The report paints a stark picture of the climate crisis facing future generations.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "thrive",
+      "translation": "prosperar, florescer",
+      "context": "Some species thrive in urban environments while others decline rapidly.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "undermine",
+      "translation": "minar, enfraquecer, sabotar",
+      "context": "Fake news can undermine public trust in democratic institutions.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "unprecedented",
+      "translation": "sem precedentes, inedito",
+      "context": "The world is experiencing unprecedented levels of biodiversity loss.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "intermediate"
+    },
+    {
+      "word": "upheaval",
+      "translation": "turbulencia, transformacao radical",
+      "context": "The industrial revolution caused massive social upheaval across Europe.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    },
+    {
+      "word": "wield",
+      "translation": "exercer (poder/influencia), manejar",
+      "context": "Large corporations wield enormous influence over government policy.",
+      "deck": "Vocabulario FUVEST",
+      "category": "fuvest_vocab",
+      "difficulty": "advanced"
+    }
+  ]
+}

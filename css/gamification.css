@@ -1,0 +1,346 @@
+/* ============================================
+   Gamification CSS - XP, Levels, Celebrations
+   ============================================ */
+
+/* --- XP Bar (Dashboard) --- */
+.xp-section {
+  margin: var(--space-3) 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+}
+
+.xp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.xp-level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: 700;
+  font-size: var(--font-size-lg);
+  color: var(--color-accent);
+}
+
+.xp-level-badge .level-number {
+  background: var(--color-accent);
+  color: var(--color-bg-primary);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.xp-daily {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.xp-daily span {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.xp-bar {
+  height: 8px;
+  background: var(--color-bg-tertiary, rgba(255,255,255,0.1));
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.xp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent), #7c5cff);
+  border-radius: 4px;
+  transition: width 0.6s ease;
+  min-width: 0;
+}
+
+.xp-bar-text {
+  text-align: center;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-1);
+}
+
+/* --- XP Popup (Float-up animation) --- */
+.xp-popup {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--color-accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: var(--font-size-lg);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-xl);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 9999;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  box-shadow: 0 4px 20px rgba(91, 141, 239, 0.4);
+}
+
+.xp-popup--treasure {
+  background: linear-gradient(135deg, #ffd700, #ff8c00);
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.5);
+}
+
+.xp-popup--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.xp-popup--fade {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-40px);
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+/* --- Treasure Question Indicator --- */
+.treasure-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  background: linear-gradient(135deg, #ffd700, #ff8c00);
+  color: #1a1a2e;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-xl);
+  animation: treasure-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes treasure-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(255, 215, 0, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
+}
+
+/* --- Level Up Modal --- */
+.levelup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.levelup-overlay--visible {
+  opacity: 1;
+}
+
+.levelup-modal {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8) var(--space-6);
+  text-align: center;
+  max-width: 340px;
+  width: 90%;
+  position: relative;
+  overflow: hidden;
+  animation: levelup-bounce 0.5s ease;
+}
+
+@keyframes levelup-bounce {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.levelup-badge {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-accent), #7c5cff);
+  color: #fff;
+  font-size: 36px;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-4);
+  box-shadow: 0 0 30px rgba(91, 141, 239, 0.5);
+}
+
+.levelup-modal h2 {
+  font-size: var(--font-size-2xl);
+  color: var(--color-accent);
+  margin-bottom: var(--space-2);
+}
+
+.levelup-modal p {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+.levelup-rewards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.levelup-reward {
+  background: rgba(91, 141, 239, 0.15);
+  color: var(--color-accent);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}
+
+.levelup-close {
+  min-width: 140px;
+}
+
+/* Confetti (CSS-only particles) */
+.levelup-confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.levelup-confetti::before,
+.levelup-confetti::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.levelup-confetti::before {
+  background: #ffd700;
+  top: -10px;
+  left: 20%;
+  animation: confetti-fall 1.5s ease-out forwards;
+}
+
+.levelup-confetti::after {
+  background: var(--color-accent);
+  top: -10px;
+  right: 25%;
+  animation: confetti-fall 1.8s ease-out 0.2s forwards;
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(300px) rotate(720deg); opacity: 0; }
+}
+
+/* --- Daily Challenge Card --- */
+.challenge-card {
+  margin: var(--space-3) 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  transition: border-color 0.3s ease;
+}
+
+.challenge-card--done {
+  border-color: var(--color-success);
+}
+
+.challenge-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.challenge-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.challenge-header-left i {
+  color: var(--color-warning);
+  width: 18px;
+  height: 18px;
+}
+
+.challenge-header-label {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.challenge-status {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.challenge-status--done {
+  color: var(--color-success);
+}
+
+.challenge-title {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.challenge-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.challenge-progress-bar {
+  height: 6px;
+  background: var(--color-bg-tertiary, rgba(255,255,255,0.1));
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.challenge-progress-fill {
+  height: 100%;
+  background: var(--color-warning);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.challenge-card--done .challenge-progress-fill {
+  background: var(--color-success);
+}
+
+.challenge-progress-text {
+  text-align: right;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-1);
+}
+
+/* Celebration animation */
+.challenge-card--celebrating {
+  animation: challenge-celebrate 0.6s ease;
+}
+
+@keyframes challenge-celebrate {
+  0%, 100% { transform: scale(1); }
+  30% { transform: scale(1.03); }
+  60% { transform: scale(0.98); }
+}
