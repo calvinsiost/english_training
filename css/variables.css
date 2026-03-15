@@ -99,6 +99,11 @@
   --color-accent: #4a7ddf;
   --color-accent-hover: #3a6dd0;
 
+  --color-success: #2e8b57;
+  --color-warning: #c08a30;
+  --color-error: #c04040;
+  --color-info: #4a7ddf;
+
   --color-border: rgba(0, 0, 0, 0.08);
   --color-shadow: rgba(0, 0, 0, 0.06);
 }
