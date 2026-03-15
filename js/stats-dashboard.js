@@ -21,7 +21,10 @@ class StatsDashboard {
     this.container.innerHTML = '<div class="stats-loading">Carregando estatísticas...</div>';
 
     // Load data
-    const stats = await this.analytics.getOverallStats();
+    const [stats, weakTerms] = await Promise.all([
+      this.analytics.getOverallStats(),
+      window.wordIntelligence ? window.wordIntelligence.getTopDifficultTerms(10) : Promise.resolve([])
+    ]);
 
     // Render dashboard
     this.container.innerHTML = `
@@ -30,6 +33,7 @@ class StatsDashboard {
         ${this._renderOverviewCards(stats)}
         ${this._renderProgressChart(stats)}
         ${this._renderSourceBreakdown(stats)}
+        ${this._renderWeakTerms(weakTerms)}
         ${this._renderActivityCalendar(stats)}
         ${this._renderInsights(stats)}
       </div>
@@ -89,8 +93,8 @@ class StatsDashboard {
         <div class="stats-card">
           <div class="stats-card__icon">📖</div>
           <div class="stats-card__value">${stats.totalPassages}</div>
-          <div class="stats-card__label">Passagens Lidas</div>
-          <div class="stats-card__sublabel">Média: ${stats.totalQuestions > 0 ? (stats.totalQuestions / stats.totalPassages || 0).toFixed(1) : 0} questões/passagem</div>
+          <div class="stats-card__label">Textos Lidos</div>
+          <div class="stats-card__sublabel">Média: ${stats.totalQuestions > 0 ? (stats.totalQuestions / stats.totalPassages || 0).toFixed(1) : 0} questões/texto</div>
         </div>
 
         <div class="stats-card">
@@ -279,6 +283,38 @@ class StatsDashboard {
           <div class="legend-box intensity-3"></div>
           <div class="legend-box intensity-4"></div>
           <span>Mais</span>
+        </div>
+      </div>
+    `;
+  }
+
+  _renderWeakTerms(weakTerms = []) {
+    const escapeHtml = (value = '') => value
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+
+    if (weakTerms.length === 0) {
+      return `
+        <div class="stats-section">
+          <h3>🧠 Vocabulário Mais Difícil</h3>
+          <div class="stats-empty">Ainda sem dados suficientes de dificuldade.</div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="stats-section">
+        <h3>🧠 Vocabulário Mais Difícil</h3>
+        <div class="weak-terms-list">
+          ${weakTerms.map(item => `
+            <div class="weak-term-item" title="${escapeHtml(item.term)}">
+              <span class="weak-term-label">${escapeHtml(item.term)}</span>
+              <span class="weak-term-score">${item.score}</span>
+            </div>
+          `).join('')}
         </div>
       </div>
     `;

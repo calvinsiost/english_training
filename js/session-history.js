@@ -209,7 +209,7 @@ class SessionHistory {
     
     if (sessions.length === 0) return null;
 
-    const headers = ['Data', 'Tipo', 'Questões', 'Acertos', 'Erros', 'Aproveitamento%', 'Tempo(min)', 'Passagens'];
+    const headers = ['Data', 'Tipo', 'Questões', 'Acertos', 'Erros', 'Aproveitamento%', 'Tempo(min)', 'Textos'];
     
     const rows = sessions.map(s => {
       const date = new Date(s.startTime).toLocaleDateString('pt-BR');
@@ -396,7 +396,7 @@ class SessionHistoryUI {
           </div>
           <div class="stat-item">
             <span class="stat-value">${session.passageIds?.length || 0}</span>
-            <span class="stat-label">Passagens</span>
+            <span class="stat-label">Textos</span>
           </div>
         </div>
         <div class="session-footer">
