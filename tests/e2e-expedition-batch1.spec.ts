@@ -121,7 +121,7 @@ test.describe('Expedition Batch 1 — Foundation', () => {
 
     expect(profile).not.toHaveProperty('error');
     expect(profile.totalRuns).toBe(0);
-    expect(profile.coins).toBe(0);
+    expect(profile.coins).toBe(50); // starting coins for new players
     expect(profile.currentFloor).toBe(1);
     expect(profile.activeClass).toBe('scholar');
     expect(profile.unlockedClasses).toContain('scholar');

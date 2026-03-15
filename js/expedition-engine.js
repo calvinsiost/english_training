@@ -233,7 +233,20 @@ class ExpeditionEngine {
       const EC = window.ExpeditionConstants;
       const rng = this._seededRandom(this._activeRun.seed + roomIndex * 7);
       const idx = Math.floor(rng() * EC.MYSTERY_EVENTS.length);
-      result.event = { type: 'mystery', ...EC.MYSTERY_EVENTS[idx] };
+      const event = EC.MYSTERY_EVENTS[idx];
+      result.event = { type: 'mystery', ...event };
+
+      // Combat-based mystery events need a question
+      if (event.type === 'combat_gamble' || event.type === 'ambush') {
+        const selected = await this._selectQuestion('combat', this._activeRun.biome, this._activeRun.floor);
+        if (selected) {
+          room.questionId = selected.question.id;
+          room.passageId = selected.passage.id;
+          room._questionType = selected.question.question_type;
+          result.question = selected.question;
+          result.passage = selected.passage;
+        }
+      }
     }
 
     this._currentRoomContext = result;
@@ -446,6 +459,17 @@ class ExpeditionEngine {
       }
     }
 
+    // Schedule SRS review for incorrect/low-confidence answers
+    if (window.srsManager && this._currentRoomContext?.question) {
+      if (!isCorrect || confidence < 2) {
+        window.srsManager.scheduleQuestion(this._currentRoomContext.question.id, {
+          question_text: this._currentRoomContext.question.question_text,
+          passage_id: this._currentRoomContext.passage?.id,
+          passage_title: this._currentRoomContext.passage?.exam_name
+        }).catch(e => console.warn('[Expedition] SRS schedule error:', e));
+      }
+    }
+
     // Update profile stats
     if (isCorrect) {
       this._profile.statistics.correctAnswers++;
@@ -615,8 +639,23 @@ class ExpeditionEngine {
       }
       return 'trade_declined';
     }
-    if (event.type === 'combat_gamble' || event.type === 'ambush') {
-      // These need a question - handled like combat via processAnswer
+    if (event.type === 'combat_gamble') {
+      if (choice === 'correct') {
+        this._activeRun.totalCoins += event.outcomes.correct.coins;
+        return 'gamble_won';
+      } else if (choice === 'incorrect') {
+        this._activeRun.currentHearts = Math.max(0, this._activeRun.currentHearts - 1);
+        return 'gamble_lost';
+      }
+      return 'awaiting_answer';
+    }
+    if (event.type === 'ambush') {
+      if (choice === 'correct') {
+        return 'ambush_survived';
+      } else if (choice === 'incorrect') {
+        this._activeRun.currentHearts = Math.max(0, this._activeRun.currentHearts + event.penaltyOnFail.hearts);
+        return 'ambush_failed';
+      }
       return 'awaiting_answer';
     }
     return 'mystery_resolved';
@@ -1176,7 +1215,7 @@ class ExpeditionEngine {
       bestFloor: 0,
       totalRoomsCleared: 0,
       totalBossesDefeated: 0,
-      coins: 0,
+      coins: 50,
       currentFloor: 1,
       unlockedRelics: [],
       equippedRelics: [],

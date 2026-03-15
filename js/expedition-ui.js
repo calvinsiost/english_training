@@ -331,6 +331,7 @@ class ExpeditionUI {
     const ctx = await this.engine.enterRoom(roomIndex);
     const run = this.engine.getActiveRun();
     const room = run.rooms[roomIndex];
+    this._prevHearts = run.currentHearts; // capture for damage flash
 
     if (['combat', 'elite', 'boss'].includes(room.type)) {
       if (!ctx.question || !ctx.passage) {
@@ -480,23 +481,39 @@ class ExpeditionUI {
         </div>`;
     } else if (room.type === 'mystery') {
       const event = ctx.event || {};
-      let choicesHtml = '';
-      if (event.type === 'trade') {
-        choicesHtml = `
-          <button class="primary" data-action="process-event" data-choice="accept">Aceitar</button>
-          <button data-action="process-event" data-choice="decline">Recusar</button>`;
-      } else if (event.type === 'windfall') {
-        choicesHtml = `<button class="primary" data-action="process-event" data-choice="collect">Pegar!</button>`;
+
+      // Combat-based mystery events: show description then load question
+      if ((event.type === 'combat_gamble' || event.type === 'ambush') && ctx.question && ctx.passage) {
+        this._container.innerHTML = `
+          <div class="expedition-event">
+            <div class="expedition-event-icon room-icon-mystery"><i data-lucide="help-circle"></i></div>
+            <h3>${event.name || 'Mistério'}</h3>
+            <p>${event.description || ''}</p>
+            <div class="expedition-event-choices">
+              <button class="primary" data-action="mystery-combat">Enfrentar!</button>
+            </div>
+          </div>`;
+        // Store context for the combat trigger
+        this._pendingMysteryCtx = ctx;
       } else {
-        choicesHtml = `<button class="primary" data-action="process-event" data-choice="continue">Continuar</button>`;
+        let choicesHtml = '';
+        if (event.type === 'trade') {
+          choicesHtml = `
+            <button class="primary" data-action="process-event" data-choice="accept">Aceitar</button>
+            <button data-action="process-event" data-choice="decline">Recusar</button>`;
+        } else if (event.type === 'windfall') {
+          choicesHtml = `<button class="primary" data-action="process-event" data-choice="collect">Pegar!</button>`;
+        } else {
+          choicesHtml = `<button class="primary" data-action="process-event" data-choice="continue">Continuar</button>`;
+        }
+        this._container.innerHTML = `
+          <div class="expedition-event">
+            <div class="expedition-event-icon room-icon-mystery"><i data-lucide="help-circle"></i></div>
+            <h3>${event.name || 'Mistério'}</h3>
+            <p>${event.description || 'Algo inesperado aconteceu...'}</p>
+            <div class="expedition-event-choices">${choicesHtml}</div>
+          </div>`;
       }
-      this._container.innerHTML = `
-        <div class="expedition-event">
-          <div class="expedition-event-icon room-icon-mystery"><i data-lucide="help-circle"></i></div>
-          <h3>${event.name || 'Mistério'}</h3>
-          <p>${event.description || 'Algo inesperado aconteceu...'}</p>
-          <div class="expedition-event-choices">${choicesHtml}</div>
-        </div>`;
     }
 
     this._refreshIcons();
@@ -598,6 +615,8 @@ class ExpeditionUI {
       } else if (action === 'abandon-stale') {
         await this.engine.abandonStaleRun();
         this._renderHub(false);
+      } else if (action === 'mystery-combat') {
+        await this._handleMysteryCombat();
       } else if (action === 'process-event') {
         await this._handleProcessEvent(target.dataset.choice);
       } else if (action === 'use-item') {
@@ -622,16 +641,31 @@ class ExpeditionUI {
     // Listen for expedition events from engine
     document.addEventListener('expedition:room_complete', (e) => {
       const detail = e.detail;
-      if (detail.isGameOver) {
-        // Will trigger run_end event
-        return;
+
+      // Coin popup
+      if (detail.coinsAwarded > 0) {
+        this._showCoinPopup(detail.coinsAwarded);
       }
+
+      // Damage flash
+      const tookDamage = detail.shieldConsumed || detail.relicBlocked
+        ? false
+        : !detail.isCorrect && detail.heartsRemaining < (this._prevHearts || 999);
+      if (tookDamage) {
+        document.body.classList.add('expedition-damage-flash');
+        setTimeout(() => document.body.classList.remove('expedition-damage-flash'), 400);
+      }
+
+      if (detail.isGameOver) return;
+
       // After combat room completes, return to map
       if (this._subView === 'combat') {
         this._removeCombatOverlay();
-        window.location.hash = '#/expedition';
-        // Small delay to let view switch happen
-        setTimeout(() => this._renderMap(), 100);
+        const delay = tookDamage ? 500 : 100;
+        setTimeout(() => {
+          window.location.hash = '#/expedition';
+          setTimeout(() => this._renderMap(), 100);
+        }, delay);
       }
     });
 
@@ -645,10 +679,19 @@ class ExpeditionUI {
     // Listen for question:answered to advance expedition after answer
     document.addEventListener('question:answered', async (e) => {
       if (!this.engine.hasActiveRun() || this._subView !== 'combat') return;
-      const { selectedAnswer, confidence } = e.detail || {};
-      if (selectedAnswer) {
-        await this.engine.processAnswer(selectedAnswer, confidence || 0);
+      const { selectedAnswer, isCorrect, confidence } = e.detail || {};
+      if (!selectedAnswer) return;
+
+      // Mystery combat events resolve via processEvent, not processAnswer
+      if (this._mysteryEvent) {
+        const event = this._mysteryEvent;
+        this._mysteryEvent = null;
+        const choiceStr = isCorrect ? 'correct' : 'incorrect';
+        await this.engine.processEvent(choiceStr);
+        return;
       }
+
+      await this.engine.processAnswer(selectedAnswer, confidence || 0);
     });
   }
 
@@ -715,6 +758,19 @@ class ExpeditionUI {
     }
   }
 
+  async _handleMysteryCombat() {
+    if (!this._pendingMysteryCtx) return;
+    const ctx = this._pendingMysteryCtx;
+    this._pendingMysteryCtx = null;
+    this._mysteryEvent = ctx.event;
+
+    // Load question into study view like combat
+    const run = this.engine.getActiveRun();
+    const room = run.rooms[run.currentRoomIndex];
+    this._showCombatOverlay(run, room);
+    this._loadQuestionIntoStudyUI(ctx.passage, ctx.question);
+  }
+
   async _handleProcessEvent(choice) {
     try {
       if (choice === 'leave' || choice === 'collect' || choice === 'continue') {
@@ -774,7 +830,15 @@ class ExpeditionUI {
         window.helpFeatures.showHints();
       } else if (item.effect === 'eliminate_wrong') {
         this._eliminateWrongOption();
+      } else if (item.effect === 'heal') {
+        const run = this.engine.getActiveRun();
+        if (run && run.currentHearts < run.maxHearts) {
+          run.currentHearts = Math.min(run.currentHearts + item.value, run.maxHearts);
+        }
+      } else if (item.effect === 'free_translations') {
+        window._expeditionFreeTranslations = (window._expeditionFreeTranslations || 0) + item.value;
       }
+      // xp_multiplier and block_damage are passive — handled in engine
 
       // Refresh combat bar to update item counts
       const run = this.engine.getActiveRun();
@@ -832,6 +896,19 @@ class ExpeditionUI {
       mystery: 'Mistério'
     };
     return names[type] || type;
+  }
+
+  _showCoinPopup(amount) {
+    if (amount <= 0) return;
+    const popup = document.createElement('div');
+    popup.className = 'expedition-coin-popup';
+    popup.textContent = '+' + amount + ' moedas';
+    document.body.appendChild(popup);
+    requestAnimationFrame(() => popup.classList.add('show'));
+    setTimeout(() => {
+      popup.classList.add('fade');
+      setTimeout(() => popup.remove(), 800);
+    }, 600);
   }
 
   _refreshIcons() {
