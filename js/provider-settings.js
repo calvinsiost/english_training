@@ -4,6 +4,7 @@ import { PROVIDERS, AIConfig } from './config/ai-providers.js';
 export function initProviderSettings(showToast) {
   const providerGrid = document.getElementById('provider-grid');
   const modelSelect = document.getElementById('model-select');
+  const apiKeyForm = document.getElementById('api-key-form');
   const apiKeyInput = document.getElementById('api-key');
   const apiKeyStatus = document.getElementById('api-key-status');
   const testBtn = document.getElementById('btn-test-connection');
@@ -172,6 +173,24 @@ export function initProviderSettings(showToast) {
   
   // Event listeners
   apiKeyInput?.addEventListener('input', (e) => validateKey(e.target.value));
+
+  apiKeyForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!testBtn?.disabled) {
+      testBtn.click();
+    }
+  });
+
+  apiKeyInput?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+
+    if (apiKeyForm?.requestSubmit) {
+      apiKeyForm.requestSubmit();
+    } else if (!testBtn?.disabled) {
+      testBtn?.click();
+    }
+  });
   
   modelSelect?.addEventListener('change', () => {
     AIConfig.setSelectedModel(selectedProvider, modelSelect.value);
