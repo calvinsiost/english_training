@@ -108,10 +108,13 @@ class ReviewView {
   
   async startSRSReview() {
     // Navigate to SRS review mode
-    // This could open an overlay or navigate to a dedicated review mode
     if (window.srsManager) {
       const dueCards = await window.srsManager.getDueCards();
       if (dueCards.length > 0) {
+        // Log SRS review session start
+        if (window.behaviorLogger) {
+          window.behaviorLogger.log('session', 'review', 'start', { dueCount: dueCards.length });
+        }
         // Start SRS review session
         this.showSRSReviewOverlay(dueCards[0]);
       }
@@ -133,7 +136,7 @@ class ReviewView {
       </div>
       <div class="srs-review-content" id="srs-review-content">
         <div class="srs-question-card">
-          <div class="srs-passage-text">${card.passage_text || 'Passagem não disponível'}</div>
+          <div class="srs-passage-text">${card.passage_text || 'Texto não disponível'}</div>
           <div class="srs-question-text">${card.question_text}</div>
           <div class="srs-options" id="srs-options">
             <p style="color: var(--text-secondary); text-align: center;">

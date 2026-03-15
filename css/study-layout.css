@@ -87,6 +87,7 @@
     height: 100%;
     overflow-y: auto;
     margin-bottom: 0;
+    min-width: 0;
   }
 
   .passage-text {
@@ -106,12 +107,15 @@
     padding: var(--space-3);
     display: flex;
     flex-direction: column;
+    min-width: 0;
   }
 
-  .question-text {
+  #question-panel > .question-text {
     font-size: var(--font-size-sm);
     line-height: 1.5;
     margin-bottom: var(--space-3);
+    overflow-wrap: break-word;
+    white-space: normal;
   }
 
   .options-list {
@@ -136,7 +140,7 @@
    ===================================================== */
 
 @media (max-width: 899px) {
-  #study {
+  #study.view--active {
     display: flex;
     flex-direction: column;
     height: calc(100vh - 70px);
@@ -233,9 +237,11 @@
     padding: var(--space-3);
   }
 
-  .question-text {
+  #question-panel > .question-text {
     font-size: var(--font-size-sm);
     margin-bottom: var(--space-3);
+    white-space: normal;
+    overflow-wrap: break-word;
   }
 
   .option-btn {
@@ -386,6 +392,15 @@ kbd {
   border-radius: 4px;
   font-family: monospace;
   font-size: var(--font-size-xs);
+}
+
+/* Shortcuts hint: wrap on narrow viewports to prevent .question-container overflow */
+@media (max-width: 899px) {
+  .shortcuts-hint {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    overflow: hidden;
+  }
 }
 
 /* Hide on very small screens */

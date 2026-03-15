@@ -2,32 +2,19 @@
  * Review View Styles
  */
 
-.review-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.review-header h2 {
-  margin: 0;
-  font-size: 1.25rem;
-}
-
 .review-stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  padding: 16px;
-  margin-bottom: 16px;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
 }
 
 .review-stat {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 16px;
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
   text-align: center;
 }
 
@@ -44,17 +31,15 @@
 }
 
 .review-list {
-  padding: 0 16px;
-  max-height: 60vh;
-  overflow-y: auto;
+  padding: 0 var(--space-4);
 }
 
 .review-item {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 12px;
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -142,19 +127,19 @@
 .srs-question-card {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
 }
 
 .srs-passage-text {
   background: var(--bg-secondary);
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
-  font-size: 0.9375rem;
+  padding: var(--space-4);
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-sm);
   line-height: 1.6;
-  max-height: 200px;
+  max-height: 40vh;
   overflow-y: auto;
 }
 
@@ -224,22 +209,22 @@
 }
 
 .srs-rating-btn.again {
-  background: #e94560;
+  background: var(--color-error);
   color: white;
 }
 
 .srs-rating-btn.hard {
-  background: #ff9f43;
+  background: var(--color-warning);
   color: white;
 }
 
 .srs-rating-btn.good {
-  background: #4eadea;
+  background: var(--color-info);
   color: white;
 }
 
 .srs-rating-btn.easy {
-  background: #10ac84;
+  background: var(--color-success);
   color: white;
 }
 

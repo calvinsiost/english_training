@@ -20,7 +20,14 @@ class HelpFeatures {
     this.selectionTooltip = null;
     this.helpModal = null;
     this.isLoading = false;
-    
+
+    // TTS state management
+    this.ttsState = 'idle'; // 'idle' | 'playing' | 'paused'
+    this._ttsTransitioning = false;
+    this._ttsWatchdogInterval = null;
+    this._ttsPausedDuration = 0;
+    this._ttsButtonRef = null;
+
     this.init();
   }
 
@@ -152,7 +159,15 @@ class HelpFeatures {
     
     if (titleEl) {
       titleEl.textContent = title;
-      titleEl.parentElement.querySelector('i').setAttribute('data-lucide', icon);
+      const titleRow = titleEl.parentElement;
+      let iconEl = titleRow.querySelector('i[data-lucide]');
+      if (!iconEl) {
+        iconEl = document.createElement('i');
+        iconEl.setAttribute('data-lucide', icon);
+        titleRow.prepend(iconEl);
+      } else {
+        iconEl.setAttribute('data-lucide', icon);
+      }
     }
     
     if (bodyEl) {
@@ -267,13 +282,43 @@ class HelpFeatures {
   // Translate text using LLM
   async translateText(text, element = null) {
     if (this.isLoading) return;
-    
+
+    // Log help usage
+    if (window.behaviorLogger) {
+      window.behaviorLogger.log('help_use', 'study', 'translate', { text: text.substring(0, 50) });
+    }
+    // Track help used this question
+    if (window.state) {
+      window.state._helpUsedThisQuestion = window.state._helpUsedThisQuestion || [];
+      if (!window.state._helpUsedThisQuestion.includes('translate')) {
+        window.state._helpUsedThisQuestion.push('translate');
+      }
+    }
+    // Daily challenge: vocabulary translations
+    if (window.dailyChallenge) {
+      window.dailyChallenge.recordProgress('translations', 1);
+    }
+
     this.isLoading = true;
     this.showLoading('Traduzindo...');
 
     try {
       const prompt = this.buildTranslationPrompt(text);
       const response = await this.callLLM(prompt);
+
+      if (window.wordIntelligence) {
+        const context = {
+          textId: this.currentPassage?.id,
+          questionId: this.currentQuestion?.id,
+          examId: this.currentPassage?.exam_id,
+          topic: this.currentPassage?.topic,
+          institution: this.currentPassage?.source || 'FUVEST',
+          translation: response,
+          textSnippet: this.currentPassage?.text?.slice(0, 120) || ''
+        };
+        // Fire-and-forget: failures here should never block study flow.
+        window.wordIntelligence.recordTranslationSignal(text, context).catch(() => null);
+      }
       
       this.closeModal();
       
@@ -335,7 +380,20 @@ class HelpFeatures {
   // Get grammar lesson
   async getGrammarLesson() {
     if (!this.currentQuestion || this.isLoading) return;
-    
+
+    // Log help usage
+    if (window.behaviorLogger) {
+      window.behaviorLogger.log('help_use', 'study', 'lesson', {
+        questionId: this.currentQuestion?.id
+      });
+    }
+    if (window.state) {
+      window.state._helpUsedThisQuestion = window.state._helpUsedThisQuestion || [];
+      if (!window.state._helpUsedThisQuestion.includes('lesson')) {
+        window.state._helpUsedThisQuestion.push('lesson');
+      }
+    }
+
     this.isLoading = true;
     this.showLoading('Preparando aula...');
 
@@ -401,28 +459,143 @@ class HelpFeatures {
     }
   }
 
-  // Text to Speech
-  speakText(text) {
-    if (!window.speechSynthesis) {
-      alert('Seu navegador não suporta leitura em voz alta');
-      return;
+  // Text to Speech — toggle play/pause/resume
+  toggleSpeech(text, buttonRef) {
+    if (this._ttsTransitioning) return this.ttsState;
+    this._ttsTransitioning = true;
+    setTimeout(() => { this._ttsTransitioning = false; }, 100);
+
+    if (buttonRef) this._ttsButtonRef = buttonRef;
+
+    if (this.ttsState === 'playing') {
+      // Pause
+      window.speechSynthesis.pause();
+      this.ttsState = 'paused';
+      this._clearWatchdog();
+      this._updateButton(this._ttsButtonRef, 'paused');
+      return this.ttsState;
     }
 
-    // Cancel any ongoing speech
+    if (this.ttsState === 'paused') {
+      // Resume
+      window.speechSynthesis.resume();
+      this.ttsState = 'playing';
+      this._startWatchdog();
+      this._updateButton(this._ttsButtonRef, 'playing');
+      return this.ttsState;
+    }
+
+    // Idle → start speaking
+    if (!window.speechSynthesis) {
+      alert('Seu navegador não suporta leitura em voz alta');
+      return this.ttsState;
+    }
+
+    if (!text || !text.trim()) return this.ttsState;
+
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'en-US';
     utterance.rate = 0.9;
-    
-    // Try to find an English voice
+
     const voices = window.speechSynthesis.getVoices();
     const englishVoice = voices.find(v => v.lang.startsWith('en'));
     if (englishVoice) utterance.voice = englishVoice;
 
+    utterance.onend = () => {
+      this.ttsState = 'idle';
+      this._clearWatchdog();
+      this._resetButton(this._ttsButtonRef);
+    };
+    utterance.onerror = () => {
+      this.ttsState = 'idle';
+      this._clearWatchdog();
+      this._resetButton(this._ttsButtonRef);
+    };
+
     window.speechSynthesis.speak(utterance);
-    
-    return utterance;
+    this.ttsState = 'playing';
+    this._startWatchdog();
+    this._updateButton(this._ttsButtonRef, 'playing');
+    return this.ttsState;
+  }
+
+  stopSpeaking(buttonRef) {
+    this._clearWatchdog();
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    this.ttsState = 'idle';
+    this._resetButton(buttonRef || this._ttsButtonRef);
+  }
+
+  _updateButton(btn, state) {
+    if (!btn) return;
+    const idle = btn.querySelector('.tts-icon--idle');
+    const playing = btn.querySelector('.tts-icon--playing');
+    const paused = btn.querySelector('.tts-icon--paused');
+
+    if (idle) idle.style.display = 'none';
+    if (playing) playing.style.display = 'none';
+    if (paused) paused.style.display = 'none';
+
+    btn.classList.remove('playing', 'paused');
+
+    if (state === 'playing') {
+      if (playing) playing.style.display = 'inline-flex';
+      btn.classList.add('playing');
+      btn.setAttribute('aria-label', 'Pausar leitura');
+      btn.setAttribute('title', 'Pausar leitura');
+    } else if (state === 'paused') {
+      if (paused) paused.style.display = 'inline-flex';
+      btn.classList.add('paused');
+      btn.setAttribute('aria-label', 'Continuar leitura');
+      btn.setAttribute('title', 'Continuar leitura');
+    }
+  }
+
+  _resetButton(btn) {
+    if (!btn) return;
+    const idle = btn.querySelector('.tts-icon--idle');
+    const playing = btn.querySelector('.tts-icon--playing');
+    const paused = btn.querySelector('.tts-icon--paused');
+
+    if (idle) idle.style.display = 'inline-flex';
+    if (playing) playing.style.display = 'none';
+    if (paused) paused.style.display = 'none';
+
+    btn.classList.remove('playing', 'paused');
+    btn.setAttribute('aria-label', 'Ouvir texto em voz alta');
+    btn.setAttribute('title', 'Ouvir texto em voz alta');
+  }
+
+  _startWatchdog() {
+    this._clearWatchdog();
+    this._ttsPausedDuration = 0;
+    this._ttsWatchdogInterval = setInterval(() => {
+      // Chrome bug: speechSynthesis enters phantom pause while playing
+      if (this.ttsState === 'playing' && window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+      // Auto-stop if paused too long (user likely abandoned)
+      if (this.ttsState === 'paused') {
+        this._ttsPausedDuration += 3000;
+        if (this._ttsPausedDuration >= 30000) {
+          this.stopSpeaking();
+        }
+      } else {
+        this._ttsPausedDuration = 0;
+      }
+    }, 3000);
+  }
+
+  _clearWatchdog() {
+    if (this._ttsWatchdogInterval) {
+      clearInterval(this._ttsWatchdogInterval);
+      this._ttsWatchdogInterval = null;
+    }
+    this._ttsPausedDuration = 0;
   }
 
   // Build prompts for LLM
@@ -436,13 +609,15 @@ Forneça apenas a tradução, sem explicações adicionais.`;
 
   buildLessonPrompt() {
     const passage = this.currentPassage?.text?.substring(0, 1000) || '';
-    const question = this.currentQuestion?.text || '';
-    const correct = this.currentQuestion?.correct !== undefined ? 
-      this.currentQuestion.options?.[this.currentQuestion.correct] : '';
+    const question = this.currentQuestion?.question_text || '';
+    const correctLetter = this.currentQuestion?.correct_answer || '';
+    const correctIdx = correctLetter ? correctLetter.charCodeAt(0) - 65 : -1;
+    const correctText = correctIdx >= 0 ? this.currentQuestion?.options?.[correctIdx] || '' : '';
+    const correct = correctLetter ? `(${correctLetter}) ${correctText}` : '';
 
     return `Você é um professor de inglês experiente preparando alunos para o vestibular FUVEST. 
 
-**Texto da passagem:**
+**Texto base:**
 ${passage}
 
 **Questão:**
@@ -462,12 +637,12 @@ Use formatação simples com títulos em maiúsculas.`;
   buildAlternativesPrompt() {
     const question = this.currentQuestion;
     const options = question?.options?.map((opt, i) => `${String.fromCharCode(65 + i)}) ${opt}`).join('\n') || '';
-    const correct = question?.correct !== undefined ? String.fromCharCode(65 + question.correct) : '';
+    const correct = question?.correct_answer || '';
 
     return `Analise cada alternativa da seguinte questão de inglês do vestibular:
 
 **Questão:**
-${question?.text || ''}
+${question?.question_text || ''}
 
 **Alternativas:**
 ${options}
@@ -483,7 +658,7 @@ Seja objetivo, máximo 2 linhas por alternativa.`;
 
   buildHintsPrompt() {
     const passage = this.currentPassage?.text?.substring(0, 800) || '';
-    const question = this.currentQuestion?.text || '';
+    const question = this.currentQuestion?.question_text || '';
 
     return `Como professor de inglês para vestibular FUVEST, dê 3 dicas estratégicas para ajudar o aluno a responder esta questão:
 
@@ -503,36 +678,49 @@ Não revele a resposta correta.`;
 
   // Call LLM API
   async callLLM(prompt) {
-    // Get current provider and key
-    const store = this.getMetaStore();
-    if (!store) throw new Error('Banco de dados não inicializado');
-    
-    const providerId = await idbGet(store, 'ai_provider') || 'openrouter';
-    const apiKey = await idbGet(store, `api_key_${providerId}`);
-    
-    if (!apiKey) {
+    const providerId = AIConfig.getSelectedProvider() || 'openrouter';
+    const apiKey = AIConfig.getStoredKey(providerId);
+
+    if (!apiKey && providerId !== 'local') {
       throw new Error('Chave de API não configurada. Configure em Configurações > Provedores de IA.');
     }
 
-    const provider = AIConfig.getProvider(providerId);
+    const provider = AIConfig.getProviderConfig(providerId);
     if (!provider) {
       throw new Error('Provedor não encontrado');
     }
 
-    // Build request
-    const model = await idbGet(store, `ai_model_${providerId}`) || provider.defaultModel;
+    const model = AIConfig.getSelectedModel(providerId);
     const body = this.buildRequestBody(providerId, model, prompt);
 
-    const response = await fetch(provider.baseUrl, {
+    // Build URL and headers per provider
+    let url = provider.baseUrl;
+    let headers = { 'Content-Type': 'application/json' };
+
+    switch (providerId) {
+      case 'anthropic':
+        headers['x-api-key'] = apiKey;
+        headers['anthropic-version'] = '2023-06-01';
+        break;
+      case 'gemini':
+        url = `${provider.baseUrl}/${model}:generateContent?key=${apiKey}`;
+        break;
+      case 'openrouter':
+        headers['Authorization'] = `Bearer ${apiKey}`;
+        headers['HTTP-Referer'] = window.location.href;
+        headers['X-Title'] = 'English Training App';
+        break;
+      case 'local':
+        url = provider.baseUrl.replace('/api/generate', '/api/chat');
+        break;
+      default:
+        headers['Authorization'] = `Bearer ${apiKey}`;
+        break;
+    }
+
+    const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        ...(providerId === 'openrouter' ? {
-          'HTTP-Referer': window.location.href,
-          'X-Title': 'English Training App'
-        } : {})
-      },
+      headers,
       body: JSON.stringify(body)
     });
 
@@ -561,6 +749,12 @@ Não revele a resposta correta.`;
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           generationConfig: { maxOutputTokens: 1000 }
         };
+      case 'local':
+        return {
+          model,
+          messages,
+          stream: false
+        };
       case 'openrouter':
         return {
           model,
@@ -585,6 +779,8 @@ Não revele a resposta correta.`;
         return data.content?.[0]?.text || '';
       case 'gemini':
         return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      case 'local':
+        return data.message?.content || '';
       default:
         return data.choices?.[0]?.message?.content || '';
     }
@@ -592,40 +788,84 @@ Não revele a resposta correta.`;
 
   // Format lesson content with HTML
   formatLessonContent(text) {
-    // Convert markdown-like formatting to HTML
-    return text
+    // Convert markdown to HTML
+    let html = text
+      // Headers: ## Title or ### Title
+      .replace(/^#{1,3}\s+(.+)$/gm, '<h4>$1</h4>')
+      // Bold
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/^\d+\.\s*(.+)$/gm, '<h4>$1</h4>')
-      .replace(/^([A-Z\s]+):$/gm, '<h4>$1</h4>')
-      .replace(/\n\n/g, '</p><p>')
-      .replace(/•\s*(.+)/g, '<li>$1</li>')
-      .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
-      .replace(/^/s, '<p>')
-      .replace(/$/s, '</p>');
+      // Italic
+      .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+      // Numbered lists: "1. item"
+      .replace(/^\d+\.\s+(.+)$/gm, '<li class="numbered">$1</li>')
+      // Bullet lists: "- item" or "• item"
+      .replace(/^[-•]\s+(.+)$/gm, '<li>$1</li>')
+      // UPPERCASE HEADERS:
+      .replace(/^([A-ZÀÁÂÃÉÊÍÓÔÕÚÇ\s]{4,}):$/gm, '<h4>$1</h4>')
+      // Inline code
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      // Separator lines
+      .replace(/^[-=]{3,}$/gm, '<hr>')
+      // Paragraphs (double newline)
+      .replace(/\n\n+/g, '</p><p>')
+      // Single newlines between non-list items
+      .replace(/([^>])\n([^<])/g, '$1<br>$2');
+
+    // Wrap consecutive <li> in <ul>
+    html = html.replace(/((?:<li[^>]*>.*?<\/li>\s*)+)/g, '<ul>$1</ul>');
+
+    // Wrap in paragraph tags
+    html = '<p>' + html + '</p>';
+
+    // Clean empty paragraphs
+    html = html.replace(/<p>\s*<\/p>/g, '');
+    // Don't wrap block elements in <p>
+    html = html.replace(/<p>(\s*<(?:h4|ul|hr|div))/g, '$1');
+    html = html.replace(/<\/(?:h4|ul|hr|div)>\s*<\/p>/g, '</h4>');
+
+    return html;
   }
 
   // Format alternatives content
   formatAlternativesContent(text) {
-    const lines = text.split('\n').filter(l => l.trim());
+    const correctAnswer = this.currentQuestion?.correct_answer || '';
+    // Clean markdown bold/emphasis from text
+    const cleaned = text.replace(/\*\*/g, '').replace(/\*/g, '');
+    const lines = cleaned.split('\n').filter(l => l.trim());
     let html = '';
     let currentAlt = null;
+    let currentBody = '';
+
+    const flushAlt = () => {
+      if (currentAlt) {
+        html += `<div class="alt-text">${currentBody.trim()}</div></div>`;
+        currentBody = '';
+      }
+    };
 
     lines.forEach(line => {
-      const match = line.match(/^([A-E])\)/);
+      const trimmed = line.trim();
+      // Match patterns: "A)", "(A)", "A.", "A -", "A:", "A )"
+      const match = trimmed.match(/^\(?([A-E])\)?[\s).\-:]+(.*)$/);
       if (match) {
-        if (currentAlt) html += '</div>';
-        const isCorrect = this.currentQuestion?.correct === match[1].charCodeAt(0) - 65;
-        currentAlt = match[1];
+        flushAlt();
+        const letter = match[1];
+        const isCorrect = letter === correctAnswer;
+        currentAlt = letter;
+        const icon = isCorrect ? '✅' : '❌';
+        const label = isCorrect ? 'CORRETA' : 'Incorreta';
         html += `<div class="alternative-explanation ${isCorrect ? 'correct' : 'incorrect'}">`;
-        html += `<div class="alt-label">${line.substring(0, 3)} ${isCorrect ? '✓ CORRETA' : '✗ Incorreta'}</div>`;
-        html += `<div class="alt-text">${line.substring(3).trim()}</div>`;
+        html += `<div class="alt-label">${icon} (${letter}) ${label}</div>`;
+        currentBody = match[2].trim();
       } else if (currentAlt) {
-        html += ` ${line.trim()}`;
+        // Skip separator lines like "---"
+        if (/^[-=]{3,}$/.test(trimmed)) return;
+        currentBody += ' ' + trimmed;
       }
     });
 
-    if (currentAlt) html += '</div>';
-    return html || `<p>${this.escapeHtml(text)}</p>`;
+    flushAlt();
+    return html || this.formatLessonContent(text);
   }
 
   // Escape HTML
@@ -691,3 +931,6 @@ function initHelpFeatures() {
 function getHelpFeatures() {
   return helpFeatures;
 }
+
+window.initHelpFeatures = initHelpFeatures;
+window.getHelpFeatures = getHelpFeatures;
