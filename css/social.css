@@ -1,0 +1,362 @@
+/* ==============================
+   Social / Ranking / Friends
+   ============================== */
+
+/* Tab navigation */
+.social-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border-color, #ddd);
+  margin-bottom: 16px;
+}
+
+.social-tab {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #666);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.social-tab.active {
+  color: var(--accent-color, #4f46e5);
+  border-bottom-color: var(--accent-color, #4f46e5);
+}
+
+/* Sub-tabs (metric type) */
+.social-subtabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.social-subtab {
+  padding: 6px 14px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--text-secondary, #666);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.social-subtab.active {
+  background: var(--accent-color, #4f46e5);
+  color: #fff;
+  border-color: var(--accent-color, #4f46e5);
+}
+
+/* Scope toggle (Global / Amigos) */
+.social-scope-toggle {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  background: var(--hover-bg, rgba(0, 0, 0, 0.05));
+  border-radius: 8px;
+  padding: 3px;
+}
+
+.social-scope-btn {
+  flex: 1;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary, #666);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.social-scope-btn.active {
+  background: var(--card-bg, #fff);
+  color: var(--text-color, #333);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Leaderboard list */
+.leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.leaderboard-entry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  transition: background 0.15s;
+}
+
+.leaderboard-entry:hover {
+  background: var(--hover-bg, rgba(0, 0, 0, 0.03));
+}
+
+.leaderboard-entry--self {
+  background: rgba(79, 70, 229, 0.06);
+  border: 1px solid rgba(79, 70, 229, 0.15);
+}
+
+.leaderboard-rank {
+  width: 28px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #666);
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.leaderboard-rank--1 { color: #fbbf24; }
+.leaderboard-rank--2 { color: #9ca3af; }
+.leaderboard-rank--3 { color: #cd7f32; }
+
+.leaderboard-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent-color, #4f46e5);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.leaderboard-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.leaderboard-username {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-color, #333);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leaderboard-level {
+  font-size: 0.7rem;
+  color: var(--text-secondary, #666);
+}
+
+.leaderboard-value {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--accent-color, #4f46e5);
+  flex-shrink: 0;
+}
+
+/* Friends list */
+.friends-section-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 16px 0 8px;
+}
+
+.friend-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  transition: background 0.15s;
+}
+
+.friend-card:hover {
+  background: var(--hover-bg, rgba(0, 0, 0, 0.03));
+}
+
+.friend-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.friend-action-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  background: transparent;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.friend-action-btn--accept {
+  background: var(--accent-color, #4f46e5);
+  color: #fff;
+  border-color: var(--accent-color, #4f46e5);
+}
+
+.friend-action-btn--decline {
+  color: var(--danger-color, #ef4444);
+  border-color: var(--danger-color, #ef4444);
+}
+
+.friend-action-btn--remove {
+  color: var(--text-secondary, #666);
+}
+
+/* Add friend button */
+.social-add-btn {
+  position: fixed;
+  bottom: 80px;
+  right: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent-color, #4f46e5);
+  color: #fff;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: transform 0.2s;
+}
+
+.social-add-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Search modal */
+.social-search-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.social-search-input:focus {
+  border-color: var(--accent-color, #4f46e5);
+}
+
+.social-search-results {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.social-search-result {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.social-search-result:hover {
+  background: var(--hover-bg, rgba(0, 0, 0, 0.05));
+}
+
+.social-search-add-btn {
+  margin-left: auto;
+  padding: 5px 12px;
+  border: 1px solid var(--accent-color, #4f46e5);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--accent-color, #4f46e5);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.social-search-add-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Empty states */
+.social-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary, #666);
+}
+
+.social-empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  opacity: 0.4;
+}
+
+.social-empty-text {
+  font-size: 0.9rem;
+}
+
+/* Login gate */
+.social-login-gate {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.social-login-gate-text {
+  font-size: 1rem;
+  color: var(--text-secondary, #666);
+  margin-bottom: 16px;
+}
+
+.social-login-gate-btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent-color, #4f46e5);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Pending badge on nav */
+.nav-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--danger-color, #ef4444);
+}
+
+/* Mobile: card layout for leaderboard */
+@media (max-width: 480px) {
+  .leaderboard-entry {
+    padding: 8px 8px;
+    gap: 8px;
+  }
+
+  .leaderboard-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 0.7rem;
+  }
+
+  .leaderboard-value {
+    font-size: 0.85rem;
+  }
+}
