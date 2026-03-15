@@ -354,12 +354,102 @@ achievements      → conquistas desbloqueadas
 
 ---
 
-## Próximos Passos Imediatos
+## Checklist de Melhoria e Padronizacao (UI/UX/Bugs)
 
-Quer que eu implemente algum desses módulos agora? Recomendo começar pelo:
+### Fase 1 - Fixes Criticos de Estrutura HTML
 
-1. **Sistema SRS** - Maior impacto no aprendizado
-2. **Estatísticas** - Feedback visual importante
-3. **Modo Simulado** - Diferencial para vestibulandos
+- [x] Remover `<section id="exam">` duplicada em `index.html`
+- [x] Remover `<section id="analytics">` duplicada em `index.html`
+- [x] Confirmar que `window.appReady = true` esta presente em `js/app.js` apos init completa
+- [x] Fix do syntax error em `js/app.js` (passageTab.classList.add fora do bloco if, `}` extra fechando funcao prematuramente)
+- [x] Fix do IDB transaction auto-abort no loop de idbPut (bankStore.put sem await individual)
 
-Qual você quer priorizar?
+### Fase 2 - Padronizar Botao Voltar em Todas as Views
+
+- [x] **exam**: Adicionado botao Voltar + `.view-header`
+- [x] **analytics**: Trocado `onclick` inline por `data-back` attribute
+- [x] **sessions**: Trocado `onclick` inline por `data-back` attribute
+- [x] **review**: Trocado `onclick="router.navigate('#/')"` inline por `data-back` attribute
+- [x] **settings**: Adicionado `data-back` ao botao existente, classe `.view-header`
+- [x] **study / srs-review**: Mantidos event listeners especificos (tem logica de encerrar sessao)
+- [x] Event listener delegado unico em `js/app.js` para `[data-back]`
+- [x] Padronizada estrutura `.view-header` em analytics, sessions, review, exam, settings
+
+### Fase 3 - Corrigir Barras de Rolagem Indesejadas
+
+- [x] `css/components.css`: Removido `max-height: 50vh` do `.passage-container`
+- [x] `css/exam-mode.css`: Aumentado `max-height` de `.exam-passage` de 300px para 60vh
+- [x] `css/review.css`: Removido `max-height: 60vh` do `.review-list`
+- [x] `css/review.css`: Aumentado `max-height` de `.srs-passage-text` de 200px para 40vh
+- [ ] `css/study-layout.css`: Revisar layout do study mobile (overflow hidden + filhos absolute)
+
+### Fase 4 - Unificar Variaveis CSS (3 convencoes conflitantes)
+
+- [x] Aliases ja existiam em `css/variables.css` (linhas 106-130) -- verificado e completo
+
+### Fase 5 - Substituir Valores Hardcoded
+
+- [x] `css/review.css`: Trocados `padding: 16px/20px` por `var(--space-4)/var(--space-5)`
+- [x] `css/review.css`: Trocados `border-radius: 8px/12px` por `var(--radius-xl)`
+- [x] `css/review.css`: Trocadas cores hardcoded dos botoes SRS por `var(--color-error/warning/info/success)`
+- [x] `css/components.css`: Removidos `!important` do padding-bottom de `.main-content`
+- [x] Removida `.review-header` CSS (usa `.view-header` padronizada agora)
+
+### Fase 6 - Padronizar Overlays e Modais
+
+- [ ] `js/review.js`: Padronizar overlay SRS (usa `document.body.appendChild` com `onclick` inline)
+- [ ] `js/flashcards.js`: Padronizar modal flashcard (mesmo padrao de body append)
+- [ ] Criar classe `.overlay` consistente e fechar com `data-close-overlay` attribute
+
+### Fase 7 - Botao Flashcards Sem Rota
+
+- [x] Verificado: `FlashcardReviewUI.startReview()` abre modal de revisao
+- [x] Adicionado event listener em `#btn-deck` que cria `FlashcardReviewUI` e inicia revisao
+- [x] Fallback com toast informativo se nao ha flashcards
+
+### Fase 8 - Bottom Nav: Highlight em Sub-views
+
+- [x] `switchView()`: Mapeamento `review/srs-review/sessions` -> "Inicio", `exam` -> "Estudar"
+
+### Fase 9 - Null Checks em Acessos DOM
+
+- [x] `loadPassageIntoUI`: Null checks em confidence-section, feedback-section, next-container
+- [x] `handleOptionSelect`: Null check em confidence-section
+- [x] `handleConfidenceSelect`: Null checks em feedback-section e confidence-section
+
+### Fase 10 - Tema Claro: Cores Faltando
+
+- [x] `css/variables.css`: Adicionadas `--color-success/warning/error/info` no `[data-theme="light"]`
+
+### Fase 11 - Daily Goal Nao Persiste
+
+- [x] Handler do input salva em `localStorage.setItem('dailyGoal', value)`
+- [x] Init do app carrega valor salvo e atualiza input + display
+
+### Fase 12 - Emojis em Vez de Icones Lucide
+
+- [x] `index.html` exam start: Trocado emoji por `<i data-lucide="file-edit">`
+- [x] `index.html` help features: Trocados 5 emojis por icones Lucide equivalentes
+
+### Fase 13 - Breakpoints Responsivos
+
+- [ ] Documentar breakpoints padrao
+- [ ] Verificar conflitos entre breakpoints de diferentes CSS files
+
+### Fase 14 - Limpeza Geral
+
+- [ ] Remover CSS nao utilizado (classes orfas)
+- [ ] Remover `console.log` de debug desnecessarios
+- [ ] `sw.js`: Verificar que STATIC_ASSETS lista CSS files com versao correta
+- [ ] Verificar temas light/dark aplicam corretamente com aliases
+
+### Verificacao Final
+
+- [x] Rodar `npx playwright test tests/quick-validation-2026.spec.ts` -- 7/7 passando
+- [ ] Desktop 1200px: Navegar todas as views, verificar botao Voltar, sem scrollbars indesejadas
+- [ ] Mobile 375px: Verificar scroll, tabs, layout responsivo
+- [ ] Tema claro: Cores de success/warning/error/info corretas
+- [ ] Tema escuro: Tudo funcional
+- [ ] Flashcards: Botao abre corretamente
+- [ ] Bottom nav: Highlight correto em todas as views e sub-views
+- [ ] Daily goal: Persiste apos reload
