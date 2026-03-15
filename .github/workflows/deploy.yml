@@ -24,6 +24,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Cache-bust assets
+        run: |
+          BUILD_HASH=$(git rev-parse --short HEAD)
+          echo "Build hash: $BUILD_HASH"
+
+          # Inject build hash into version.js
+          sed -i "s/__BUILD_HASH__/$BUILD_HASH/g" js/config/version.js
+
+          # Cache-bust all local CSS references in index.html
+          sed -i -E 's/(href="css\/[^"]+\.css)(\?[^"]*)?/\1?h='"$BUILD_HASH"'/g' index.html
+
+          # Cache-bust all local JS references in index.html
+          sed -i -E 's/(src="js\/[^"]+\.js)(\?[^"]*)?/\1?h='"$BUILD_HASH"'/g' index.html
+
+          # Cache-bust manifest.json
+          sed -i -E 's/(href="manifest\.json)(\?[^"]*)?/\1?h='"$BUILD_HASH"'/g' index.html
+
+          # Verify: count cache-busted refs
+          echo "CSS refs with hash: $(grep -c '\.css?h=' index.html)"
+          echo "JS refs with hash: $(grep -c '\.js?h=' index.html)"
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:

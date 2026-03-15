@@ -5,6 +5,10 @@ export default defineConfig({
   timeout: 60_000,
   retries: 0,
   workers: 1,
+  fullyParallel: false,
+  // Create new browser context for each test
+  globalSetup: undefined,
+  globalTeardown: undefined,
   reporter: [
     ['list'],
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
@@ -21,6 +25,8 @@ export default defineConfig({
       'Cache-Control': 'no-cache, no-store, must-revalidate',
       'Pragma': 'no-cache',
     },
+    // Ensure clean state between tests
+    storageState: undefined,
   },
   projects: [
     {

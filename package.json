@@ -4,7 +4,8 @@
   "description": "Preparação para o Exame de Proficiência em Inglês da FUVEST (Universidade de São Paulo).",
   "main": "sw.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:e2e:batch1": "playwright test tests/e2e-batch1-validation.spec.ts --project=chromium-desktop"
   },
   "repository": {
     "type": "git",
