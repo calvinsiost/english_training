@@ -13,7 +13,7 @@ import { test, expect } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const BASE = 'https://calvinsiost.github.io/english_training/';
+const BASE = process.env.PLAYWRIGHT_BASE_URL || 'https://calvinsiost.github.io/english_training/';
 const SHOTS = 'test-results/validation';
 
 // Real content of the missing module (committed locally, not yet pushed)
@@ -26,26 +26,55 @@ async function shot(page: any, name: string) {
   await page.screenshot({ path: `${SHOTS}/${name}.png`, fullPage: false });
 }
 
-/** Register a route intercept that patches the 404 module before navigating */
-async function patchMissingModule(page: any) {
-  await page.route('**/js/core/request-with-fallback.js', (route: any) => {
-    route.fulfill({
-      status: 200,
-      contentType: 'application/javascript',
-      body: MODULE_SRC,
-    });
-  });
+// Clean storage after navigation in openApp function
+async function cleanStorage(page: any) {
+  await page.evaluate(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  }).catch(() => {});
+  await page.evaluate(async () => {
+    const databases = await (window as any).indexedDB?.databases?.() || [];
+    const deletions = databases
+      .filter((db: any) => db.name)
+      .map((db: any) => new Promise<void>((resolve) => {
+        const req = (window as any).indexedDB.deleteDatabase(db.name);
+        req.onsuccess = () => resolve();
+        req.onerror = () => resolve();
+        req.onblocked = () => resolve();
+      }));
+    await Promise.all(deletions);
+  }).catch(() => {});
 }
 
-/** Navigate to BASE, patch missing module, wait for app to fully init */
+/** Register a route intercept that patches the 404 module before navigating */
+async function patchMissingModule(page: any) {
+  // No-op for now - debugging syntax error
+}
+
+/** Navigate to app and wait for it to load */
 async function openApp(page: any, viewport = { width: 1200, height: 800 }) {
   await page.setViewportSize(viewport);
-  await patchMissingModule(page);
-  await page.goto(BASE);
-  await page.waitForLoadState('networkidle');
-  // Wait for router to be available (signals app is initialized)
-  await page.waitForFunction(() => typeof (window as any).router !== 'undefined', { timeout: 10000 });
-  await page.waitForTimeout(1500); // allow IDB bank init to complete
+  // Clear IndexedDB before loading to force bank reload
+  await page.goto(BASE + '#/', { waitUntil: 'commit' });
+  await page.evaluate(async () => {
+    // Delete all IndexedDB databases — properly await each deletion
+    const databases = await (window as any).indexedDB?.databases?.() || [];
+    const deletions = databases
+      .filter((db: any) => db.name)
+      .map((db: any) => new Promise<void>((resolve) => {
+        const req = (window as any).indexedDB.deleteDatabase(db.name);
+        req.onsuccess = () => resolve();
+        req.onerror = () => resolve();
+        req.onblocked = () => resolve();
+      }));
+    await Promise.all(deletions);
+    localStorage.clear();
+    sessionStorage.clear();
+  }).catch(() => {});
+  // Full reload to trigger fresh DOMContentLoaded + initialization
+  await page.reload({ waitUntil: 'networkidle' });
+  // Wait for app to finish async initialization (bank load, etc.)
+  await page.waitForFunction(() => (window as any).appReady === true, { timeout: 15000 });
 }
 
 /** Click Nova Passagem and wait for study view to become active */
@@ -75,6 +104,10 @@ test('1 - Dashboard: no study content bleeding through', async ({ page }) => {
   await page.waitForTimeout(1500);
   await shot(page, '01-dashboard');
 
+  // Check bank count
+  const bankCount = await page.locator('#bank-count').textContent();
+  console.log(`  Test 1 - Bank count: ${bankCount}`);
+
   const studyActive = await page.evaluate(
     () => document.getElementById('study')?.classList.contains('view--active') ?? false
   );
@@ -103,6 +136,11 @@ test('1 - Dashboard: no study content bleeding through', async ({ page }) => {
 
 test('2 - Study desktop: two-column layout with passage and question', async ({ page }) => {
   await openApp(page, { width: 1200, height: 800 });
+  
+  // Check if bank is loaded
+  const bankCount = await page.locator('#bank-count').textContent();
+  console.log(`  Bank count after openApp: ${bankCount}`);
+  
   await startStudy(page);
   await shot(page, '02-study-desktop');
 

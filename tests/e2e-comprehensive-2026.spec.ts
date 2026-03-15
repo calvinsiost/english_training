@@ -1140,6 +1140,23 @@ test.describe('UX Audit', () => {
           }
         });
 
+        // Labels that reference non-existent form field IDs
+        document.querySelectorAll('label[for]').forEach(label => {
+          const forValue = label.getAttribute('for');
+          if (!forValue || !document.getElementById(forValue)) {
+            found.push(`label[for="${forValue}"] has no matching element id`);
+          }
+        });
+
+        // Labels that are not associated with any form field
+        document.querySelectorAll('label:not([for])').forEach(label => {
+          const hasNestedControl = !!label.querySelector('input, select, textarea');
+          if (!hasNestedControl) {
+            const text = (label.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 40);
+            found.push(`label "${text}" is not associated with a form field`);
+          }
+        });
+
         return found;
       });
 
@@ -1153,6 +1170,12 @@ test.describe('UX Audit', () => {
         console.log(`OK: No a11y issues at ${route}`);
       }
     }
+
+    const orphanLabelIssues = a11yIssues.filter(issue => issue.includes('label[for="'));
+    expect(
+      orphanLabelIssues,
+      `Orphan label references found:\n${orphanLabelIssues.join('\n')}`
+    ).toEqual([]);
 
     // Keyboard focus test
     await goTo(page, '#/', 1000);
