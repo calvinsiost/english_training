@@ -1,4 +1,4 @@
-﻿/**
+/**
  * English Training - Main Application
  * Entry point and initialization
  */
@@ -137,6 +137,11 @@ const FilterSettings = {
   }
 };
 
+window.SourceMetadata = SourceMetadata;
+window.FilterSettings = FilterSettings;
+// Exposed for expedition-ui.js combat integration
+window._loadPassageIntoUI = null; // set after function definition
+
 // Initialize application
 document.addEventListener('DOMContentLoaded', async () => {
   try {
@@ -178,6 +183,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.flashcardSystem = new FlashcardSystem(state.db);
       await window.flashcardSystem.init();
     }
+
+    // Initialize Vocabulary Intelligence (Bayesian difficulty)
+    if (typeof WordIntelligence !== 'undefined') {
+      window.wordIntelligence = new WordIntelligence(state.db);
+      await window.wordIntelligence.init();
+    }
     
     // Initialize Glossary
     if (typeof Glossary !== 'undefined') {
@@ -195,18 +206,54 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (typeof BackupManager !== 'undefined') {
       window.backupManager = new BackupManager(state.db);
     }
-    
+
+    // Initialize Behavior Logger
+    if (typeof BehaviorLogger !== 'undefined') {
+      window.behaviorLogger = new BehaviorLogger(state.db);
+      window.behaviorLogger.init();
+    }
+
+    // Initialize XP System
+    if (typeof XPSystem !== 'undefined') {
+      window.xpSystem = new XPSystem(state.db);
+      await window.xpSystem.init();
+    }
+
+    // Initialize Daily Challenge
+    if (typeof DailyChallenge !== 'undefined') {
+      window.dailyChallenge = new DailyChallenge(state.db);
+      await window.dailyChallenge.init();
+    }
+
+    // Initialize Expedition Engine (roguelite)
+    if (typeof ExpeditionEngine !== 'undefined') {
+      window.expeditionEngine = new ExpeditionEngine(state.db);
+      await window.expeditionEngine.init();
+    }
+
+    // Initialize Expedition UI
+    if (typeof ExpeditionUI !== 'undefined' && window.expeditionEngine) {
+      window.expeditionUI = new ExpeditionUI(window.expeditionEngine);
+    }
+
     // Initialize question bank from JSON
     await initializeQuestionBank();
-    
+
+    // Initialize default flashcards (falsos cognatos + phrasal verbs)
+    await initializeDefaultFlashcards();
+
+    // Backfills (non-blocking) for additive metadata fields
+    backfillFlashcardMetadata().catch(err => console.warn('[App] Flashcard metadata backfill skipped:', err));
+    backfillTextMetadata().catch(err => console.warn('[App] Text metadata backfill skipped:', err));
+
     // Setup router
     setupRouter();
     
     // Setup event listeners
     setupEventListeners();
     
-    // Register service worker
-    registerServiceWorker();
+    // Cleanup old service workers (SW removed — cache busting via git hash in CI)
+    cleanupServiceWorkers();
     
     // Update dashboard
     await updateDashboard();
@@ -215,6 +262,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (window.lucide) {
       window.lucide.createIcons();
     }
+    
+    // Signal that app is ready (for tests)
+    window.appReady = true;
+    console.log('[App] Initialization complete');
 
     // Welcome toast removed - unnecessary on every load
   } catch (error) {
@@ -229,6 +280,9 @@ async function initDatabase() {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
     
     request.onerror = () => reject(request.error);
+    request.onblocked = () => {
+      console.warn('[DB] Upgrade blocked — close other tabs using this app');
+    };
     request.onsuccess = () => {
       state.db = request.result;
       resolve(state.db);
@@ -236,6 +290,13 @@ async function initDatabase() {
     
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
+      const upgradeTx = event.target.transaction;
+
+      const ensureIndex = (store, indexName, keyPath, options = {}) => {
+        if (!store.indexNames.contains(indexName)) {
+          store.createIndex(indexName, keyPath, options);
+        }
+      };
       
       // Question Bank store
       if (!db.objectStoreNames.contains(STORES.QUESTION_BANK)) {
@@ -243,6 +304,11 @@ async function initDatabase() {
         bankStore.createIndex('question_type', 'question_type', { multiEntry: true });
         bankStore.createIndex('passage_topic', 'passage_topic', { unique: false });
         bankStore.createIndex('times_served', 'times_served', { unique: false });
+      } else {
+        const bankStore = upgradeTx.objectStore(STORES.QUESTION_BANK);
+        ensureIndex(bankStore, 'question_type', 'question_type', { multiEntry: true });
+        ensureIndex(bankStore, 'passage_topic', 'passage_topic', { unique: false });
+        ensureIndex(bankStore, 'times_served', 'times_served', { unique: false });
       }
       
       // Other stores (minimal setup for now)
@@ -261,6 +327,16 @@ async function initDatabase() {
       if (!db.objectStoreNames.contains(STORES.META)) {
         db.createObjectStore(STORES.META, { keyPath: 'key' });
       }
+
+      if (!db.objectStoreNames.contains(STORES.PROFILE)) {
+        db.createObjectStore(STORES.PROFILE, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(STORES.ACTIVE_PASSAGE)) {
+        db.createObjectStore(STORES.ACTIVE_PASSAGE, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(STORES.TOKEN_LOG)) {
+        db.createObjectStore(STORES.TOKEN_LOG, { keyPath: 'id' });
+      }
       
       // Analytics stores
       if (!db.objectStoreNames.contains(STORES.ANALYTICS)) {
@@ -276,10 +352,38 @@ async function initDatabase() {
         db.createObjectStore('notes', { keyPath: 'id' });
       }
       if (!db.objectStoreNames.contains('flashcards')) {
-        db.createObjectStore('flashcards', { keyPath: 'id' });
+        const flashStore = db.createObjectStore('flashcards', { keyPath: 'id' });
+        ensureIndex(flashStore, 'termNormalized', 'termNormalized', { unique: false });
+        ensureIndex(flashStore, 'sourceType', 'sourceType', { unique: false });
+        ensureIndex(flashStore, 'vocabId', 'vocabId', { unique: false });
+      } else {
+        const flashStore = upgradeTx.objectStore('flashcards');
+        ensureIndex(flashStore, 'termNormalized', 'termNormalized', { unique: false });
+        ensureIndex(flashStore, 'sourceType', 'sourceType', { unique: false });
+        ensureIndex(flashStore, 'vocabId', 'vocabId', { unique: false });
       }
       if (!db.objectStoreNames.contains('glossary')) {
         db.createObjectStore('glossary', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(STORES.VOCABULARY)) {
+        const vocabularyStore = db.createObjectStore(STORES.VOCABULARY, { keyPath: 'id' });
+        ensureIndex(vocabularyStore, 'normalizedTerm', 'normalizedTerm', { unique: true });
+        ensureIndex(vocabularyStore, 'difficultyScore', 'difficultyScore', { unique: false });
+        ensureIndex(vocabularyStore, 'reliability', 'reliability', { unique: false });
+        ensureIndex(vocabularyStore, 'updatedAtISO', 'updatedAtISO', { unique: false });
+        ensureIndex(vocabularyStore, 'termType', 'termType', { unique: false });
+        ensureIndex(vocabularyStore, 'observations', 'observations', { unique: false });
+      } else {
+        const vocabularyStore = upgradeTx.objectStore(STORES.VOCABULARY);
+        ensureIndex(vocabularyStore, 'normalizedTerm', 'normalizedTerm', { unique: true });
+        ensureIndex(vocabularyStore, 'difficultyScore', 'difficultyScore', { unique: false });
+        ensureIndex(vocabularyStore, 'reliability', 'reliability', { unique: false });
+        ensureIndex(vocabularyStore, 'updatedAtISO', 'updatedAtISO', { unique: false });
+        ensureIndex(vocabularyStore, 'termType', 'termType', { unique: false });
+        ensureIndex(vocabularyStore, 'observations', 'observations', { unique: false });
+      }
+      if (!db.objectStoreNames.contains(STORES.WEAKNESS_MAP)) {
+        db.createObjectStore(STORES.WEAKNESS_MAP, { keyPath: 'id' });
       }
       if (!db.objectStoreNames.contains('achievements')) {
         db.createObjectStore('achievements', { keyPath: 'id' });
@@ -287,9 +391,35 @@ async function initDatabase() {
       if (!db.objectStoreNames.contains('exam_attempts')) {
         db.createObjectStore('exam_attempts', { keyPath: 'id' });
       }
+
+      // v5: Gamification stores
+      if (!db.objectStoreNames.contains('event_log')) {
+        const eventStore = db.createObjectStore('event_log', { keyPath: 'id' });
+        eventStore.createIndex('type', 'type', { unique: false });
+        eventStore.createIndex('category', 'category', { unique: false });
+        eventStore.createIndex('dayKey', 'dayKey', { unique: false });
+        eventStore.createIndex('sessionId', 'sessionId', { unique: false });
+      }
+      if (!db.objectStoreNames.contains('xp_log')) {
+        db.createObjectStore('xp_log', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('lesson_progress')) {
+        db.createObjectStore('lesson_progress', { keyPath: 'id' });
+      }
+
+      // v7: Expedition (roguelite) store
+      if (!db.objectStoreNames.contains(STORES.EXPEDITION_RUNS)) {
+        const expStore = db.createObjectStore(STORES.EXPEDITION_RUNS, { keyPath: 'id' });
+        expStore.createIndex('status', 'status', { unique: false });
+        expStore.createIndex('startedAt', 'startedAt', { unique: false });
+        expStore.createIndex('biome', 'biome', { unique: false });
+      }
     };
   });
 }
+
+// Expected bank version — bump this when initial-bank.json data changes
+const EXPECTED_BANK_VERSION = "3.4";
 
 // Initialize Question Bank from JSON
 async function initializeQuestionBank() {
@@ -297,51 +427,459 @@ async function initializeQuestionBank() {
   const tx = db.transaction(STORES.META, 'readonly');
   const metaStore = tx.objectStore(STORES.META);
   const isInitialized = await idbGet(metaStore, 'bank_initialized');
-  
-  if (isInitialized?.value) {
+
+  const needsUpgrade = isInitialized?.value && isInitialized.version !== EXPECTED_BANK_VERSION;
+
+  if (isInitialized?.value && !needsUpgrade) {
     console.log('[App] Question bank already initialized');
     return;
   }
-  
+
   try {
+    // Preserve SRS progress during upgrade
+    let progressMap = null;
+    if (needsUpgrade) {
+      console.log(`[App] Upgrading question bank from ${isInitialized.version || 'unknown'} to ${EXPECTED_BANK_VERSION}...`);
+      try {
+        const readTx = db.transaction(STORES.QUESTION_BANK, 'readonly');
+        const readStore = readTx.objectStore(STORES.QUESTION_BANK);
+        const allRecords = await new Promise((resolve, reject) => {
+          const req = readStore.getAll();
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+        progressMap = new Map();
+        for (const rec of allRecords) {
+          if (rec.times_served > 0 || rec.last_served_at) {
+            progressMap.set(rec.id, {
+              times_served: rec.times_served,
+              last_served_at: rec.last_served_at
+            });
+          }
+        }
+        console.log(`[App] Preserved progress for ${progressMap.size} passages`);
+      } catch (e) {
+        console.warn('[App] Could not read existing progress, will reset:', e);
+      }
+    }
+
     console.log('Carregando banco de questões...');
-    const data = await requestJsonWithFallback('./data/initial-bank.json', {}, {
+    const fetchOptions = needsUpgrade ? { cache: 'reload' } : {};
+    const data = await requestJsonWithFallback('./data/initial-bank.json', fetchOptions, {
       context: 'initial-bank',
       fallbackMessage: 'Nao foi possivel carregar o banco inicial.',
       retries: 2,
       timeoutMs: 10000
     });
-    
-    // Populate question bank
+
+    // Clear existing data during upgrade
+    if (needsUpgrade) {
+      const clearTx = db.transaction(STORES.QUESTION_BANK, 'readwrite');
+      clearTx.objectStore(STORES.QUESTION_BANK).clear();
+      await new Promise((resolve, reject) => {
+        clearTx.oncomplete = resolve;
+        clearTx.onerror = () => reject(clearTx.error);
+      });
+    }
+
+    // Populate question bank — fire all puts synchronously to keep transaction alive
     const writeTx = db.transaction(STORES.QUESTION_BANK, 'readwrite');
     const bankStore = writeTx.objectStore(STORES.QUESTION_BANK);
-    
+
     for (const passage of data.passages) {
+      const progress = progressMap?.get(passage.id);
       const bankEntry = {
         ...passage,
-        times_served: 0,
-        last_served_at: null,
+        times_served: progress?.times_served || 0,
+        last_served_at: progress?.last_served_at || null,
         source_type: 'official',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        text_metadata: createTextMetadata(passage)
       };
-      await idbPut(bankStore, bankEntry);
+      bankStore.put(bankEntry);
     }
-    
+
+    // Wait for transaction to complete
+    await new Promise((resolve, reject) => {
+      writeTx.oncomplete = resolve;
+      writeTx.onerror = () => reject(writeTx.error);
+      writeTx.onabort = () => reject(writeTx.error || new Error('Transaction aborted'));
+    });
+
     // Mark as initialized
     const metaWriteTx = db.transaction(STORES.META, 'readwrite');
     await idbPut(metaWriteTx.objectStore(STORES.META), {
       key: 'bank_initialized',
       value: true,
-      version: data.schema_version,
+      version: EXPECTED_BANK_VERSION,
       timestamp: new Date().toISOString()
     });
-    
-    console.log(`${data.total_passages} passagens carregadas`);
-    console.log(`[App] Initialized question bank with ${data.total_passages} passages`);
+
+    if (needsUpgrade) {
+      console.log(`[App] Question bank upgraded to v${EXPECTED_BANK_VERSION}`);
+      showToast('Banco de questões atualizado!', 'success');
+    } else {
+      console.log(`${data.total_passages} textos carregados`);
+      console.log(`[App] Initialized question bank with ${data.total_passages} passages`);
+    }
   } catch (error) {
     console.error('[App] Failed to initialize question bank:', error);
-    showToast('Usando banco vazio. Configure API para gerar questões.', 'warning');
+    if (!needsUpgrade) {
+      showToast('Usando banco vazio. Configure API para gerar questões.', 'warning');
+    }
   }
+}
+
+// Initialize Default Flashcards from JSON
+async function initializeDefaultFlashcards() {
+  if (!state.db || !window.flashcardSystem) return;
+
+  const tx = state.db.transaction(STORES.META, 'readonly');
+  const isInit = await idbGet(tx.objectStore(STORES.META), 'flashcards_initialized');
+
+  // Fetch JSON first to check version, skip if already up-to-date
+  try {
+    const data = await requestJsonWithFallback('./data/default-flashcards.json', {}, {
+      context: 'default-flashcards',
+      fallbackMessage: 'Flashcards padrão não disponíveis.',
+      retries: 2,
+      timeoutMs: 10000
+    });
+
+    if (isInit?.value && isInit?.version === data.schema_version) return;
+
+    if (!Array.isArray(data.cards) || data.cards.length === 0) return;
+
+    // Batch insert via single transaction — idempotent with deterministic IDs
+    const writeTx = state.db.transaction(STORES.FLASHCARDS, 'readwrite');
+    const store = writeTx.objectStore(STORES.FLASHCARDS);
+    const now = new Date();
+    let inserted = 0;
+
+    data.cards.forEach((card, index) => {
+      if (!card.word || !card.translation) return;
+
+      const dayOffset = Math.floor(index / 9);
+      const nextReview = new Date(now);
+      nextReview.setDate(nextReview.getDate() + dayOffset);
+
+      const id = 'fc_default_' + card.word.toLowerCase().replace(/\s+/g, '_');
+      const termNormalized = card.word.toLowerCase().trim().replace(/\s+/g, ' ');
+      store.put({
+        id,
+        word: card.word,
+        translation: card.translation,
+        context: card.context || '',
+        deck: card.deck,
+        category: card.category || '',
+        difficulty: card.difficulty || 'intermediate',
+        termNormalized,
+        termType: termNormalized.includes(' ') ? 'phrase' : 'word',
+        sourceType: 'seed',
+        sourceRefs: {},
+        difficultySnapshot: null,
+        autoGenerated: false,
+        vocabId: null,
+        createdAt: now.toISOString(),
+        repetitions: 0,
+        easeFactor: 2.5,
+        interval: 0,
+        nextReview: nextReview.toISOString(),
+        reviewCount: 0,
+        history: []
+      });
+      inserted++;
+    });
+
+    await new Promise((resolve, reject) => {
+      writeTx.oncomplete = resolve;
+      writeTx.onerror = () => reject(writeTx.error);
+      writeTx.onabort = () => reject(writeTx.error || new Error('Transaction aborted'));
+    });
+
+    // Set META flag
+    const metaTx = state.db.transaction(STORES.META, 'readwrite');
+    await idbPut(metaTx.objectStore(STORES.META), {
+      key: 'flashcards_initialized',
+      value: true,
+      version: data.schema_version,
+      count: inserted,
+      timestamp: now.toISOString()
+    });
+
+    console.log(`[App] Initialized ${inserted} default flashcards`);
+  } catch (error) {
+    console.error('[App] Failed to initialize flashcards:', error);
+  }
+}
+
+function waitForIdle() {
+  return new Promise(resolve => {
+    if (typeof window.requestIdleCallback === 'function') {
+      window.requestIdleCallback(() => resolve());
+    } else {
+      setTimeout(resolve, 0);
+    }
+  });
+}
+
+function normalizeTerm(termRaw = '') {
+  return String(termRaw)
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, ' ')
+    .replace(/^[^a-z0-9]+/i, '')
+    .replace(/[^a-z0-9]+$/i, '');
+}
+
+function computeLexicalMetadata(text = '') {
+  const tokens = (text.match(/[A-Za-z]+(?:'[A-Za-z]+)*/g) || []).map(t => t.toLowerCase());
+  const wordCount = tokens.length;
+  const uniqueWordCount = new Set(tokens).size;
+  const lexicalDiversity = wordCount > 0 ? Number((uniqueWordCount / wordCount).toFixed(3)) : 0;
+  const avgWordLength = wordCount > 0
+    ? Number((tokens.reduce((sum, t) => sum + t.length, 0) / wordCount).toFixed(2))
+    : 0;
+  const sentenceCount = Math.max(1, text.split(/[.!?]+/).filter(Boolean).length);
+  const estimatedReadingTime = wordCount > 0 ? Math.max(1, Math.ceil(wordCount / 200)) : 0;
+
+  return {
+    wordCount,
+    uniqueWordCount,
+    lexicalDiversity,
+    avgWordLength,
+    sentenceCount,
+    estimatedReadingTime
+  };
+}
+
+function createTextMetadata(entry) {
+  const source = SourceMetadata.extract(entry.exam_id, entry.exam_name, entry.source);
+  return {
+    source: {
+      institution: source.institution || 'FUVEST',
+      year: source.year || null,
+      edition: source.edition || null,
+      period: source.period || null
+    },
+    lexical: computeLexicalMetadata(entry.text || ''),
+    performance: {
+      attempts: 0,
+      accuracy: 0,
+      avgConfidence: 0,
+      lowConfidenceRate: 0,
+      lastAttemptAt: null,
+      _correctCount: 0,
+      _confidenceSum: 0,
+      _lowConfidenceCount: 0
+    },
+    vocabDifficulty: {
+      topTerms: [],
+      avgDifficulty: null
+    }
+  };
+}
+
+async function backfillFlashcardMetadata() {
+  if (!state.db) return;
+  const metaTx = state.db.transaction(STORES.META, 'readonly');
+  const done = await idbGet(metaTx.objectStore(STORES.META), 'flashcards_metadata_backfill_v1_done');
+  if (done?.value) return;
+
+  const tx = state.db.transaction(STORES.FLASHCARDS, 'readwrite');
+  const store = tx.objectStore(STORES.FLASHCARDS);
+  const cards = await idbGetAll(store);
+  let updated = 0;
+
+  for (const card of cards) {
+    let dirty = false;
+    const normalized = normalizeTerm(card.word || '');
+    if (!card.termNormalized) {
+      card.termNormalized = normalized;
+      dirty = true;
+    }
+    if (!card.termType) {
+      card.termType = normalized.includes(' ') ? 'phrase' : 'word';
+      dirty = true;
+    }
+    if (!card.sourceType) {
+      card.sourceType = 'manual';
+      dirty = true;
+    }
+    if (!card.sourceRefs) {
+      card.sourceRefs = {};
+      dirty = true;
+    }
+    if (!Object.prototype.hasOwnProperty.call(card, 'difficultySnapshot')) {
+      card.difficultySnapshot = null;
+      dirty = true;
+    }
+    if (!Object.prototype.hasOwnProperty.call(card, 'autoGenerated')) {
+      card.autoGenerated = false;
+      dirty = true;
+    }
+    if (!Object.prototype.hasOwnProperty.call(card, 'vocabId')) {
+      card.vocabId = null;
+      dirty = true;
+    }
+    if (dirty) {
+      await idbPut(store, card);
+      updated += 1;
+    }
+  }
+
+  await new Promise((resolve, reject) => {
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error || new Error('Transaction aborted'));
+  });
+
+  const doneTx = state.db.transaction(STORES.META, 'readwrite');
+  await idbPut(doneTx.objectStore(STORES.META), {
+    key: 'flashcards_metadata_backfill_v1_done',
+    value: true,
+    updated,
+    timestamp: new Date().toISOString()
+  });
+}
+
+async function backfillTextMetadata() {
+  if (!state.db) return;
+  const metaTx = state.db.transaction(STORES.META, 'readonly');
+  const done = await idbGet(metaTx.objectStore(STORES.META), 'metadata_backfill_v1_done');
+  if (done?.value) return;
+
+  const readTx = state.db.transaction(STORES.QUESTION_BANK, 'readonly');
+  const entries = await idbGetAll(readTx.objectStore(STORES.QUESTION_BANK));
+  const chunkSize = 20;
+  let touched = 0;
+
+  for (let i = 0; i < entries.length; i += chunkSize) {
+    await waitForIdle();
+    const chunk = entries.slice(i, i + chunkSize);
+    const writeTx = state.db.transaction(STORES.QUESTION_BANK, 'readwrite');
+    const store = writeTx.objectStore(STORES.QUESTION_BANK);
+
+    for (const entry of chunk) {
+      let dirty = false;
+      if (!entry.text_metadata) {
+        entry.text_metadata = createTextMetadata(entry);
+        dirty = true;
+      } else {
+        if (!entry.text_metadata.source) {
+          entry.text_metadata.source = createTextMetadata(entry).source;
+          dirty = true;
+        }
+        if (!entry.text_metadata.lexical) {
+          entry.text_metadata.lexical = computeLexicalMetadata(entry.text || '');
+          dirty = true;
+        }
+        if (!entry.text_metadata.performance) {
+          entry.text_metadata.performance = createTextMetadata(entry).performance;
+          dirty = true;
+        } else {
+          const perf = entry.text_metadata.performance;
+          if (!Object.prototype.hasOwnProperty.call(perf, '_correctCount')) {
+            perf._correctCount = Math.round((perf.attempts || 0) * (perf.accuracy || 0) / 100);
+            dirty = true;
+          }
+          if (!Object.prototype.hasOwnProperty.call(perf, '_confidenceSum')) {
+            perf._confidenceSum = Number(((perf.avgConfidence || 0) * (perf.attempts || 0)).toFixed(4));
+            dirty = true;
+          }
+          if (!Object.prototype.hasOwnProperty.call(perf, '_lowConfidenceCount')) {
+            perf._lowConfidenceCount = Math.round((perf.lowConfidenceRate || 0) * (perf.attempts || 0) / 100);
+            dirty = true;
+          }
+        }
+        if (!entry.text_metadata.vocabDifficulty) {
+          entry.text_metadata.vocabDifficulty = { topTerms: [], avgDifficulty: null };
+          dirty = true;
+        }
+      }
+
+      if (dirty) {
+        await idbPut(store, entry);
+        touched += 1;
+      }
+    }
+
+    await new Promise((resolve, reject) => {
+      writeTx.oncomplete = resolve;
+      writeTx.onerror = () => reject(writeTx.error);
+      writeTx.onabort = () => reject(writeTx.error || new Error('Transaction aborted'));
+    });
+  }
+
+  const doneTx = state.db.transaction(STORES.META, 'readwrite');
+  await idbPut(doneTx.objectStore(STORES.META), {
+    key: 'metadata_backfill_v1_done',
+    value: true,
+    touched,
+    timestamp: new Date().toISOString()
+  });
+}
+
+async function updateTextPerformanceMetadata(textId, isCorrect, confidence) {
+  if (!state.db || !textId) return;
+
+  try {
+    const tx = state.db.transaction(STORES.QUESTION_BANK, 'readwrite');
+    const store = tx.objectStore(STORES.QUESTION_BANK);
+    const entry = await idbGet(store, textId);
+    if (!entry) return;
+
+    entry.text_metadata = entry.text_metadata || createTextMetadata(entry);
+    const perf = entry.text_metadata.performance || createTextMetadata(entry).performance;
+
+    perf.attempts = (perf.attempts || 0) + 1;
+    perf._correctCount = (perf._correctCount || 0) + (isCorrect ? 1 : 0);
+    perf._confidenceSum = Number(((perf._confidenceSum || 0) + confidence).toFixed(4));
+    perf._lowConfidenceCount = (perf._lowConfidenceCount || 0) + (confidence < 2 ? 1 : 0);
+    perf.accuracy = perf.attempts > 0 ? Math.round((perf._correctCount / perf.attempts) * 100) : 0;
+    perf.avgConfidence = perf.attempts > 0
+      ? Number((perf._confidenceSum / perf.attempts).toFixed(2))
+      : 0;
+    perf.lowConfidenceRate = perf.attempts > 0
+      ? Math.round((perf._lowConfidenceCount / perf.attempts) * 100)
+      : 0;
+    perf.lastAttemptAt = new Date().toISOString();
+    entry.text_metadata.performance = perf;
+
+    await idbPut(store, entry);
+  } catch (error) {
+    console.warn('[App] Failed to update text performance metadata:', error);
+  }
+}
+
+async function updateWeaknessSection() {
+  const weaknessList = document.getElementById('weakness-list');
+  if (!weaknessList) return;
+
+  if (!window.wordIntelligence) {
+    weaknessList.innerHTML = '<p class="empty-state">Inteligência de vocabulário indisponível.</p>';
+    return;
+  }
+
+  const weakTerms = await window.wordIntelligence.getTopDifficultTerms(5);
+  if (!weakTerms.length) {
+    weaknessList.innerHTML = '<p class="empty-state">Complete algumas questões para ver análise</p>';
+    return;
+  }
+
+  const escapeHtml = (value = '') => value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+
+  weaknessList.innerHTML = weakTerms.map(item => `
+    <div class="weakness-item" title="${escapeHtml(item.term)}">
+      <span class="weakness-term">${escapeHtml(item.term)}</span>
+      <span class="weakness-score">${item.score}</span>
+    </div>
+  `).join('');
 }
 
 // Simple Router
@@ -357,12 +895,24 @@ function handleRoute() {
     '#/study': 'study',
     '#/exam': 'exam',
     '#/review': 'review',
+    '#/flashcard-list': 'flashcard-list',
     '#/analytics': 'analytics',
     '#/sessions': 'sessions',
-    '#/settings': 'settings'
+    '#/settings': 'settings',
+    '#/expedition': 'expedition'
   };
-  
+
   const viewId = viewMap[hash] || 'dashboard';
+
+  // Log navigation
+  if (window.behaviorLogger) {
+    window.behaviorLogger.log('navigation', 'navigation', 'route_change', {
+      from: state.currentView,
+      to: viewId,
+      hash
+    });
+  }
+
   switchView(viewId);
 }
 
@@ -388,9 +938,11 @@ function switchView(viewId) {
     document.body.classList.remove('study-active');
   }
 
-  // Update bottom nav active state
+  // Update bottom nav active state (map sub-views to nearest nav item)
+  const navMap = { review: 'dashboard', 'srs-review': 'dashboard', sessions: 'dashboard', exam: 'study', 'flashcard-list': 'dashboard', expedition: 'dashboard' };
+  const navViewId = navMap[viewId] || viewId;
   document.querySelectorAll('.nav-item').forEach(item => {
-    item.classList.toggle('active', item.dataset.view === viewId);
+    item.classList.toggle('active', item.dataset.view === navViewId);
   });
 
   // Update dashboard data if entering dashboard
@@ -411,6 +963,21 @@ function switchView(viewId) {
     if (typeof SessionHistoryUI !== 'undefined' && window.sessionHistory) {
       const historyUI = new SessionHistoryUI(window.sessionHistory);
       historyUI.render('session-history-view');
+    }
+  }
+
+  // Render flashcard list if entering flashcard-list view
+  if (viewId === 'flashcard-list') {
+    if (typeof FlashcardListUI !== 'undefined' && window.flashcardSystem) {
+      const listUI = new FlashcardListUI(window.flashcardSystem);
+      listUI.render('flashcard-list-view');
+    }
+  }
+
+  // Render expedition view
+  if (viewId === 'expedition') {
+    if (window.expeditionUI) {
+      window.expeditionUI.render();
     }
   }
 }
@@ -482,6 +1049,10 @@ function initHelpFeatureSettings() {
     cb.addEventListener('change', () => {
       if (window.helpFeatures) {
         window.helpFeatures.updateSettings({ [key]: cb.checked });
+        // Stop TTS if it was playing and user disabled the setting
+        if (key === 'tts' && !cb.checked) {
+          window.helpFeatures.stopSpeaking();
+        }
       }
     });
   });
@@ -500,7 +1071,7 @@ async function updateFilterSummary() {
   
   const summaryEl = document.getElementById('filter-summary');
   if (summaryEl) {
-    summaryEl.innerHTML = `<span class="filter-count">${filtered.length} passagens · ${totalQuestions} questões disponíveis</span>`;
+    summaryEl.innerHTML = `<span class="filter-count">${filtered.length} textos · ${totalQuestions} questões disponíveis</span>`;
   }
 }
 
@@ -516,10 +1087,6 @@ function setupEventListeners() {
   document.getElementById('settings-btn')?.addEventListener('click', () => {
     window.location.hash = '#/settings';
     updateFilterSummary();
-  });
-  
-  document.getElementById('settings-back')?.addEventListener('click', () => {
-    window.location.hash = '#/';
   });
   
   document.getElementById('study-back')?.addEventListener('click', async () => {
@@ -558,10 +1125,65 @@ function setupEventListeners() {
   document.getElementById('btn-sessions')?.addEventListener('click', () => {
     window.location.hash = '#/sessions';
   });
-  
-  // Settings
+
+  // Flashcards button — start review directly, fallback to list if no cards
+  document.getElementById('btn-deck')?.addEventListener('click', async () => {
+    if (window.flashcardSystem) {
+      const ui = new FlashcardUI(window.flashcardSystem);
+      const dueCards = await window.flashcardSystem.getDueCards(null, 50);
+      if (dueCards.length > 0) {
+        ui.cards = dueCards;
+        ui.currentIndex = 0;
+        ui.showCard();
+        return;
+      }
+      const allCards = await window.flashcardSystem.getAllCards();
+      if (allCards.length > 0) {
+        ui.cards = allCards;
+        ui.currentIndex = 0;
+        ui.showCard();
+        return;
+      }
+    }
+    window.location.hash = '#/flashcard-list';
+  });
+
+  // Flashcard list "Voltar ao Treino" — reopen flashcard training
+  document.getElementById('fc-list-back')?.addEventListener('click', async () => {
+    if (window.flashcardSystem) {
+      const ui = new FlashcardUI(window.flashcardSystem);
+      const dueCards = await window.flashcardSystem.getDueCards(null, 50);
+      const cards = dueCards.length > 0 ? dueCards : await window.flashcardSystem.getAllCards();
+      if (cards.length > 0) {
+        window.location.hash = '#/';
+        ui.cards = cards;
+        ui.currentIndex = 0;
+        ui.showCard();
+        return;
+      }
+    }
+    window.location.hash = '#/';
+  });
+
+  // Delegated back button handler for [data-back] attribute
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-back]')) {
+      e.preventDefault();
+      window.location.hash = '#/';
+    }
+  });
+
+  // Settings - daily goal with persistence
+  const savedGoal = localStorage.getItem('dailyGoal');
+  if (savedGoal) {
+    const goalInput = document.getElementById('daily-goal');
+    const goalValue = document.getElementById('daily-goal-value');
+    if (goalInput) goalInput.value = savedGoal;
+    if (goalValue) goalValue.textContent = savedGoal;
+  }
   document.getElementById('daily-goal')?.addEventListener('input', (e) => {
     document.getElementById('daily-goal-value').textContent = e.target.value;
+    localStorage.setItem('dailyGoal', e.target.value);
   });
 
   // Theme toggle
@@ -672,7 +1294,48 @@ async function updateDashboard() {
     } catch (e) {
       console.error('Analytics stats error:', e);
     }
-    
+
+    // Update XP bar
+    if (window.xpSystem) {
+      window.xpSystem.updateDashboardXP();
+    }
+
+    // Update daily challenge card
+    if (window.dailyChallenge) {
+      window.dailyChallenge.updateDashboardCard();
+    }
+
+    // Update expedition badge
+    if (window.expeditionUI) {
+      window.expeditionUI.updateDashboardBadge();
+    }
+
+    // Check achievements (including expedition stats)
+    if (window.achievementsManager) {
+      try {
+        const aStats = window.analyticsManager ? await window.analyticsManager.getOverallStats() : {};
+        const achieveStats = {
+          totalQuestions: aStats.totalQuestions || 0,
+          currentStreak: aStats.currentStreak || 0,
+          fuvestAccuracy: aStats.overallAccuracy || 0,
+          fuvestQuestions: aStats.totalQuestions || 0,
+          translations: 0, fastAnswers: 0, completionRate: 0,
+          examsCompleted: 0, notesCreated: 0, flashcardsReviewed: 0
+        };
+        if (window.expeditionEngine) {
+          const ep = window.expeditionEngine.getProfile();
+          achieveStats.expeditionsCompleted = ep.completedRuns || 0;
+          achieveStats.expeditionBestFloor = ep.bestFloor || 0;
+          achieveStats.expeditionPerfectRuns = ep.statistics?.perfectRuns || 0;
+          achieveStats.expeditionBossesDefeated = ep.statistics?.bossesDefeated || 0;
+          achieveStats.expeditionRelicsUnlocked = ep.unlockedRelics?.length || 0;
+        }
+        window.achievementsManager.checkAchievements(achieveStats).catch(() => {});
+      } catch (e) { /* achievements check non-critical */ }
+    }
+
+    await updateWeaknessSection();
+
   } catch (error) {
     console.error('Dashboard update error:', error);
   }
@@ -693,6 +1356,11 @@ async function startStudySession() {
   if (window.sessionHistory) {
     window.sessionHistory.startSession('study');
   }
+
+  // Log session start
+  if (window.behaviorLogger) {
+    window.behaviorLogger.log('session', 'study', 'start', {});
+  }
   
   try {
     // Get filter settings
@@ -709,7 +1377,7 @@ async function startStudySession() {
     passages = FilterSettings.filter(passages, filters);
     
     if (passages.length === 0) {
-      showToast('Nenhuma passagem disponível com os filtros atuais. Ajuste as configurações.', 'warning');
+      showToast('Nenhum texto disponível com os filtros atuais. Ajuste as configurações.', 'warning');
       return;
     }
     
@@ -750,7 +1418,7 @@ async function startStudySession() {
     
   } catch (error) {
     console.error('Start study error:', error);
-    showToast('Erro ao carregar passagem', 'error');
+    showToast('Erro ao carregar texto', 'error');
     // Hide loading state on error
     const loadingEl = document.getElementById('study-loading');
     if (loadingEl) loadingEl.style.display = 'none';
@@ -759,6 +1427,12 @@ async function startStudySession() {
 
 // Load Passage into UI
 function loadPassageIntoUI(passage) {
+  // Stop any active TTS when loading a new passage
+  if (window.helpFeatures) {
+    const ttsBtn = document.getElementById('help-btn-tts');
+    window.helpFeatures.stopSpeaking(ttsBtn);
+  }
+
   const passageEl = document.getElementById('passage-text');
   const questionEl = document.getElementById('question-text');
   const optionsEl = document.getElementById('options-list');
@@ -835,25 +1509,44 @@ function loadPassageIntoUI(passage) {
   const passageTab = document.querySelector('[data-tab="passage"]');
   if (passageTab) {
     document.querySelectorAll('.study-tab').forEach(t => t.classList.remove('active'));
+    passageTab.classList.add('active');
   }
-  
+
   // Hide loading state
   const loadingEl = document.getElementById('study-loading');
   if (loadingEl) loadingEl.style.display = 'none';
-    passageTab.classList.add('active');
-  }
   
   // Hide feedback and confidence sections
-  document.getElementById('confidence-section').style.display = 'none';
-  document.getElementById('feedback-section').style.display = 'none';
-  document.getElementById('next-container').style.display = 'none';
+  const confEl = document.getElementById('confidence-section');
+  const feedEl = document.getElementById('feedback-section');
+  const nextEl = document.getElementById('next-container');
+  if (confEl) confEl.style.display = 'none';
+  if (feedEl) feedEl.style.display = 'none';
+  if (nextEl) nextEl.style.display = 'none';
   
   // Expand passage if collapsed
   const passageContainer = document.getElementById('passage-panel');
   if (passageContainer) {
     passageContainer.classList.remove('collapsed');
   }
+
+  // Mark question load time for hesitation tracking
+  if (window.behaviorLogger) {
+    window.behaviorLogger.markQuestionLoad();
+  }
+
+  // Determine if this is a treasure question (10% chance)
+  state._currentTreasure = window.xpSystem ? window.xpSystem.isTreasureQuestion() : false;
+  state._helpUsedThisQuestion = [];
+
+  // Show treasure indicator if applicable
+  const treasureEl = document.getElementById('treasure-indicator');
+  if (treasureEl) {
+    treasureEl.style.display = state._currentTreasure ? 'inline-flex' : 'none';
+  }
 }
+// Expose for expedition-ui.js combat integration
+window._loadPassageIntoUI = loadPassageIntoUI;
 
 // Handle Option Selection
 function handleOptionSelect(button, question) {
@@ -861,18 +1554,28 @@ function handleOptionSelect(button, question) {
   document.querySelectorAll('.option-btn').forEach(btn => {
     btn.disabled = true;
   });
-  
+
   // Mark selected
   button.classList.add('selected');
-  
+
+  // Log behavior
+  if (window.behaviorLogger) {
+    const timeFromLoad = window.behaviorLogger.getTimeSinceQuestionLoad();
+    window.behaviorLogger.log('answer', 'study', 'select_option', {
+      questionId: question.id,
+      optionSelected: button.dataset.value,
+      timeFromLoad
+    });
+  }
+
   // Show confidence prompt
   const confidenceSection = document.getElementById('confidence-section');
-  confidenceSection.style.display = 'block';
-  
-  // Setup confidence buttons
-  confidenceSection.querySelectorAll('.confidence-btn').forEach(btn => {
-    btn.onclick = () => handleConfidenceSelect(btn.dataset.confidence, button.dataset.value, question);
-  });
+  if (confidenceSection) {
+    confidenceSection.style.display = 'block';
+    confidenceSection.querySelectorAll('.confidence-btn').forEach(btn => {
+      btn.onclick = () => handleConfidenceSelect(btn.dataset.confidence, button.dataset.value, question);
+    });
+  }
 }
 
 // Handle Confidence Selection
@@ -881,12 +1584,14 @@ function handleConfidenceSelect(confidenceLevel, selectedAnswer, question) {
   
   // Show feedback
   const feedbackSection = document.getElementById('feedback-section');
-  feedbackSection.style.display = 'block';
-  feedbackSection.className = `feedback-section ${isCorrect ? 'correct' : 'incorrect'}`;
-  feedbackSection.innerHTML = `
-    <h4>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</h4>
-    <p>Resposta correta: ${question.correct_answer}</p>
-  `;
+  if (feedbackSection) {
+    feedbackSection.style.display = 'block';
+    feedbackSection.className = `feedback-section ${isCorrect ? 'correct' : 'incorrect'}`;
+    feedbackSection.innerHTML = `
+      <h4>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</h4>
+      <p>Resposta correta: ${question.correct_answer}</p>
+    `;
+  }
   
   // Show next button
   const nextContainer = document.getElementById('next-container');
@@ -904,16 +1609,63 @@ function handleConfidenceSelect(confidenceLevel, selectedAnswer, question) {
   });
   
   // Hide confidence section
-  document.getElementById('confidence-section').style.display = 'none';
+  const confSection = document.getElementById('confidence-section');
+  if (confSection) confSection.style.display = 'none';
   
+  // Log behavior
+  if (window.behaviorLogger) {
+    window.behaviorLogger.log('answer', 'study', 'confirm_answer', {
+      questionId: question.id,
+      isCorrect,
+      confidence: parseInt(confidenceLevel),
+      selectedAnswer
+    });
+  }
+
+  // Skip XP/challenge awards if inside expedition (engine handles its own rewards)
+  const inExpedition = window.expeditionEngine && window.expeditionEngine.hasActiveRun();
+
+  // Award XP
+  if (window.xpSystem && !inExpedition) {
+    const isTreasure = state._currentTreasure || false;
+    const multiplier = isTreasure ? 2 : 1;
+    if (isCorrect) {
+      const baseXP = parseInt(confidenceLevel) >= 3 ? 15 : 10;
+      window.xpSystem.awardXP(baseXP, 'answer_correct', multiplier);
+    } else {
+      window.xpSystem.awardXP(3, 'answer_incorrect', multiplier);
+    }
+  }
+
+  // Update daily challenge
+  if (window.dailyChallenge && !inExpedition) {
+    window.dailyChallenge.recordProgress('total_answers', 1);
+    if (isCorrect) {
+      window.dailyChallenge.recordProgress('consecutive_correct', 1);
+      // Track correct without help for "perfect" challenge
+      const helpUsedThisQuestion = state._helpUsedThisQuestion || [];
+      if (helpUsedThisQuestion.length === 0) {
+        window.dailyChallenge.recordProgress('correct_no_help', 1);
+      }
+    } else {
+      // Reset consecutive counter on wrong answer
+      window.dailyChallenge._challenge && (window.dailyChallenge._challenge._consecutiveCorrect = 0);
+    }
+  }
+
   // Save attempt (async, don't block)
   saveAttempt(question, selectedAnswer, parseInt(confidenceLevel), isCorrect);
+
+  // Dispatch event for expedition combat bridge
+  document.dispatchEvent(new CustomEvent('question:answered', {
+    detail: { questionId: question.id, isCorrect, confidence: parseInt(confidenceLevel), selectedAnswer }
+  }));
 }
 
 // Handle Next Question
 async function handleNextQuestion() {
   state.currentQuestionIndex++;
-  
+
   if (state.currentQuestionIndex < state.currentPassage.questions.length) {
     // Load next question
     loadPassageIntoUI(state.currentPassage);
@@ -922,7 +1674,16 @@ async function handleNextQuestion() {
     if (window.sessionHistory) {
       await window.sessionHistory.endSession();
     }
-    showToast('Passagem completa!', 'success');
+
+    // Log session end
+    if (window.behaviorLogger) {
+      window.behaviorLogger.log('session', 'study', 'end', {
+        passageId: state.currentPassage?.id,
+        questionsAnswered: state.currentPassage?.questions?.length || 0
+      });
+    }
+
+    showToast('Texto completo!', 'success');
     window.location.hash = '#/';
   }
 }
@@ -946,6 +1707,8 @@ async function saveAttempt(question, answer, confidence, isCorrect, timeSpent = 
       confidence: confidence,
       created_at: new Date().toISOString()
     });
+
+    updateTextPerformanceMetadata(state.currentPassage.id, isCorrect, confidence).catch(() => null);
     
     // Record in analytics
     if (window.analyticsManager) {
@@ -1083,28 +1846,21 @@ function showToast(message, type = 'info') {
   }, 2000);
 }
 
-// Service Worker Registration
-function registerServiceWorker() {
+// Cleanup old service workers (SW removed — ADR-001)
+function cleanupServiceWorkers() {
   if ('serviceWorker' in navigator) {
-    // Unregister any old service workers first to prevent caching issues
-    navigator.serviceWorker.getRegistrations().then(registrations => {
-      registrations.forEach(reg => {
-        if (reg.scope.includes('english_training')) {
-          console.log('[SW] Unregistering old service worker');
-          reg.unregister();
-        }
+    navigator.serviceWorker.getRegistrations().then(regs => {
+      regs.forEach(reg => {
+        reg.unregister().then(() => console.log('[SW] Unregistered service worker'));
       });
     }).catch(() => {});
-    
-    // Register new service worker with delay to avoid blocking
-    setTimeout(() => {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('[SW] Registered:', reg.scope))
-        .catch(err => {
-          console.warn('[SW] Registration failed (non-critical):', err.message);
-          // Don't show error to user - app works without SW
-        });
-    }, 1000);
+  }
+  if ('caches' in window) {
+    caches.keys().then(names => {
+      names.forEach(name => {
+        caches.delete(name).then(() => console.log('[SW] Cleared cache:', name));
+      });
+    }).catch(() => {});
   }
 }
 
@@ -1228,14 +1984,14 @@ function setupHelpToolbar() {
     });
   }
   
-  // TTS button
+  // TTS button — toggle play/pause/resume
   const ttsBtn = document.getElementById('help-btn-tts');
   if (ttsBtn) {
     ttsBtn.addEventListener('click', () => {
       const passageText = document.getElementById('passage-text');
       if (window.helpFeatures && passageText) {
         const text = passageText.textContent;
-        window.helpFeatures.speakText(text);
+        window.helpFeatures.toggleSpeech(text, ttsBtn);
       }
     });
   }

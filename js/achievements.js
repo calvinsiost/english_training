@@ -72,6 +72,48 @@ const ACHIEVEMENTS = {
     description: 'Revise 100 flashcards',
     icon: '🎴',
     condition: (stats) => stats.flashcardsReviewed >= 100
+  },
+  first_expedition: {
+    id: 'first_expedition',
+    name: 'Primeira Expedição',
+    description: 'Complete sua primeira expedição',
+    icon: '🧭',
+    condition: (stats) => stats.expeditionsCompleted >= 1
+  },
+  expedition_floor_5: {
+    id: 'expedition_floor_5',
+    name: 'Explorador',
+    description: 'Alcance o andar 5 na expedição',
+    icon: '🗺️',
+    condition: (stats) => stats.expeditionBestFloor >= 5
+  },
+  expedition_floor_10: {
+    id: 'expedition_floor_10',
+    name: 'Aventureiro',
+    description: 'Alcance o andar 10 na expedição',
+    icon: '⛰️',
+    condition: (stats) => stats.expeditionBestFloor >= 10
+  },
+  expedition_perfect: {
+    id: 'expedition_perfect',
+    name: 'Intocável',
+    description: 'Complete uma expedição sem perder coração',
+    icon: '💎',
+    condition: (stats) => stats.expeditionPerfectRuns >= 1
+  },
+  expedition_boss_hunter: {
+    id: 'expedition_boss_hunter',
+    name: 'Caçador de Bosses',
+    description: 'Derrote 10 bosses na expedição',
+    icon: '🐉',
+    condition: (stats) => stats.expeditionBossesDefeated >= 10
+  },
+  expedition_relic_collector: {
+    id: 'expedition_relic_collector',
+    name: 'Colecionador',
+    description: 'Desbloqueie todas as relíquias',
+    icon: '🏺',
+    condition: (stats) => stats.expeditionRelicsUnlocked >= 5
   }
 };
 

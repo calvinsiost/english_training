@@ -13,18 +13,20 @@
     <link rel="icon" type="image/svg+xml" href="icon.svg">
     <link rel="apple-touch-icon" href="icon.svg">
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/variables.css?v=3">
-    <link rel="stylesheet" href="css/base.css?v=3">
-    <link rel="stylesheet" href="css/components.css?v=3">
-    <link rel="stylesheet" href="css/study-layout.css?v=3">
-    <link rel="stylesheet" href="css/srs.css?v=1">
-    <link rel="stylesheet" href="css/stats.css?v=1">
-    <link rel="stylesheet" href="css/session-history.css?v=1">
-    <link rel="stylesheet" href="css/exam-mode.css?v=1">
-    <link rel="stylesheet" href="css/flashcards.css?v=1">
-    <link rel="stylesheet" href="css/achievements.css?v=1">
-    <link rel="stylesheet" href="css/review.css?v=1">
+    <!-- CSS (cache busting via git hash in CI — do not add ?v=N manually) -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/study-layout.css">
+    <link rel="stylesheet" href="css/srs.css">
+    <link rel="stylesheet" href="css/stats.css">
+    <link rel="stylesheet" href="css/session-history.css">
+    <link rel="stylesheet" href="css/exam-mode.css">
+    <link rel="stylesheet" href="css/flashcards.css">
+    <link rel="stylesheet" href="css/achievements.css">
+    <link rel="stylesheet" href="css/review.css">
+    <link rel="stylesheet" href="css/gamification.css">
+    <link rel="stylesheet" href="css/expedition.css">
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
@@ -58,7 +60,7 @@
                     </div>
                     <div class="stat-card">
                         <span class="stat-value" id="bank-count">0</span>
-                        <span class="stat-label">Passagens no banco</span>
+                        <span class="stat-label">Textos no banco</span>
                     </div>
                 </div>
 
@@ -71,6 +73,38 @@
                     <div class="progress-bar">
                         <div id="daily-progress" class="progress-fill" style="width: 0%"></div>
                     </div>
+                </div>
+
+                <!-- XP Bar -->
+                <div class="xp-section" id="xp-section">
+                    <div class="xp-header">
+                        <div class="xp-level-badge">
+                            <span class="level-number" id="xp-level">0</span>
+                            <span>Nivel</span>
+                        </div>
+                        <div class="xp-daily">Hoje: <span id="xp-daily">0</span> XP</div>
+                    </div>
+                    <div class="xp-bar">
+                        <div class="xp-bar-fill" id="xp-bar-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="xp-bar-text" id="xp-bar-text">0 / 100 XP</div>
+                </div>
+
+                <!-- Daily Challenge -->
+                <div class="challenge-card" id="daily-challenge-card">
+                    <div class="challenge-header">
+                        <div class="challenge-header-left">
+                            <i data-lucide="target"></i>
+                            <span class="challenge-header-label">Desafio Diario</span>
+                        </div>
+                        <span class="challenge-status">+25 XP</span>
+                    </div>
+                    <div class="challenge-title">Carregando...</div>
+                    <div class="challenge-desc"></div>
+                    <div class="challenge-progress-bar">
+                        <div class="challenge-progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="challenge-progress-text">0/0</div>
                 </div>
 
                 <!-- SRS Status Card -->
@@ -110,12 +144,18 @@
 
                     <button id="btn-study" class="action-btn action-btn--primary">
                         <span class="action-icon"><i data-lucide="file-text"></i></span>
-                        <span class="action-text">Nova Passagem</span>
+                        <span class="action-text">Novo Texto</span>
                     </button>
 
                     <button id="btn-exam" class="action-btn">
                         <span class="action-icon"><i data-lucide="clipboard-list"></i></span>
                         <span class="action-text">Prova Real</span>
+                    </button>
+
+                    <button id="btn-expedition" class="action-btn action-btn--primary">
+                        <span class="action-icon"><i data-lucide="compass"></i></span>
+                        <span class="action-text">Expedição</span>
+                        <span id="expedition-floor" class="action-badge">Andar 1</span>
                     </button>
 
                     <button id="btn-analytics" class="action-btn">
@@ -147,13 +187,14 @@
             <section id="study" class="view">
                 <div class="study-header">
                     <button id="study-back" class="btn-back"><i data-lucide="arrow-left"></i> Voltar</button>
-                    <span id="study-progress" class="study-progress">Passagem 1/1 · Questão 1/5</span>
+                    <span id="study-progress" class="study-progress">Texto 1/1 · Questão 1/5</span>
+                    <span id="treasure-indicator" class="treasure-indicator" style="display: none;"><i data-lucide="gem"></i> 2x XP</span>
                 </div>
                 
                 <!-- Loading State -->
                 <div id="study-loading" class="study-loading" style="display: none;">
                     <div class="loading-spinner"></div>
-                    <p>Carregando passagem...</p>
+                    <p>Carregando texto...</p>
                 </div>
 
                 <!-- Help Features Toolbar -->
@@ -167,8 +208,10 @@
                     <button class="help-btn" id="help-btn-hints" title="Dicas contextuais">
                         <i data-lucide="graduation-cap"></i> Dicas
                     </button>
-                    <button class="help-btn" id="help-btn-tts" title="Ouvir texto em voz alta">
-                        <i data-lucide="volume-2"></i> Ouvir
+                    <button class="help-btn" id="help-btn-tts" title="Ouvir texto em voz alta" aria-label="Ouvir texto em voz alta">
+                        <span class="tts-icon tts-icon--idle"><i data-lucide="volume-2"></i> Ouvir</span>
+                        <span class="tts-icon tts-icon--playing"><i data-lucide="pause"></i> Pausar</span>
+                        <span class="tts-icon tts-icon--paused"><i data-lucide="play"></i> Continuar</span>
                     </button>
                 </div>
 
@@ -186,7 +229,7 @@
                     <!-- Passage Container -->
                     <div class="passage-container" id="passage-panel">
                         <div class="passage-header" id="passage-header">
-                            <h3>Texto da Passagem</h3>
+                            <h3>Texto</h3>
                             <i data-lucide="chevron-up" class="passage-toggle-icon"></i>
                         </div>
                         <div class="reading-progress">
@@ -275,8 +318,8 @@
 
             <!-- Analytics/Stats View -->
             <section id="analytics" class="view">
-                <div class="settings-header">
-                    <button class="btn-back" onclick="window.location.hash='#/'"><i data-lucide="arrow-left"></i> Voltar</button>
+                <div class="view-header">
+                    <button class="btn-back" data-back><i data-lucide="arrow-left"></i> Voltar</button>
                     <h2>Estatísticas</h2>
                 </div>
                 <div id="stats-view">
@@ -286,8 +329,8 @@
 
             <!-- Session History View -->
             <section id="sessions" class="view">
-                <div class="settings-header">
-                    <button class="btn-back" onclick="window.location.hash='#/'"><i data-lucide="arrow-left"></i> Voltar</button>
+                <div class="view-header">
+                    <button class="btn-back" data-back><i data-lucide="arrow-left"></i> Voltar</button>
                     <h2>Histórico de Sessões</h2>
                 </div>
                 <div id="session-history-view">
@@ -297,9 +340,13 @@
 
             <!-- Exam Mode View -->
             <section id="exam" class="view">
+                <div class="view-header">
+                    <button class="btn-back" data-back><i data-lucide="arrow-left"></i> Voltar</button>
+                    <h2>Simulado FUVEST</h2>
+                </div>
                 <div id="exam-container">
                     <div class="exam-start-screen">
-                        <h2>📝 Simulado FUVEST</h2>
+                        <h2><i data-lucide="file-edit"></i> Simulado FUVEST</h2>
                         <p>Teste seus conhecimentos em condições de prova real</p>
                         
                         <div class="exam-info">
@@ -309,7 +356,7 @@
                             </div>
                             <div class="exam-info-item">
                                 <span class="exam-info-value">6</span>
-                                <span class="exam-info-label">Passagens</span>
+                                <span class="exam-info-label">Textos</span>
                             </div>
                             <div class="exam-info-item">
                                 <span class="exam-info-value">4h</span>
@@ -333,10 +380,21 @@
                 </div>
             </section>
 
+            <!-- Expedition View (Roguelite) -->
+            <section id="expedition" class="view">
+                <div class="view-header">
+                    <button class="btn-back" data-back><i data-lucide="arrow-left"></i> Voltar</button>
+                    <h2>Expedição</h2>
+                </div>
+                <div id="expedition-content">
+                    <!-- Rendered dynamically by expedition-ui.js -->
+                </div>
+            </section>
+
             <!-- Settings View -->
             <section id="settings" class="view">
-                <div class="settings-header">
-                    <button id="settings-back" class="btn-back"><i data-lucide="arrow-left"></i> Voltar</button>
+                <div class="view-header">
+                    <button id="settings-back" class="btn-back" data-back><i data-lucide="arrow-left"></i> Voltar</button>
                     <h2>Configurações</h2>
                 </div>
 
@@ -354,7 +412,7 @@
 
                     <!-- Provider Selection -->
                     <div class="input-group">
-                        <label>Provedor de IA</label>
+                        <span class="input-label">Provedor de IA</span>
                         <div class="provider-grid" id="provider-grid">
                             <!-- Providers will be rendered by JS -->
                         </div>
@@ -377,12 +435,12 @@
                             <label for="api-key">Chave API</label>
                             <span id="api-key-status" class="api-status"></span>
                         </div>
-                        <div class="input-with-button">
+                        <form id="api-key-form" class="input-with-button" novalidate>
                             <input type="password" id="api-key" placeholder="Digite sua chave API..." autocomplete="off">
-                            <button id="btn-test-connection" class="btn-small" disabled>
+                            <button type="button" id="btn-test-connection" class="btn-small" disabled>
                                 <i data-lucide="plug"></i> Testar
                             </button>
-                        </div>
+                        </form>
                         <small class="input-help" id="api-key-help">
                             <i data-lucide="lightbulb"></i> <a href="#" id="provider-link" target="_blank">Clique aqui para obter sua chave API</a>
                         </small>
@@ -404,7 +462,7 @@
                     <p class="settings-description">Filtre de quais instituições e anos as questões serão exibidas</p>
                     
                     <div class="input-group">
-                        <label>Instituições</label>
+                        <span class="input-label">Instituições</span>
                         <div class="source-filters" id="source-filters">
                             <label class="checkbox-label">
                                 <input type="checkbox" value="FUVEST" checked>
@@ -438,7 +496,7 @@
                     </div>
                     
                     <div class="input-group">
-                        <label>Ano das Questões</label>
+                        <span class="input-label">Ano das Questões</span>
                         <div class="year-range">
                             <div class="year-input">
                                 <span>De</span>
@@ -482,7 +540,7 @@
                             <input type="checkbox" id="help-translate" checked>
                             <span class="toggle-switch"></span>
                             <span class="toggle-label">
-                                <strong>🔤 Tradução por Clique</strong>
+                                <strong><i data-lucide="languages"></i> Tradução por Clique</strong>
                                 <small>Clique em qualquer palavra ou selecione uma frase para traduzir</small>
                             </span>
                         </label>
@@ -493,7 +551,7 @@
                             <input type="checkbox" id="help-lesson" checked>
                             <span class="toggle-switch"></span>
                             <span class="toggle-label">
-                                <strong>💡 Aula Rápida</strong>
+                                <strong><i data-lucide="lightbulb"></i> Aula Rápida</strong>
                                 <small>Botão de lâmpada com explicação gramatical da questão</small>
                             </span>
                         </label>
@@ -504,7 +562,7 @@
                             <input type="checkbox" id="help-alternatives">
                             <span class="toggle-switch"></span>
                             <span class="toggle-label">
-                                <strong>🎯 Explicação das Alternativas</strong>
+                                <strong><i data-lucide="target"></i> Explicação das Alternativas</strong>
                                 <small>Mostra por que cada alternativa está certa ou errada</small>
                             </span>
                         </label>
@@ -515,7 +573,7 @@
                             <input type="checkbox" id="help-hints">
                             <span class="toggle-switch"></span>
                             <span class="toggle-label">
-                                <strong>🎓 Dicas Contextuais</strong>
+                                <strong><i data-lucide="graduation-cap"></i> Dicas Contextuais</strong>
                                 <small>Dicas sobre vocabulário e estratégias de leitura</small>
                             </span>
                         </label>
@@ -526,7 +584,7 @@
                             <input type="checkbox" id="help-tts">
                             <span class="toggle-switch"></span>
                             <span class="toggle-label">
-                                <strong>🔊 Leitura em Voz Alta</strong>
+                                <strong><i data-lucide="volume-2"></i> Leitura em Voz Alta</strong>
                                 <small>Ouça a pronúncia do texto (TTS do navegador)</small>
                             </span>
                         </label>
@@ -538,7 +596,7 @@
                     <div class="bank-stats">
                         <div class="bank-stat-item">
                             <span class="bank-stat-value" id="bank-total">-</span>
-                            <span class="bank-stat-label">passagens</span>
+                            <span class="bank-stat-label">textos</span>
                         </div>
                         <div class="bank-stat-item">
                             <span class="bank-stat-value" id="bank-questions">-</span>
@@ -578,7 +636,7 @@
                 <div class="settings-category" data-category="prefs">
                     <h3><i data-lucide="sliders-horizontal"></i> Preferências</h3>
                     <div class="input-group">
-                        <label for="theme-toggle">Tema</label>
+                        <span class="input-label">Tema</span>
                         <div class="theme-toggle-group">
                             <button id="theme-dark" class="theme-btn active" data-theme="dark">
                                 <i data-lucide="moon"></i> Escuro
@@ -598,16 +656,18 @@
                 </div>
             </section>
 
-            <!-- Other views (placeholders) -->
-            <section id="exam" class="view">
-                <h2>Modo Prova</h2>
-                <p>Em desenvolvimento</p>
-                <button class="btn-back" onclick="router.navigate('#/')"><i data-lucide="arrow-left"></i> Voltar</button>
+            <!-- Flashcard List View -->
+            <section id="flashcard-list" class="view">
+                <div class="view-header">
+                    <button class="btn-back" id="fc-list-back"><i data-lucide="arrow-left"></i> Voltar ao Treino</button>
+                    <h2>Gerenciar Flashcards</h2>
+                </div>
+                <div id="flashcard-list-view"></div>
             </section>
 
             <section id="review" class="view">
-                <div class="review-header">
-                    <button class="btn-back" onclick="router.navigate('#/')"><i data-lucide="arrow-left"></i> Voltar</button>
+                <div class="view-header">
+                    <button class="btn-back" data-back><i data-lucide="arrow-left"></i> Voltar</button>
                     <h2>Revisões Pendentes</h2>
                 </div>
                 <div id="review-content">
@@ -630,11 +690,6 @@
                 </div>
             </section>
 
-            <section id="analytics" class="view">
-                <h2>Análise de Desempenho</h2>
-                <p>Em desenvolvimento</p>
-                <button class="btn-back" onclick="router.navigate('#/')"><i data-lucide="arrow-left"></i> Voltar</button>
-            </section>
         </main>
 
         <!-- Bottom Navigation -->
@@ -661,9 +716,17 @@
         <div id="toast-container" class="toast-container" role="status" aria-live="polite"></div>
     </div>
 
-    <!-- IndexedDB Helpers (must load first) -->
+    <!-- Version management (must load first — cache busting + version gate) -->
+    <script src="js/config/version.js"></script>
+
+    <!-- IndexedDB Helpers (must load before app modules) -->
     <script src="js/idb-helpers.js"></script>
-    
+
+    <!-- Gamification Scripts (load after idb-helpers, before app.js) -->
+    <script src="js/behavior-logger.js"></script>
+    <script src="js/xp-system.js"></script>
+    <script src="js/daily-challenge.js"></script>
+
     <!-- App Scripts -->
     <script type="module" src="js/provider-settings.js"></script>
     <script type="module" src="js/help-features.js"></script>
@@ -675,11 +738,15 @@
     <script src="js/exam-results.js"></script>
     <script src="js/notes-system.js"></script>
     <script src="js/theme-switcher.js"></script>
+    <script src="js/vocabulary-intelligence.js"></script>
     <script src="js/flashcards.js"></script>
     <script src="js/glossary.js"></script>
     <script src="js/achievements.js"></script>
     <script src="js/backup-manager.js"></script>
     <script src="js/review.js"></script>
+    <script src="js/expedition-constants.js"></script>
+    <script src="js/expedition-engine.js"></script>
+    <script src="js/expedition-ui.js"></script>
     <script type="module" src="js/app.js"></script>
 </body>
 </html>
