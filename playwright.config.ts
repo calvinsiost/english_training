@@ -16,9 +16,9 @@ export default defineConfig({
   ],
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:8080',
-    trace: 'on',
-    video: 'on',
-    screenshot: 'on',
+    trace: 'retain-on-failure',
+    video: 'retain-on-failure',
+    screenshot: 'only-on-failure',
     bypassCSP: true,
     serviceWorkers: 'block',
     extraHTTPHeaders: {

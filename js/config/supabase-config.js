@@ -5,8 +5,8 @@
  * IMPORTANT: Replace these with your actual Supabase project values.
  */
 
-const SUPABASE_URL = '';  // e.g. 'https://xxxxx.supabase.co'
-const SUPABASE_ANON_KEY = '';  // e.g. 'eyJhbGciOiJIUzI1...'
+const SUPABASE_URL = 'https://ugvzyyalhtzfthlwowzd.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVndnp5eWFsaHR6ZnRobHdvd3pkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2MDI3NDEsImV4cCI6MjA4OTE3ODc0MX0.CmARqR1f5tuhscFYOSg9fNe8od9A0UnGJAQIBpYHQAk';
 
 // Sync constants
 const SYNC_DEBOUNCE_MS = 30000;

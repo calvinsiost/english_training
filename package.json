@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/calvinsiost/english_training#readme",
   "devDependencies": {
-    "@playwright/test": "^1.58.2"
+    "@playwright/test": "^1.58.2",
+    "pg": "^8.20.0"
   }
 }
